@@ -18,11 +18,14 @@ import java.util.List;
 @RequestMapping("/label")
 public class LabelController {
 
-    @Autowired
-    private LabelServiceImpl labelService;
+    private final LabelServiceImpl labelService;
+
+    public LabelController(LabelServiceImpl labelService) {
+        this.labelService = labelService;
+    }
 
     @GetMapping()
-    public ResponseEntity<?> findAll(){
+    public ResponseEntity<List<Label>> findAll(){
         return ResponseEntity.ok(labelService.findAll());
 
     }

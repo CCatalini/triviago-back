@@ -11,8 +11,11 @@ import java.util.List;
 @Service
 public class LabelServiceImpl implements LabelService {
 
-    @Autowired
-    private LabelRepository labelRepository;
+    private final LabelRepository labelRepository;
+
+    public LabelServiceImpl(LabelRepository labelRepository) {
+        this.labelRepository = labelRepository;
+    }
 
     @Override
     public List<Label> findAll() {
