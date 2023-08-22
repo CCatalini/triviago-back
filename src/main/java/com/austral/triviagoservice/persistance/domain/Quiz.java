@@ -1,4 +1,4 @@
-package com.austral.triviagoservice.persistence.domain;
+package com.austral.triviagoservice.persistance.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;

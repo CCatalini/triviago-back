@@ -1,6 +1,6 @@
-package com.austral.triviagoservice.persistence.specification;
+package com.austral.triviagoservice.persistance.specification;
 
-import com.austral.triviagoservice.persistence.domain.Quiz;
+import com.austral.triviagoservice.persistance.domain.Quiz;
 import com.austral.triviagoservice.presentation.dto.QuizFilter;
 import org.springframework.data.jpa.domain.Specification;
 

@@ -2,7 +2,7 @@ package com.austral.triviagoservice.presentation.controller;
 
 import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.business.impl.QuizServiceImpl;
-import com.austral.triviagoservice.persistence.domain.Quiz;
+import com.austral.triviagoservice.persistance.domain.Quiz;
 import com.austral.triviagoservice.presentation.dto.QuizCreate;
 import com.austral.triviagoservice.presentation.dto.QuizFilter;
 import org.springframework.data.domain.Page;

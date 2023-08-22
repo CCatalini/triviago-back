@@ -1,6 +1,6 @@
 package com.austral.triviagoservice.presentation.dto;
 
-import com.austral.triviagoservice.persistence.domain.Quiz;
+import com.austral.triviagoservice.persistance.domain.Quiz;
 import lombok.Getter;
 import lombok.Setter;
 
