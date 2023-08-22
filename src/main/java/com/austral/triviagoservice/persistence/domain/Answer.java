@@ -3,22 +3,23 @@ package com.austral.triviagoservice.persistence.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
 public class Answer {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private Long questionId;
 
     private String content;
 
-    private Boolean isCorrect;
+    private boolean isCorrect;
 
-    public Answer(Long questionId, String content, Boolean isCorrect) {
+    public Answer(Long questionId, String content, boolean isCorrect) {
         this.questionId = questionId;
         this.content = content;
         this.isCorrect = isCorrect;
@@ -44,11 +45,11 @@ public class Answer {
         this.content = content;
     }
 
-    public Boolean getCorrect() {
+    public boolean getCorrect() {
         return isCorrect;
     }
 
-    public void setCorrect(Boolean correct) {
+    public void setCorrect(boolean correct) {
         isCorrect = correct;
     }
 }
