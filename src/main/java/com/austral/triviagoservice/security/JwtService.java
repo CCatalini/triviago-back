@@ -1,5 +1,6 @@
 package com.austral.triviagoservice.security;
 
+import com.austral.triviagoservice.persistance.domain.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -9,7 +10,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
-import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,13 +30,13 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-    public String generateToken (UserDetails userDetails){ // puede no ser User Details
-        return generateToken(new HashMap<>(),userDetails);
+    public String generateToken (User user){ // puede no ser User Details
+        return generateToken(new HashMap<>(),user);
     }
 
     public String generateToken (
             Map<String, Object> extractClaims,
-            UserDetails userDetails //no creo que sea un userDetails
+            User userDetails //no creo que sea un userDetails
     ) {
         return Jwts.builder()
                 .setClaims(extractClaims)
@@ -47,7 +47,7 @@ public class JwtService {
                 .compact();
     }
 
-    public boolean isTokenValid(String token, UserDetails userDetails){ //puede cambiar userdetails
+    public boolean isTokenValid(String token, User userDetails){ //puede cambiar userdetails
         String username = extractUsername(token);
         return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
     }

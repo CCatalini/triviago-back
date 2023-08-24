@@ -1,8 +1,11 @@
 package com.austral.triviagoservice.security;
 
+import com.austral.triviagoservice.persistance.domain.User;
 import com.sun.istack.NotNull;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -12,9 +15,13 @@ import java.io.IOException;
 @Component
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
-    private JwtService jswtService;
-    private UserDetailsService userDetailsService;
+    private JwtService jwtService;
+    private UserService userService;
 
+    public  JWTAuthenticationFilter(JwtService jwtService, UserService userService) {
+        this.jwtService = jwtService;
+        this.userService = userService;
+    }
     @Override
     protected void doFilterInternal(
             @NotNull javax.servlet.http.HttpServletRequest request,
@@ -29,9 +36,15 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         jwtToken = authHeader.substring(7);
-        username = jswtService.extractUsername(jwtToken);
+        username = jwtService.extractUsername(jwtToken);
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            User user = this.userDetailsService.loadByUSername(username);
+            User user = this.userService.findByEmail(username);
+            if (jwtService.isTokenValid(jwtToken,user)){
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user,null);
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+            }
         }
+        filterChain.doFilter(request, response);
     }
 }
