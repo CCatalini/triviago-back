@@ -37,32 +37,20 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf()
-                .disable()
+                .csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("api/auth/**")
-                    .permitAll()
-                    .anyRequest()
-                    .authenticated()
+                .antMatchers("api/auth/**").permitAll()
+                    .anyRequest().authenticated()
                 .and()
                 .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .authenticationProvider(authenticationProvider)
                 .addFilterBefore(JWTAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
 
         return http.build();
     }
 
-
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-//        authProvider.setUserDetailsService(userService); no tengo userDetails
-        authProvider.setPasswordEncoder(passwordEnconder());
-        return authProvider;
-    }
 
     @Bean
     public PasswordEncoder passwordEnconder() {
