@@ -22,7 +22,7 @@ public class Quiz {
     @JsonFormat(pattern= "dd-MM-yyyy", timezone = "Argentina")
     LocalDate creationDate;
     @Column
-    double rating;
+    Double rating;
     @Column
     String invitationCode;
     @Column

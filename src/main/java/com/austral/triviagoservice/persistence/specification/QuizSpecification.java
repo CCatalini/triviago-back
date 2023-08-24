@@ -29,17 +29,35 @@ public class QuizSpecification implements Specification<Quiz> {
         if((quizFilter.getDateFrom() != null) && (quizFilter.getDateTo() != null)){
             restrictions.add(criteriaBuilder.between(quiz.get("creationDate"),quizFilter.getDateFrom(), quizFilter.getDateTo()));
         }
+        if (quizFilter.getDateFrom() != null) {
+            restrictions.add(criteriaBuilder.greaterThanOrEqualTo(quiz.get("creationDate"), quizFilter.getCreationDate()));
+        }
+        if (quizFilter.getDateTo() != null) {
+            restrictions.add(criteriaBuilder.lessThanOrEqualTo(quiz.get("creationDate"), quizFilter.getCreationDate()));
+        }
         if(quizFilter.getQuestionQty() != null){
             restrictions.add(criteriaBuilder.equal(quiz.get("questionQty"), quizFilter.getQuestionQty()));
         }
         if((quizFilter.getMinQuestion() != null) && (quizFilter.getMaxQuestion()!= null)){
             restrictions.add(criteriaBuilder.between(quiz.get("questionQty"), quizFilter.getMinQuestion(), quizFilter.getMaxQuestion()));
         }
+        if (quizFilter.getMinQuestion() != null) {
+            restrictions.add(criteriaBuilder.greaterThanOrEqualTo(quiz.get("questionQty"), quizFilter.getMinQuestion()));
+        }
+        if (quizFilter.getMaxQuestion() != null) {
+            restrictions.add(criteriaBuilder.lessThanOrEqualTo(quiz.get("questionQty"), quizFilter.getMaxQuestion()));
+        }
         if(quizFilter.getRating()!=null){
             restrictions.add(criteriaBuilder.equal(quiz.get("rating"), quizFilter.getRating()));
         }
         if((quizFilter.getMinRating() != null) && (quizFilter.getMaxRating()!=null)){
             restrictions.add(criteriaBuilder.between(quiz.get("rating"), quizFilter.getMinRating(), quizFilter.getMaxRating()));
+        }
+        if(quizFilter.getMinRating() != null){
+            restrictions.add(criteriaBuilder.greaterThanOrEqualTo(quiz.get("rating"), quizFilter.getMinRating()));
+        }
+        if(quizFilter.getMaxRating() != null){
+            restrictions.add(criteriaBuilder.lessThanOrEqualTo(quiz.get("rating"), quizFilter.getMaxRating()));
         }
         if(quizFilter.getUserId() != null){
             restrictions.add(criteriaBuilder.equal(quiz.get("userId"), quizFilter.getUserId()));

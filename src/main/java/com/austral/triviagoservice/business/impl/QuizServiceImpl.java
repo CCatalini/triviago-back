@@ -20,7 +20,7 @@ import java.util.Optional;
 @Service
 public class QuizServiceImpl implements QuizService {
 
-    final QuizRepository quizRepository;
+    final private QuizRepository quizRepository;
     public QuizServiceImpl(QuizRepository quizRepository) {
         this.quizRepository = quizRepository;
     }
@@ -30,7 +30,7 @@ public class QuizServiceImpl implements QuizService {
         Optional<Quiz> search = quizRepository.findById(id);
         if(search.isPresent()){
             Quiz quiz = search.get();
-            return QuizCreate.CreateDTO(quiz);
+            return QuizCreate.createDTO(quiz);
 
         }
         throw new InvalidContentException("Invalid quiz Id");
@@ -64,7 +64,7 @@ public class QuizServiceImpl implements QuizService {
     @Override
     public QuizCreate createQuiz(Quiz quiz) {
         Quiz created = quizRepository.save(quiz);
-        return QuizCreate.CreateDTO(created);
+        return QuizCreate.createDTO(created);
     }
 
 }
