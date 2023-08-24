@@ -1,4 +1,4 @@
-package com.austral.triviagoservice.persistance.domain;
+package com.austral.triviagoservice.persistence.domain;
 
 import javax.persistence.*;
 

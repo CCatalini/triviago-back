@@ -3,9 +3,9 @@ package com.austral.triviagoservice.business.impl;
 import com.austral.triviagoservice.business.helper.ErrorCheckers;
 import com.austral.triviagoservice.business.QuizService;
 import com.austral.triviagoservice.business.exception.InvalidContentException;
-import com.austral.triviagoservice.persistance.domain.Quiz;
-import com.austral.triviagoservice.persistance.repository.QuizRepository;
-import com.austral.triviagoservice.persistance.specification.QuizSpecification;
+import com.austral.triviagoservice.persistence.domain.Quiz;
+import com.austral.triviagoservice.persistence.repository.QuizRepository;
+import com.austral.triviagoservice.persistence.specification.QuizSpecification;
 import com.austral.triviagoservice.presentation.dto.QuizCreate;
 import com.austral.triviagoservice.presentation.dto.QuizFilter;
 import org.springframework.data.domain.PageImpl;
@@ -20,7 +20,7 @@ import java.util.Optional;
 @Service
 public class QuizServiceImpl implements QuizService {
 
-    final QuizRepository quizRepository;
+    final private QuizRepository quizRepository;
     public QuizServiceImpl(QuizRepository quizRepository) {
         this.quizRepository = quizRepository;
     }
@@ -30,7 +30,7 @@ public class QuizServiceImpl implements QuizService {
         Optional<Quiz> search = quizRepository.findById(id);
         if(search.isPresent()){
             Quiz quiz = search.get();
-            return QuizCreate.CreateDTO(quiz);
+            return QuizCreate.createDTO(quiz);
 
         }
         throw new InvalidContentException("Invalid quiz Id");
@@ -64,7 +64,7 @@ public class QuizServiceImpl implements QuizService {
     @Override
     public QuizCreate createQuiz(Quiz quiz) {
         Quiz created = quizRepository.save(quiz);
-        return QuizCreate.CreateDTO(created);
+        return QuizCreate.createDTO(created);
     }
 
 }

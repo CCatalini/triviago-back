@@ -1,4 +1,4 @@
-package com.austral.triviagoservice.persistance.domain;
+package com.austral.triviagoservice.persistence.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
@@ -22,7 +22,7 @@ public class Quiz {
     @JsonFormat(pattern= "dd-MM-yyyy", timezone = "Argentina")
     LocalDate creationDate;
     @Column
-    double rating;
+    Double rating;
     @Column
     String invitationCode;
     @Column

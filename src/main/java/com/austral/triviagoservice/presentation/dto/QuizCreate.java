@@ -1,6 +1,6 @@
 package com.austral.triviagoservice.presentation.dto;
 
-import com.austral.triviagoservice.persistance.domain.Quiz;
+import com.austral.triviagoservice.persistence.domain.Quiz;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,15 +10,15 @@ import java.time.LocalDate;
 @Setter
 public class QuizCreate {
 
-    private long id;
-    private long userId;
+    private Long id;
+    private Long userId;
     private String title;
     private String description;
     private LocalDate creationDate;
-    private double rating;
+    private Double rating;
     private String invitationCode;
 
-    public static QuizCreate CreateDTO(Quiz quiz){
+    public static QuizCreate createDTO(Quiz quiz){
         QuizCreate dto = new QuizCreate();
         dto.setTitle(quiz.getTitle());
         dto.setDescription(quiz.getDescription());
