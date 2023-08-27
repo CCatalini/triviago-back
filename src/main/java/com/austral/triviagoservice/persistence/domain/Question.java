@@ -18,7 +18,7 @@ public class Question {
     @Column
     private String content;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JsonIgnore //json loop
     private Quiz quiz;
 

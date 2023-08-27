@@ -33,7 +33,7 @@ public class Quiz {
     @Column
     private Boolean isPrivate;
 
-    @OneToMany(targetEntity = Question.class, cascade = CascadeType.PERSIST)
+    @OneToMany(targetEntity = Question.class, cascade = CascadeType.ALL)
     @JsonIgnore //json loop
     List<Question> questions;
 
