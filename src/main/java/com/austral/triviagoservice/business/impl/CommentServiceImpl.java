@@ -2,7 +2,13 @@ package com.austral.triviagoservice.business.impl;
 
 import com.austral.triviagoservice.business.CommentService;
 import com.austral.triviagoservice.persistence.domain.Comment;
+<<<<<<< Updated upstream
 import com.austral.triviagoservice.persistence.repository.CommentRepository;
+=======
+import com.austral.triviagoservice.persistence.domain.Quiz;
+import com.austral.triviagoservice.persistence.repository.CommentRepository;
+import com.austral.triviagoservice.persistence.repository.QuizRepository;
+>>>>>>> Stashed changes
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,6 +16,7 @@ import java.util.List;
 @Service
 public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
+<<<<<<< Updated upstream
 
     public CommentServiceImpl(CommentRepository commentRepository) {
         this.commentRepository = commentRepository;
@@ -19,6 +26,20 @@ public class CommentServiceImpl implements CommentService {
     public List<Comment> findAll() {
         return commentRepository.findAll();
 
+=======
+    private final QuizRepository quizRepository;
+
+    public CommentServiceImpl(CommentRepository commentRepository,
+                              QuizRepository quizRepository) {
+        this.commentRepository = commentRepository;
+        this.quizRepository = quizRepository;
+    }
+
+    @Override
+    public List<Comment> findAllByQuizId(Quiz quiz) {
+        Long quizId = quiz.getId();
+        return commentRepository.findByQuizId(quizId);
+>>>>>>> Stashed changes
     }
 
     @Override
@@ -41,4 +62,8 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.delete(comment);
         return comment;
     }
+<<<<<<< Updated upstream
 }
+=======
+}
+>>>>>>> Stashed changes
