@@ -8,7 +8,6 @@ import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 @Entity
-
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +27,8 @@ public class Comment {
         this.content = content;
         this.creationDateTime = LocalDateTime.now();
     }
+
+    public Comment(){}
 
     public Long getId() {
         return id;
