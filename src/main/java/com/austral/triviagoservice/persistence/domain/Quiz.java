@@ -30,6 +30,8 @@ public class Quiz {
     private String invitationCode;
     @Column
     private Integer questionQty;
+    @Column
+    private Boolean isPrivate;
 
     @OneToMany(targetEntity = Question.class, cascade = CascadeType.PERSIST)
     @JsonIgnore //json loop
@@ -37,5 +39,6 @@ public class Quiz {
 
     @ManyToMany(mappedBy = "quizzes")
     List<Label> lables;
+
     public Quiz(){}
 }
