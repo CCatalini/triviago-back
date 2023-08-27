@@ -1,5 +1,6 @@
 package com.austral.triviagoservice.persistence.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,6 +8,8 @@ import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.UUID;
 
 @Getter
@@ -23,6 +26,10 @@ public class InvitationCode {
 
     @Column
     private Boolean inUse;
+
+    @Column
+    @JsonFormat(pattern = "dd/MM/yyy")
+    private LocalDate creationDate;
 
     public InvitationCode(){}
 
@@ -41,6 +48,7 @@ public class InvitationCode {
         String uuid = UUID.randomUUID().toString();
         code.setUuid(uuid);
         code.setInUse(true);
+        code.setCreationDate(LocalDate.now(ZoneId.of("AGT")));
         return code;
     }
 }
