@@ -82,6 +82,7 @@ public class QuizServiceImpl implements QuizService {
             }
             created.setInvitationCode(code.getUuid());
         }
+        created.setQuestionQty(created.getQuestions().size());
         return QuizCreate.createDTO(created);
     }
 
