@@ -1,32 +1,41 @@
 package com.austral.triviagoservice.persistence.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
 public class Quiz {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
     @Column(nullable = false)
-    Long userId;
+    private Long userId;
     @Column(nullable = false)
-    String title;
+    private String title;
     @Column
-    String description;
+    private String description;
     @Column(nullable = false)
     @JsonFormat(pattern= "dd-MM-yyyy", timezone = "Argentina")
-    LocalDate creationDate;
+    private LocalDate creationDate;
     @Column
-    Double rating;
+    private double rating;
     @Column
-    String invitationCode;
+    private String invitationCode;
     @Column
-    Integer questionQty;
+    private Integer questionQty;
 
+    @OneToMany(targetEntity = Question.class, cascade = CascadeType.PERSIST)
+    @JsonIgnore //json loop
+    List<Question> questions;
+
+    @ManyToMany(mappedBy = "quizzes")
+    List<Label> lables;
     public Quiz(){}
 }

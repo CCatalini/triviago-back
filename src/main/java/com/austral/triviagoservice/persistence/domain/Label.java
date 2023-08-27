@@ -1,7 +1,14 @@
 package com.austral.triviagoservice.persistence.domain;
 
-import javax.persistence.*;
 
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.persistence.*;
+import java.util.List;
+
+@Getter
+@Setter
 @Entity(name = "Label")
 public class Label {
 
@@ -12,18 +19,10 @@ public class Label {
     @Column
     String value;
 
-    public Label(){}
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(joinColumns = @JoinColumn,
+            inverseJoinColumns = @JoinColumn)
+    List<Quiz> quizzes;
 
-    public Long getId() {
-        return Id;
-    }
-
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
+    public Label() {}
 }
