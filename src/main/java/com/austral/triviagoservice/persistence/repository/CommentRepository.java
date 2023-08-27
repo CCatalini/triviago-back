@@ -10,10 +10,6 @@ import java.util.List;
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-
-<<<<<<< Updated upstream
-=======
     List<Comment> findByQuizId(Long quizId);
->>>>>>> Stashed changes
 }
     
