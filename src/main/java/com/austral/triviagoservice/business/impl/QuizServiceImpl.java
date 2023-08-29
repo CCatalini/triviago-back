@@ -79,6 +79,7 @@ public class QuizServiceImpl implements QuizService {
     @Override
     public Long deleteById(Long id) throws InvalidContentException {
         if(quizRepository.existsById(id)){
+
             quizRepository.deleteById(id);
             return id;
         }

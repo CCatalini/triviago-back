@@ -16,4 +16,5 @@ public interface QuizService {
     QuizCreate createQuiz(Quiz quiz);
 
     Long deleteById(Long id) throws InvalidContentException;
+
 }
