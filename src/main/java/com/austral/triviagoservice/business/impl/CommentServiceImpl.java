@@ -14,12 +14,11 @@ import java.util.List;
 public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
 
-    public CommentServiceImpl(CommentRepository commentRepository, QuizRepository quizRepository) {
+    public CommentServiceImpl(CommentRepository commentRepository) {
             this.commentRepository = commentRepository;
-            this.quizRepository = quizRepository;
-        }
+    }
         @Override
-        public List<Comment> findAllByQuizId (Quiz quiz){
+        public List<Comment> findAllByQuizId(Quiz quiz){
             Long quizId = quiz.getId();
             return commentRepository.findByQuizId(quizId);
         }
