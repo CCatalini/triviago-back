@@ -35,9 +35,6 @@ public class QuizSpecification implements Specification<Quiz> {
         if (quizFilter.getDateTo() != null) {
             restrictions.add(criteriaBuilder.lessThanOrEqualTo(quiz.get("creationDate"), quizFilter.getCreationDate()));
         }
-        if(quizFilter.getQuestionQty() != null){
-            restrictions.add(criteriaBuilder.equal(quiz.get("questionQty"), quizFilter.getQuestionQty()));
-        }
         if((quizFilter.getMinQuestion() != null) && (quizFilter.getMaxQuestion()!= null)){
             restrictions.add(criteriaBuilder.between(quiz.get("questionQty"), quizFilter.getMinQuestion(), quizFilter.getMaxQuestion()));
         }

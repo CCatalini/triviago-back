@@ -29,8 +29,6 @@ public class Quiz {
     @Column
     private String invitationCode;
     @Column
-    private Integer questionQty;
-    @Column
     private Boolean isPrivate;
 
     @OneToMany(targetEntity = Question.class, cascade = CascadeType.ALL)
@@ -38,7 +36,7 @@ public class Quiz {
     List<Question> questions;
 
     @ManyToMany(mappedBy = "quizzes")
-    List<Label> lables;
+    List<Label> labels;
 
     public Quiz(){}
 }
