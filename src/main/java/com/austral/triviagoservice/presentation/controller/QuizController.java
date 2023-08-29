@@ -1,7 +1,9 @@
 package com.austral.triviagoservice.presentation.controller;
 
 import com.austral.triviagoservice.business.exception.InvalidContentException;
+import com.austral.triviagoservice.business.impl.CommentServiceImpl;
 import com.austral.triviagoservice.business.impl.QuizServiceImpl;
+import com.austral.triviagoservice.persistence.domain.Comment;
 import com.austral.triviagoservice.persistence.domain.Quiz;
 import com.austral.triviagoservice.presentation.dto.QuizCreate;
 import com.austral.triviagoservice.presentation.dto.QuizFilter;
@@ -13,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -21,9 +24,11 @@ public class QuizController {
 
     final
     QuizServiceImpl quizService;
+    final CommentServiceImpl commentService;
 
-    public QuizController(QuizServiceImpl quizService) {
+    public QuizController(QuizServiceImpl quizService, CommentServiceImpl commentService){
         this.quizService = quizService;
+        this.commentService = commentService;
     }
 
     @GetMapping
@@ -60,6 +65,18 @@ public class QuizController {
         }
     }
 
+    @GetMapping("/{quizId}/comment")
+    public ResponseEntity<List<Comment>> getComments(@PathVariable("quizId") long quizId) {
+        try {
+            if (quizService.findById(quizId) == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            else {
+                return new ResponseEntity<>(commentService.findAllByQuizId(quizId), HttpStatus.OK);
+            }
+        } catch (InvalidContentException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteById(@PathVariable("id") Long quizId){
         try{
@@ -70,6 +87,5 @@ public class QuizController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
-
 
 }

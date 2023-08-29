@@ -18,8 +18,7 @@ public class CommentServiceImpl implements CommentService {
             this.commentRepository = commentRepository;
     }
         @Override
-        public List<Comment> findAllByQuizId(Quiz quiz){
-            Long quizId = quiz.getId();
+        public List<Comment> findAllByQuizId(Long quizId){
             return commentRepository.findByQuizId(quizId);
         }
 
