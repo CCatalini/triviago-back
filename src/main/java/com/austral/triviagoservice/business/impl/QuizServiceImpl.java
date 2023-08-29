@@ -78,17 +78,11 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     public Long deleteById(Long id) throws InvalidContentException {
-        if(this.isPresent(id)){
+        if(quizRepository.existsById(id)){
             quizRepository.deleteById(id);
             return id;
         }
         throw new InvalidContentException("Invalid Id, quiz does not exist");
 
-    }
-
-    @Override
-    public Boolean isPresent(Long id){
-        Optional<Quiz> entity = quizRepository.findById(id);
-        return entity.isPresent();
     }
 }
