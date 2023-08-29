@@ -32,5 +32,5 @@ public class AuthService {
         userRepository.save(user);
         return response;
     }
-    }
+
 }
