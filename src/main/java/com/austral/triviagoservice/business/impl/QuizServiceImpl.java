@@ -3,10 +3,8 @@ package com.austral.triviagoservice.business.impl;
 import com.austral.triviagoservice.business.helper.ErrorCheckers;
 import com.austral.triviagoservice.business.QuizService;
 import com.austral.triviagoservice.business.exception.InvalidContentException;
-import com.austral.triviagoservice.persistence.domain.InvitationCode;
 import com.austral.triviagoservice.persistence.domain.Quiz;
 import com.austral.triviagoservice.persistence.repository.QuizRepository;
-import com.austral.triviagoservice.persistence.repository.UUIDRepository;
 import com.austral.triviagoservice.persistence.specification.QuizSpecification;
 import com.austral.triviagoservice.presentation.dto.QuizCreate;
 import com.austral.triviagoservice.presentation.dto.QuizFilter;
@@ -20,19 +18,18 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class QuizServiceImpl implements QuizService {
 
     final private QuizRepository quizRepository;
-    final private UUIDRepository uuidRepository;
-    public QuizServiceImpl(QuizRepository quizRepository, UUIDRepository uuidRepository) {
+    public QuizServiceImpl(QuizRepository quizRepository) {
         this.quizRepository = quizRepository;
-        this.uuidRepository = uuidRepository;
     }
 
     @Override
-    public QuizCreate findById(long id) throws InvalidContentException {
+    public QuizCreate findById(Long id) throws InvalidContentException {
         Optional<Quiz> search = quizRepository.findById(id);
         if(search.isPresent()){
             Quiz quiz = search.get();
@@ -69,21 +66,29 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     public QuizCreate createQuiz(Quiz quiz) {
-        Quiz created = quizRepository.save(quiz);
-        created.setCreationDate(LocalDate.now(ZoneId.of("AGT"))); //Buenos Aires time zone
-        if(created.getIsPrivate()){
+        quiz.setCreationDate(LocalDate.now(ZoneId.of("America/Argentina/Buenos_Aires"))); //Buenos Aires time zone
+        if(quiz.getIsPrivate()){
             //Se genera un código de invitación con un UUID random.
-            InvitationCode code = InvitationCode.createInvitationCode();
-            Optional<InvitationCode> invitation = uuidRepository.findById(code.getUuid()); //Busqueda para ver si hay repetidos
-            if(invitation.isPresent()){
-                //Caso que el random genera un UUID repetido
-                String newUUID = InvitationCode.generateNewUUID(code.getUuid());
-                code.setUuid(newUUID);
-            }
-            created.setInvitationCode(code.getUuid());
+            UUID code = UUID.randomUUID();
+            quiz.setInvitationCode(code.toString());
         }
-        created.setQuestionQty(created.getQuestions().size());
+        Quiz created = quizRepository.save(quiz);
         return QuizCreate.createDTO(created);
     }
 
+    @Override
+    public Long deleteById(Long id) throws InvalidContentException {
+        if(this.isPresent(id)){
+            quizRepository.deleteById(id);
+            return id;
+        }
+        throw new InvalidContentException("Invalid Id, quiz does not exist");
+
+    }
+
+    @Override
+    public Boolean isPresent(Long id){
+        Optional<Quiz> entity = quizRepository.findById(id);
+        return entity.isPresent();
+    }
 }

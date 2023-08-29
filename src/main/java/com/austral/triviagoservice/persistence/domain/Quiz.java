@@ -22,23 +22,20 @@ public class Quiz {
     @Column
     private String description;
     @Column(nullable = false)
-    @JsonFormat(pattern= "dd-MM-yyyy", timezone = "Argentina")
     private LocalDate creationDate;
     @Column
     private double rating;
     @Column
     private String invitationCode;
     @Column
-    private Integer questionQty;
-    @Column
     private Boolean isPrivate;
+
 
     @OneToMany(targetEntity = Question.class, cascade = CascadeType.PERSIST)
     @JsonIgnore //json loop
     List<Question> questions;
 
     @ManyToMany(mappedBy = "quizzes")
-    List<Label> lables;
-
+    List<Label> labels;
     public Quiz(){}
 }

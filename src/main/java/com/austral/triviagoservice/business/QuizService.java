@@ -9,9 +9,13 @@ import org.springframework.data.domain.Pageable;
 
 public interface QuizService {
 
-    QuizCreate findById(long id) throws InvalidContentException;
+    QuizCreate findById(Long id) throws InvalidContentException;
 
     Page<Quiz> findAll(QuizFilter quizFIlter, Pageable pageable) throws InvalidContentException;
 
     QuizCreate createQuiz(Quiz quiz);
+
+    Long deleteById(Long id) throws InvalidContentException;
+
+    Boolean isPresent(Long id);
 }
