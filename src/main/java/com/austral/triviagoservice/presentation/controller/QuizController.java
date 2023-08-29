@@ -53,7 +53,7 @@ public class QuizController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> findById(@PathVariable("id") long quizId){
+    public ResponseEntity<?> findById(@PathVariable("id") Long quizId){
         try{
             QuizCreate dto = quizService.findById(quizId);
             return new ResponseEntity<>(dto, HttpStatus.OK);
@@ -74,6 +74,17 @@ public class QuizController {
             }
         } catch (InvalidContentException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteById(@PathVariable("id") Long quizId){
+        try{
+            Long value = quizService.deleteById(quizId);
+            return new ResponseEntity<>(value, HttpStatus.OK);
+        }
+        catch (InvalidContentException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
