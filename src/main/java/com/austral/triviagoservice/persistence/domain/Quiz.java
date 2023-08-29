@@ -22,7 +22,6 @@ public class Quiz {
     @Column
     private String description;
     @Column(nullable = false)
-    @JsonFormat(pattern= "dd-MM-yyyy", timezone = "Argentina")
     private LocalDate creationDate;
     @Column
     private double rating;
@@ -31,12 +30,13 @@ public class Quiz {
     @Column
     private Boolean isPrivate;
 
+
     @OneToMany(targetEntity = Question.class, cascade = CascadeType.ALL)
     @JsonIgnore //json loop
     List<Question> questions;
 
     @ManyToMany(mappedBy = "quizzes")
     List<Label> labels;
-
+  
     public Quiz(){}
 }
