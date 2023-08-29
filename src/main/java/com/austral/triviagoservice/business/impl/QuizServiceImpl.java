@@ -14,8 +14,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class QuizServiceImpl implements QuizService {
@@ -63,6 +66,11 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     public QuizCreate createQuiz(Quiz quiz) {
+        quiz.setCreationDate(LocalDate.now(ZoneId.of("AGT"))); //Buenos Aires time zone
+        if(quiz.getIsPrivate()){
+            UUID code = UUID.randomUUID();
+            quiz.setInvitationCode(code.toString());
+        }
         Quiz created = quizRepository.save(quiz);
         return QuizCreate.createDTO(created);
     }
