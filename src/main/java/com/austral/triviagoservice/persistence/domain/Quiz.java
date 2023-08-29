@@ -31,11 +31,12 @@ public class Quiz {
     private Boolean isPrivate;
 
 
-    @OneToMany(targetEntity = Question.class, cascade = CascadeType.PERSIST)
+    @OneToMany(targetEntity = Question.class, cascade = CascadeType.ALL)
     @JsonIgnore //json loop
     List<Question> questions;
 
     @ManyToMany(mappedBy = "quizzes")
     List<Label> labels;
+  
     public Quiz(){}
 }

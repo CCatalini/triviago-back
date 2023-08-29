@@ -19,7 +19,7 @@ public class Label {
     @Column
     String value;
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(joinColumns = @JoinColumn,
             inverseJoinColumns = @JoinColumn)
     List<Quiz> quizzes;
