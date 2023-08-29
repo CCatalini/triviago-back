@@ -8,7 +8,7 @@ import com.austral.triviagoservice.persistence.domain.Quiz;
 import java.util.List;
 
 public interface CommentService {
-    List<Comment> findAllByQuizId(Quiz quiz);
+    List<Comment> findAllByQuizId(Long quizId);
     Comment create(Comment comment);
     Comment editComment(Comment comment, String newContent);
     Comment deleteComment(Comment comment);
