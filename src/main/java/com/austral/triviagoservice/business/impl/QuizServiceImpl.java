@@ -14,8 +14,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class QuizServiceImpl implements QuizService {
@@ -26,7 +29,7 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public QuizCreate findById(long id) throws InvalidContentException {
+    public QuizCreate findById(Long id) throws InvalidContentException {
         Optional<Quiz> search = quizRepository.findById(id);
         if(search.isPresent()){
             Quiz quiz = search.get();
@@ -63,8 +66,23 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     public QuizCreate createQuiz(Quiz quiz) {
+        quiz.setCreationDate(LocalDate.now(ZoneId.of("America/Argentina/Buenos_Aires"))); //Buenos Aires time zone
+        if(quiz.getIsPrivate()){
+            //Se genera un código de invitación con un UUID random.
+            UUID code = UUID.randomUUID();
+            quiz.setInvitationCode(code.toString());
+        }
         Quiz created = quizRepository.save(quiz);
         return QuizCreate.createDTO(created);
     }
 
+    @Override
+    public Long deleteById(Long id) throws InvalidContentException {
+        if(quizRepository.existsById(id)){
+            quizRepository.deleteById(id);
+            return id;
+        }
+        throw new InvalidContentException("Invalid Id, quiz does not exist");
+
+    }
 }
