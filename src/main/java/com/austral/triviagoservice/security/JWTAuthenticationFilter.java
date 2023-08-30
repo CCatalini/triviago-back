@@ -37,6 +37,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 //            throw new ServletException("An error ocurred within the authentication");
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing token");
             filterChain.doFilter(request, response);
+            return;
 
         }
 

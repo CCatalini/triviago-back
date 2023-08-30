@@ -37,7 +37,7 @@ public class JwtService {
         claims.put("id", user.getId());
         claims.put("firstName", user.getFirstName());
         claims.put("lastName", user.getLastName());
-        claims.put("birthDate", user.getBirthDate());
+        claims.put("birthDate", user.getBirthDate().toString());
 
         return Jwts.builder()
                 .setClaims(claims)
