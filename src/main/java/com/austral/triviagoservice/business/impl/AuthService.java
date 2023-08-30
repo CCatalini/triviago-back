@@ -1,11 +1,14 @@
 package com.austral.triviagoservice.business.impl;
 
-import com.austral.triviagoservice.persistence.domain.AuthenticationRequest;
+import com.austral.triviagoservice.presentation.dto.AuthenticationRequest;
 import com.austral.triviagoservice.persistence.domain.User;
 import com.austral.triviagoservice.persistence.repository.UserRepository;
 import com.austral.triviagoservice.presentation.dto.AuthenticationResponse;
+import com.austral.triviagoservice.presentation.dto.SignUpForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 
 @Service
 public class AuthService {
@@ -19,10 +22,15 @@ public class AuthService {
     @Autowired
     private JwtService jwtService;
 
-    public AuthenticationResponse signUp(User user) {
+    public AuthenticationResponse signUp(SignUpForm signUpForm) {
 
 //        newUser.setPassword(passwordEncoder.encode(user.getPassword()));
-
+        User user = new User();
+        user.setEmail(signUpForm.getEmail());
+        user.setPassword(signUpForm.getPassword());
+        user.setBirthDate(LocalDate.parse(signUpForm.getBirthDate()));
+        user.setFirstName(signUpForm.getFirstName());
+        user.setLastName(signUpForm.getLastName());
         AuthenticationResponse response = AuthenticationResponse.builder().token(jwtService.generateToken(user)).build();
 
         userRepository.save(user);

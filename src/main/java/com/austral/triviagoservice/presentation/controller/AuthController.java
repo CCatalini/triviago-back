@@ -1,9 +1,9 @@
 package com.austral.triviagoservice.presentation.controller;
 
 import com.austral.triviagoservice.business.impl.AuthService;
-import com.austral.triviagoservice.persistence.domain.AuthenticationRequest;
-import com.austral.triviagoservice.persistence.domain.User;
+import com.austral.triviagoservice.presentation.dto.AuthenticationRequest;
 import com.austral.triviagoservice.presentation.dto.AuthenticationResponse;
+import com.austral.triviagoservice.presentation.dto.SignUpForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +19,7 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/signup")
-    public ResponseEntity<AuthenticationResponse> signUpUser(@RequestBody User user){
+    public ResponseEntity<AuthenticationResponse> signUpUser(@RequestBody SignUpForm user){
         return ResponseEntity.ok(authService.signUp(user));
     }
 
