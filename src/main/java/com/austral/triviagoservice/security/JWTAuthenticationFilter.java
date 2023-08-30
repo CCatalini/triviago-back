@@ -36,6 +36,8 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         if(authHeader == null || !authHeader.startsWith("Bearer ")){
 //            throw new ServletException("An error ocurred within the authentication");
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing token");
+            filterChain.doFilter(request, response);
+
         }
 
         jwtToken = authHeader.substring(7);
@@ -45,10 +47,14 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
         if (!jwtService.isTokenValid(jwtToken,user)){
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
+            filterChain.doFilter(request, response);
+
         }
 
         if (username == null || SecurityContextHolder.getContext().getAuthentication() != null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "User not found");
+            filterChain.doFilter(request, response);
+
         }
         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authToken);
