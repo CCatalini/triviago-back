@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
@@ -49,16 +50,20 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         if (!jwtService.isTokenValid(jwtToken,user)){
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
             filterChain.doFilter(request, response);
-
+            return;
         }
 
         if (username == null || SecurityContextHolder.getContext().getAuthentication() != null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "User not found");
             filterChain.doFilter(request, response);
-
+            return;
         }
         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authToken);
         filterChain.doFilter(request, response);
+    }
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        return request.getServletPath().startsWith("/auth");
     }
 }

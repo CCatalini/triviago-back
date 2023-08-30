@@ -15,8 +15,8 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    @Value("${secret.key}")
-    private String secret;
+//    @Value("${secret.key}")
+    private String secret = "eyJhbGciOiJIUzUxMiJ9.eyJmaXJzdE5hbWUiOiJTYW50aWFnbyIsImxhc3ROYW1lIjoiR3JpbW9sZGkiLCJzdWIiOiJzZ2FAZ21haWwuY29tIiwiaWQiOjEsImV4cCI6MTY5MzUxMTc2OSwiYmlydGhEYXRlIjoiMTk5MC0wOC0wMiIsImlhdCI6MTY5MzQyNTM2OX0.syccs0FBmrVBcQMWHWj_fNPXppH17efpfhg7Ozly9IRQBNeE_GnWU6YGOhfDqMEtC2cSueF36p6b3EOi8mPXLg";
 
     public Boolean isTokenValid (String token, User user) {
         final String username = extractUsername(token);

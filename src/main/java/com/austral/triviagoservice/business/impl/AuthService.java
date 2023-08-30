@@ -1,6 +1,6 @@
 package com.austral.triviagoservice.business.impl;
 
-import com.austral.triviagoservice.persistence.domain.AuthenticationRequest;
+import com.austral.triviagoservice.presentation.dto.AuthenticationRequest;
 import com.austral.triviagoservice.persistence.domain.User;
 import com.austral.triviagoservice.persistence.repository.UserRepository;
 import com.austral.triviagoservice.presentation.dto.AuthenticationResponse;

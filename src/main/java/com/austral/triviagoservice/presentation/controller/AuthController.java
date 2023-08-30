@@ -1,8 +1,7 @@
 package com.austral.triviagoservice.presentation.controller;
 
 import com.austral.triviagoservice.business.impl.AuthService;
-import com.austral.triviagoservice.persistence.domain.AuthenticationRequest;
-import com.austral.triviagoservice.persistence.domain.User;
+import com.austral.triviagoservice.presentation.dto.AuthenticationRequest;
 import com.austral.triviagoservice.presentation.dto.AuthenticationResponse;
 import com.austral.triviagoservice.presentation.dto.SignUpForm;
 import org.springframework.beans.factory.annotation.Autowired;
