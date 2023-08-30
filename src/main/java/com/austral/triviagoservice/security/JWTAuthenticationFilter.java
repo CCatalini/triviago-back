@@ -1,5 +1,8 @@
 package com.austral.triviagoservice.security;
 
+import com.austral.triviagoservice.business.UserService;
+import com.austral.triviagoservice.business.impl.JwtService;
+import com.austral.triviagoservice.persistence.domain.User;
 import com.sun.istack.NotNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -31,7 +34,8 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         String jwtToken;
         String username;
         if(authHeader == null || !authHeader.startsWith("Bearer ")){
-            throw new ServletException("An error ocurred within the authentication");
+//            throw new ServletException("An error ocurred within the authentication");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing token");
         }
 
         jwtToken = authHeader.substring(7);

@@ -1,5 +1,6 @@
 package com.austral.triviagoservice.security;
 
+import com.austral.triviagoservice.business.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,15 +22,12 @@ import javax.servlet.Filter;
 public class SecurityConfiguration {
 
     private final JWTAuthenticationFilter JWTAuthenticationFilter;
-    private final AuthenticationProvider authenticationProvider;
     private final UserService userService;
 
     public SecurityConfiguration
             (JWTAuthenticationFilter jwtAuthenticationFilter,
-             AuthenticationProvider authenticationProvider,
              UserService userService) {
         this.JWTAuthenticationFilter = jwtAuthenticationFilter;
-        this.authenticationProvider = authenticationProvider;
         this.userService = userService;
 
     }
