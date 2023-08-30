@@ -14,6 +14,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collections;
 
 @Component
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
@@ -45,7 +46,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         jwtToken = authHeader.substring(7);
         username = jwtService.extractUsername(jwtToken);
         User user = this.userService.findByEmail(username);
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user,null);
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user,null, Collections.emptyList());
 
         if (!jwtService.isTokenValid(jwtToken,user)){
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
