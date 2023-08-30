@@ -1,5 +1,6 @@
 package com.austral.triviagoservice.business.impl;
 
+import com.austral.triviagoservice.persistence.domain.AuthenticationRequest;
 import com.austral.triviagoservice.persistence.domain.User;
 import com.austral.triviagoservice.persistence.repository.UserRepository;
 import com.austral.triviagoservice.presentation.dto.AuthenticationResponse;
@@ -19,12 +20,7 @@ public class AuthService {
     private JwtService jwtService;
 
     public AuthenticationResponse signUp(User user) {
-        User newUser = new User();
-        newUser.setFirstName(user.getFirstName());
-        newUser.setLastName(user.getLastName());
-        newUser.setBirthDate(user.getBirthDate());
-        newUser.setEmail(user.getEmail());
-        newUser.setPassword(user.getPassword());
+
 //        newUser.setPassword(passwordEncoder.encode(user.getPassword()));
 
         AuthenticationResponse response = AuthenticationResponse.builder().token(jwtService.generateToken(user)).build();
@@ -33,4 +29,18 @@ public class AuthService {
         return response;
     }
 
+    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+
+        User user = (User) userRepository.findByEmail( request.getUsername() ).orElseThrow( () -> new RuntimeException("User not found"));
+
+        if (request.getPassword().equals(user.getPassword()) && request.getUsername().equals(user.getEmail()) ){
+
+            var jwtToken = jwtService.generateToken(user);
+
+            AuthenticationResponse response = AuthenticationResponse.builder().token(jwtToken).build();;
+
+            return response;
+        }
+        return null;
+    }
 }

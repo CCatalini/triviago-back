@@ -1,6 +1,7 @@
 package com.austral.triviagoservice.presentation.controller;
 
 import com.austral.triviagoservice.business.impl.AuthService;
+import com.austral.triviagoservice.persistence.domain.AuthenticationRequest;
 import com.austral.triviagoservice.persistence.domain.User;
 import com.austral.triviagoservice.presentation.dto.AuthenticationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,16 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<AuthenticationResponse> signUpUser(@RequestBody User user){
         return ResponseEntity.ok(authService.signUp(user));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<AuthenticationResponse> logUser(@RequestBody AuthenticationRequest authenticationRequest) {
+        AuthenticationResponse a = authService.authenticate(authenticationRequest);
+
+        if (a != null){
+            return ResponseEntity.ok(a);
+        }
+        return ResponseEntity.badRequest().build();
     }
 
 
