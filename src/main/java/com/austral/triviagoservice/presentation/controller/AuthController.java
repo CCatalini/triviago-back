@@ -5,6 +5,7 @@ import com.austral.triviagoservice.persistence.domain.AuthenticationRequest;
 import com.austral.triviagoservice.persistence.domain.User;
 import com.austral.triviagoservice.presentation.dto.AuthenticationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,7 +31,7 @@ public class AuthController {
         if (a != null){
             return ResponseEntity.ok(a);
         }
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
 

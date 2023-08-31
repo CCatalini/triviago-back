@@ -31,7 +31,9 @@ public class AuthService {
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
 
-        User user = (User) userRepository.findByEmail( request.getUsername() ).orElseThrow( () -> new RuntimeException("User not found"));
+        User user = (User) userRepository.findByEmail( request.getUsername() ).orElse( null );
+
+        if (user == null) return null;
 
         if (request.getPassword().equals(user.getPassword()) && request.getUsername().equals(user.getEmail()) ){
 
@@ -41,6 +43,7 @@ public class AuthService {
 
             return response;
         }
+
         return null;
     }
 }
