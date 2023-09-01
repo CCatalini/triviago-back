@@ -52,9 +52,10 @@ public class CommentServiceImpl implements CommentService {
             throw new InvalidContentException("Invalid content, Id does not exist");
         }
 
-        public void like(Long id) throws InvalidContentException {
+        public void like(Long id, Boolean dislike) throws InvalidContentException {
             Comment comment = this.findById(id);
-            comment.incrementLike();
+            if(dislike){comment.decrementLike();}
+            else {comment.incrementLike();}
             commentRepository.save(comment);
         }
 }
