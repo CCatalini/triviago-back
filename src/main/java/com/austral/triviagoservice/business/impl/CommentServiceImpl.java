@@ -1,6 +1,7 @@
 package com.austral.triviagoservice.business.impl;
 
 import com.austral.triviagoservice.business.CommentService;
+import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.persistence.domain.Comment;
 import com.austral.triviagoservice.persistence.repository.CommentRepository;
 import com.austral.triviagoservice.persistence.domain.Quiz;
@@ -24,6 +25,7 @@ public class CommentServiceImpl implements CommentService {
 
         @Override
         public Comment create (Comment comment){
+            comment.setLikes(0);
             commentRepository.save(comment);
             return comment;
         }
@@ -41,5 +43,18 @@ public class CommentServiceImpl implements CommentService {
         public Comment deleteComment (Comment comment){
             commentRepository.delete(comment);
             return comment;
+        }
+
+        public Comment findById(Long id) throws InvalidContentException {
+            if(commentRepository.existsById(id)){
+                return commentRepository.findById(id).get();
+            }
+            throw new InvalidContentException("Invalid content, Id does not exist");
+        }
+
+        public void like(Long id) throws InvalidContentException {
+            Comment comment = this.findById(id);
+            comment.incrementLike();
+            commentRepository.save(comment);
         }
 }
