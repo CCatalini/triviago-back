@@ -3,18 +3,21 @@ package com.austral.triviagoservice.presentation.controller;
 import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.business.impl.CommentServiceImpl;
 import com.austral.triviagoservice.persistence.domain.Comment;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.fasterxml.jackson.databind.JsonNode;
 
 @RestController
 @RequestMapping("/comment")
 public class CommentController {
 
     private final CommentServiceImpl commentService;
-
-    public CommentController(CommentServiceImpl commentService) {
+    private final ObjectMapper objectMapper;
+    public CommentController(CommentServiceImpl commentService, ObjectMapper objectMapper) {
         this.commentService = commentService;
+        this.objectMapper = objectMapper;
     }
 
     @PostMapping
@@ -55,6 +58,15 @@ public class CommentController {
         }
     }
 
-    
+    @PutMapping("/{id}")
+    public ResponseEntity<?> editContent(@PathVariable("id") Long id, @RequestBody JsonNode jsonNode){
+        try{
+            commentService.editContent(id, jsonNode.get("content").asText());
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        catch (InvalidContentException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
 
 }

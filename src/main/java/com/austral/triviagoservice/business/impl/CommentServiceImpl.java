@@ -60,4 +60,11 @@ public class CommentServiceImpl implements CommentService {
             else {comment.incrementLike();}
             commentRepository.save(comment);
         }
+
+        @Override
+        public void editContent(Long id, String content) throws InvalidContentException{
+           Comment comment = this.findById(id);
+           comment.setContent(content);
+           commentRepository.save(comment);
+        }
 }

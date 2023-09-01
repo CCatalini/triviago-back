@@ -15,4 +15,5 @@ public interface CommentService {
     Comment deleteComment(Comment comment);
     void like(Long id, Boolean dislike) throws InvalidContentException;
     Comment findById(Long id) throws InvalidContentException;
+    void editContent(Long id, String Content) throws InvalidContentException;
 }
