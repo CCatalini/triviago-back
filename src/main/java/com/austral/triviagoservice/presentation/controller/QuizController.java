@@ -5,6 +5,7 @@ import com.austral.triviagoservice.business.impl.CommentServiceImpl;
 import com.austral.triviagoservice.business.impl.QuizServiceImpl;
 import com.austral.triviagoservice.persistence.domain.Comment;
 import com.austral.triviagoservice.persistence.domain.Quiz;
+import com.austral.triviagoservice.presentation.dto.CommentDTO;
 import com.austral.triviagoservice.presentation.dto.QuizCreate;
 import com.austral.triviagoservice.presentation.dto.QuizFilter;
 import org.springframework.data.domain.Page;
@@ -66,11 +67,11 @@ public class QuizController {
     }
 
     @GetMapping("/{quizId}/comment")
-    public ResponseEntity<List<Comment>> getComments(@PathVariable("quizId") long quizId) {
+    public ResponseEntity<List<CommentDTO>> getComments(@PathVariable("quizId") long quizId) {
         try {
             if (quizService.findById(quizId) == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             else {
-                return new ResponseEntity<>(commentService.findAllByQuizId(quizId), HttpStatus.OK);
+                return new ResponseEntity<>(commentService.findAllCommentsAndAnswersByQuiz(quizId), HttpStatus.OK);
             }
         } catch (InvalidContentException e) {
             throw new RuntimeException(e);

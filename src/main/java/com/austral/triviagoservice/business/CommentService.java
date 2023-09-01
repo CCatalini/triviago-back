@@ -14,4 +14,5 @@ public interface CommentService {
     Comment editComment(Comment comment, String newContent);
     Comment deleteComment(Comment comment);
     CommentDTO findCommentAndAnswers(Long id);
+    List<CommentDTO> findAllCommentsAndAnswersByQuiz(Long QuizId);
 }

@@ -50,7 +50,21 @@ public class CommentServiceImpl implements CommentService {
         }
 
         @Override
-        public CommentDTO findCommentAndAnswers(Long id){
+        public List<CommentDTO> findAllCommentsAndAnswersByQuiz(Long QuizId) {
+            List<Comment> comments = findAllByQuizId(QuizId);
+            List<CommentDTO> commentDTOS = new ArrayList<>();
+            comments.forEach(
+                    comment -> {
+                        if (comment.getAnsweredCommentId() == null) {
+                            commentDTOS.add(findCommentAndAnswers(comment.getId()));
+                        }
+                    }
+            );
+            return  commentDTOS;
+        }
+
+        @Override
+        public CommentDTO findCommentAndAnswers(Long id) {
             Comment comment = findCommentById(id);
             List<Comment> answers = findAllByAnsweredCommentId(id);
             List<CommentResponseDTO> responses = new ArrayList<>();
@@ -61,6 +75,7 @@ public class CommentServiceImpl implements CommentService {
                                         .authorEmail(userRepository.findById(answer.getUserId()).orElse(null).getEmail())
                                         .content(answer.getContent())
                                         .creationDateTime(answer.getCreationDateTime())
+                                        .likes(answer.getLikes())
                                         .build()
                         );
                     }

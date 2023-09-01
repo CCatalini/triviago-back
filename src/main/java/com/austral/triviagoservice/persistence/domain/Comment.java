@@ -20,14 +20,16 @@ public class Comment {
     private String content;
 
     private LocalDateTime creationDateTime;
-
+    private int likes;
     private Long answeredCommentId;
 
-    public Comment(Long userId, Long quizId, String content) {
+    public Comment(Long userId, Long quizId, String content, Long answeredCommentId) {
         this.userId = userId;
         this.quizId = quizId;
         this.content = content;
         this.creationDateTime = LocalDateTime.now();
+        this.likes = 0;
+        this.answeredCommentId = answeredCommentId;
     }
 
     public Comment(){}
@@ -70,6 +72,18 @@ public class Comment {
 
     public Long getAnsweredCommentId() {
         return answeredCommentId;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public int getLikes() {
+        return likes;
+    }
+
+    public void setLikes(int likes) {
+        this.likes = likes;
     }
 
     public void setAnsweredCommentId(Long answeredCommentId) {
