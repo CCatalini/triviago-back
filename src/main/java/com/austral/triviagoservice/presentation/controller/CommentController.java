@@ -25,7 +25,7 @@ public class CommentController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getCommentById(@RequestParam("id") Long id){
+    public ResponseEntity<?> getCommentById(@PathVariable("id") Long id){
         try{
             Comment comment = commentService.findById(id);
             return new ResponseEntity<>(comment, HttpStatus.OK);
@@ -36,7 +36,7 @@ public class CommentController {
     }
 
     @PostMapping("/{id}/like")
-    public ResponseEntity<?> likeComment(@RequestParam("id") Long id){
+    public ResponseEntity<?> likeComment(@PathVariable("id") Long id){
         try{
             commentService.like(id);
             return new ResponseEntity<>(HttpStatus.OK);
