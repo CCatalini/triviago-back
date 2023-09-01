@@ -36,4 +36,8 @@ public class Comment {
     public void incrementLike(){
         likes += 1;
     }
+
+    public void decrementLike(){
+        likes -= 1;
+    }
 }
