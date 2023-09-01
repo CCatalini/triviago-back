@@ -21,6 +21,8 @@ public class Comment {
 
     private LocalDateTime creationDateTime;
 
+    private Long answeredCommentId;
+
     public Comment(Long userId, Long quizId, String content) {
         this.userId = userId;
         this.quizId = quizId;
@@ -64,5 +66,13 @@ public class Comment {
 
     public void setCreationDateTime(LocalDateTime creationDateTime) {
         this.creationDateTime = creationDateTime;
+    }
+
+    public Long getAnsweredCommentId() {
+        return answeredCommentId;
+    }
+
+    public void setAnsweredCommentId(Long answeredCommentId) {
+        this.answeredCommentId = answeredCommentId;
     }
 }
