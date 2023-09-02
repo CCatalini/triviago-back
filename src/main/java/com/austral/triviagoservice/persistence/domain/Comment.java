@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 @Getter
 @Setter
 @Entity
@@ -20,17 +20,11 @@ public class Comment {
 
     private String content;
 
-    private LocalDateTime creationDateTime;
+    private LocalDate creationDate;
 
     @Column
     private Integer likes;
 
-    public Comment(Long userId, Long quizId, String content) {
-        this.userId = userId;
-        this.quizId = quizId;
-        this.content = content;
-        this.creationDateTime = LocalDateTime.now();
-    }
     public Comment(){}
 
     public void incrementLike(){
