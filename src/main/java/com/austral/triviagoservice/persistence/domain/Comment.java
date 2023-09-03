@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 public class Comment {
@@ -19,14 +19,7 @@ public class Comment {
 
     private String content;
 
-    private LocalDateTime creationDateTime;
-
-    public Comment(Long userId, Long quizId, String content) {
-        this.userId = userId;
-        this.quizId = quizId;
-        this.content = content;
-        this.creationDateTime = LocalDateTime.now();
-    }
+    private LocalDate creationDateTime;
 
     public Comment(){}
 
@@ -58,11 +51,11 @@ public class Comment {
         this.content = content;
     }
 
-    public LocalDateTime getCreationDateTime() {
+    public LocalDate getCreationDateTime() {
         return creationDateTime;
     }
 
-    public void setCreationDateTime(LocalDateTime creationDateTime) {
+    public void setCreationDateTime(LocalDate creationDateTime) {
         this.creationDateTime = creationDateTime;
     }
 }
