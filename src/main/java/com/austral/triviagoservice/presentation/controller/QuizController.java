@@ -88,4 +88,16 @@ public class QuizController {
         }
     }
 
+    @GetMapping("/private/{invitationCode}")
+    public ResponseEntity<?> getQuizByInvitationCode(@PathVariable("invitationCode") String invitationCode){
+        try {
+            QuizCreate dto = quizService.findByInvitationCode(invitationCode);
+            return new ResponseEntity<>(dto, HttpStatus.OK);
+        } catch (InvalidContentException e){
+            Map<String, String> response = new HashMap<>();
+            response.put("error", e.getMessage());
+            return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
+        }
+    }
+
 }

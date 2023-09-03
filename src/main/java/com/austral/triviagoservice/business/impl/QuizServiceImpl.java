@@ -85,4 +85,14 @@ public class QuizServiceImpl implements QuizService {
         throw new InvalidContentException("Invalid Id, quiz does not exist");
 
     }
+
+    @Override
+    public QuizCreate findByInvitationCode(String invitationCode) throws InvalidContentException{
+        Optional<Quiz> search = quizRepository.findByInvitationCode(invitationCode);
+        if (search.isPresent()){
+            Quiz quiz = search.get();
+            return QuizCreate.createDTO(quiz);
+        }
+        throw new InvalidContentException("Invalid invitation Code");
+    }
 }
