@@ -1,12 +1,13 @@
 package com.austral.triviagoservice.persistence.domain;
 
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.Setter;
 
+import javax.persistence.*;
+import java.time.LocalDate;
+@Getter
+@Setter
 @Entity
 public class Comment {
     @Id
@@ -19,50 +20,18 @@ public class Comment {
 
     private String content;
 
-    private LocalDateTime creationDateTime;
+    private LocalDate creationDate;
 
-    public Comment(Long userId, Long quizId, String content) {
-        this.userId = userId;
-        this.quizId = quizId;
-        this.content = content;
-        this.creationDateTime = LocalDateTime.now();
-    }
+    @Column
+    private Integer likes;
 
     public Comment(){}
 
-    public Long getId() {
-        return id;
+    public void incrementLike(){
+        likes += 1;
     }
 
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public Long getQuizId() {
-        return quizId;
-    }
-
-    public void setQuizId(Long quizId) {
-        this.quizId = quizId;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public LocalDateTime getCreationDateTime() {
-        return creationDateTime;
-    }
-
-    public void setCreationDateTime(LocalDateTime creationDateTime) {
-        this.creationDateTime = creationDateTime;
+    public void decrementLike(){
+        likes -= 1;
     }
 }
