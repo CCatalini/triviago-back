@@ -1,6 +1,7 @@
 package com.austral.triviagoservice.business.impl;
 
 import com.austral.triviagoservice.business.CommentService;
+import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.persistence.domain.Comment;
 import com.austral.triviagoservice.persistence.repository.CommentRepository;
 import com.austral.triviagoservice.persistence.domain.Quiz;
@@ -11,7 +12,11 @@ import com.austral.triviagoservice.presentation.dto.CommentDTO;
 import com.austral.triviagoservice.presentation.dto.CommentResponseDTO;
 import org.springframework.stereotype.Service;
 
+
 import java.util.ArrayList;
+
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 @Service
@@ -30,6 +35,8 @@ public class CommentServiceImpl implements CommentService {
 
         @Override
         public Comment create (Comment comment){
+            comment.setLikes(0);
+            comment.setCreationDate(LocalDate.now(ZoneId.of("America/Argentina/Buenos_Aires"))); //Buenos Aires time zone
             commentRepository.save(comment);
             return comment;
         }
@@ -48,6 +55,7 @@ public class CommentServiceImpl implements CommentService {
             commentRepository.delete(comment);
             return comment;
         }
+
 
         @Override
         public List<CommentDTO> findAllCommentsAndAnswersByQuiz(Long QuizId) {
@@ -96,5 +104,20 @@ public class CommentServiceImpl implements CommentService {
             return commentRepository.findById(id).orElse(null);
         }
 
+
+
+        public Comment findById(Long id) throws InvalidContentException {
+            if(commentRepository.existsById(id)){
+                return commentRepository.findById(id).get();
+            }
+            throw new InvalidContentException("Invalid content, Id does not exist");
+        }
+
+        public void like(Long id, Boolean dislike) throws InvalidContentException {
+            Comment comment = this.findById(id);
+            if(dislike){comment.decrementLike();}
+            else {comment.incrementLike();}
+            commentRepository.save(comment);
+        }
 
 }
