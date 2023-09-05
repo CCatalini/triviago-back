@@ -2,22 +2,23 @@ package com.austral.triviagoservice.presentation.dto;
 
 import lombok.Builder;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+
 import java.util.List;
 @Builder
 public class CommentDTO {
     private String authorEmail;
     private String content;
-    private LocalDateTime creationDateTime;
+    private LocalDate creationDate;
     private int likes;
     private List<CommentResponseDTO> responses;
 
     public CommentDTO() {}
 
-    public CommentDTO(String authorEmail, String content, LocalDateTime creationDateTime, int likes, List<CommentResponseDTO> responses) {
+    public CommentDTO(String authorEmail, String content, LocalDate creationDateTime, int likes, List<CommentResponseDTO> responses) {
         this.authorEmail = authorEmail;
         this.content = content;
-        this.creationDateTime = creationDateTime;
+        this.creationDate = creationDateTime;
         this.likes = likes;
         this.responses = responses;
     }
@@ -38,12 +39,12 @@ public class CommentDTO {
         this.content = content;
     }
 
-    public LocalDateTime getCreationDateTime() {
-        return creationDateTime;
+    public LocalDate getCreationDateTime() {
+        return creationDate;
     }
 
-    public void setCreationDateTime(LocalDateTime creationDateTime) {
-        this.creationDateTime = creationDateTime;
+    public void setCreationDateTime(LocalDate creationDateTime) {
+        this.creationDate = creationDateTime;
     }
 
     public int getLikes() {

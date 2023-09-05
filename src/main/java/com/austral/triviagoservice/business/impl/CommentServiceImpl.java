@@ -82,7 +82,7 @@ public class CommentServiceImpl implements CommentService {
                                 CommentResponseDTO.builder()
                                         .authorEmail(userRepository.findById(answer.getUserId()).orElse(null).getEmail())
                                         .content(answer.getContent())
-                                        .creationDateTime(answer.getCreationDateTime())
+                                        .creationDateTime(answer.getCreationDate())
                                         .likes(answer.getLikes())
                                         .build()
                         );
@@ -91,7 +91,7 @@ public class CommentServiceImpl implements CommentService {
             return CommentDTO.builder()
                     .authorEmail(userRepository.findById(comment.getUserId()).orElse(null).getEmail())
                     .content(comment.getContent())
-                    .creationDateTime(comment.getCreationDateTime())
+                    .creationDate(comment.getCreationDate())
                     .responses(responses)
                     .build();
         }

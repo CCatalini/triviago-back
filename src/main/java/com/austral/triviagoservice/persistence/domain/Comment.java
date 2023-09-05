@@ -28,7 +28,7 @@ public class Comment {
         this.userId = userId;
         this.quizId = quizId;
         this.content = content;
-        this.creationDateTime = LocalDate.now();
+        this.creationDate = LocalDate.now();
         this.likes = 0;
         this.answeredCommentId = answeredCommentId;
     }
