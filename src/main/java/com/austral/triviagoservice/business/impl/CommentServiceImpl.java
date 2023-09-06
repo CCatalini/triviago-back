@@ -3,15 +3,10 @@ package com.austral.triviagoservice.business.impl;
 import com.austral.triviagoservice.business.CommentService;
 import com.austral.triviagoservice.persistence.domain.Comment;
 import com.austral.triviagoservice.persistence.repository.CommentRepository;
-import com.austral.triviagoservice.persistence.domain.Quiz;
-import com.austral.triviagoservice.persistence.repository.CommentRepository;
-import com.austral.triviagoservice.persistence.repository.QuizRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -28,7 +23,7 @@ public class CommentServiceImpl implements CommentService {
 
         @Override
         public Comment create (Comment comment){
-            comment.setCreationDateTime(LocalDate.now(ZoneId.of("America/Argentina/Buenos_Aires")));
+            comment.setCreationDateTime(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")));
             commentRepository.save(comment);
             return comment;
         }

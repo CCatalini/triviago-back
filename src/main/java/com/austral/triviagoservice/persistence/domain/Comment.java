@@ -2,7 +2,7 @@ package com.austral.triviagoservice.persistence.domain;
 
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 public class Comment {
@@ -15,8 +15,8 @@ public class Comment {
     private Long quizId;
 
     private String content;
-
-    private LocalDate creationDateTime;
+    @Column(nullable = false, columnDefinition = "DATETIME(0)")
+    private LocalDateTime creationDateTime;
 
     public Comment(){}
 
@@ -48,11 +48,11 @@ public class Comment {
         this.content = content;
     }
 
-    public LocalDate getCreationDateTime() {
+    public LocalDateTime getCreationDateTime() {
         return creationDateTime;
     }
 
-    public void setCreationDateTime(LocalDate creationDateTime) {
+    public void setCreationDateTime(LocalDateTime creationDateTime) {
         this.creationDateTime = creationDateTime;
     }
 }
