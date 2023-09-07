@@ -1,9 +1,13 @@
 package com.austral.triviagoservice.persistence.domain;
 
 
+import lombok.Getter;
+import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
 @Entity
 public class Comment {
     @Id
@@ -18,41 +22,16 @@ public class Comment {
     @Column(nullable = false, columnDefinition = "DATETIME(0)")
     private LocalDateTime creationDateTime;
 
+    @Column
+    private Integer likes;
+
     public Comment(){}
 
-    public Long getId() {
-        return id;
+    public void incrementLike(){
+        likes += 1;
     }
 
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public Long getQuizId() {
-        return quizId;
-    }
-
-    public void setQuizId(Long quizId) {
-        this.quizId = quizId;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public LocalDateTime getCreationDateTime() {
-        return creationDateTime;
-    }
-
-    public void setCreationDateTime(LocalDateTime creationDateTime) {
-        this.creationDateTime = creationDateTime;
+    public void decrementLike(){
+        likes -= 1;
     }
 }
