@@ -48,6 +48,7 @@ public class CommentServiceImpl implements CommentService {
             return comment;
         }
 
+        @Override
         public Comment findById(Long id) throws InvalidContentException {
             if(commentRepository.existsById(id)){
                 return commentRepository.findById(id).get();
@@ -55,6 +56,7 @@ public class CommentServiceImpl implements CommentService {
             throw new InvalidContentException("Invalid content, Id does not exist");
         }
 
+        @Override
         public void like(Long id, Boolean dislike) throws InvalidContentException {
             Comment comment = this.findById(id);
             if(dislike){comment.decrementLike();}
