@@ -1,6 +1,7 @@
 package com.austral.triviagoservice.persistence.domain;
 
 
+import com.austral.triviagoservice.presentation.dto.CommentCreateDto;
 import lombok.Getter;
 import lombok.Setter;
 import javax.persistence.*;
@@ -24,6 +25,14 @@ public class Comment {
 
     @Column
     private Integer likes;
+
+    public Comment(CommentCreateDto commentDto){
+        this.content = commentDto.getContent();
+        this.creationDateTime = commentDto.getCreationDate();
+        this.likes = commentDto.getLikes();
+        this.userId = commentDto.getUserId();
+        this.quizId = commentDto.getQuizId();
+    }
 
     public Comment(){}
 
