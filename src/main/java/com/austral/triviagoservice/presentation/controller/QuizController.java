@@ -32,7 +32,7 @@ public class QuizController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllQuizzes(@RequestBody QuizFilter quizFilter,
+    public ResponseEntity<?> getAllQuizzes(@ModelAttribute QuizFilter quizFilter,
                                         @RequestParam(value="page", defaultValue= "0" ) int page,
                                         @RequestParam(value="size", defaultValue="10") int size){
         Pageable pages = PageRequest.of(page, size);
