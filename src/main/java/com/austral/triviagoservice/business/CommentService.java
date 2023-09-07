@@ -1,6 +1,7 @@
 package com.austral.triviagoservice.business;
 
 
+import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.persistence.domain.Comment;
 
 import com.austral.triviagoservice.persistence.domain.Quiz;
@@ -13,6 +14,8 @@ public interface CommentService {
     Comment create(Comment comment);
     Comment editComment(Comment comment, String newContent);
     Comment deleteComment(Comment comment);
+    void like(Long id, Boolean dislike) throws InvalidContentException;
+    Comment findById(Long id) throws InvalidContentException;
     CommentDTO findCommentAndAnswers(Long id);
     List<CommentDTO> findAllCommentsAndAnswersByQuiz(Long QuizId);
 }
