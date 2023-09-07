@@ -41,7 +41,7 @@ public class SecurityConfig {
                 .and()
                 .addFilterBefore(JWTAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
-
+        http.cors();
         return http.build();
     }
 
