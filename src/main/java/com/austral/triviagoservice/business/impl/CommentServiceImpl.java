@@ -8,6 +8,7 @@ import com.austral.triviagoservice.persistence.repository.CommentRepository;
 import com.austral.triviagoservice.persistence.domain.Quiz;
 import com.austral.triviagoservice.persistence.repository.CommentRepository;
 import com.austral.triviagoservice.persistence.repository.QuizRepository;
+import com.austral.triviagoservice.presentation.dto.EditedContent;
 import com.austral.triviagoservice.security.LuchoDecode;
 import org.springframework.stereotype.Service;
 
@@ -65,9 +66,10 @@ public class CommentServiceImpl implements CommentService {
         }
 
         @Override
-        public void editContent(Long id, String content) throws InvalidContentException{
+        public void editContent(Long id, EditedContent content) throws InvalidContentException{
            Comment comment = this.findById(id);
-           comment.setContent(content);
+           ValidateUser.validate(comment.getUserId(), content.getToken());
+           comment.setContent(content.getContent());
            commentRepository.save(comment);
         }
 }
