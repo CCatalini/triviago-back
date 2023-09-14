@@ -28,7 +28,7 @@ import java.util.Optional;
 public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
-    private final UserRepository userRepository;
+
     private final QuizRepository quizRepository;
 
     public CommentServiceImpl(CommentRepository commentRepository, UserRepository userRepository,
@@ -72,69 +72,60 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    public List<CommentDTO> findAllCommentsAndAnswersByQuiz(Long QuizId) {
+        List<Comment> comments = findAllByQuizId(QuizId);
+        List<CommentDTO> commentDTOS = new ArrayList<>();
+        comments.forEach(
+                comment -> {
+                    if (comment.getAnsweredCommentId() == null) {
+                        commentDTOS.add(findCommentAndAnswers(comment.getId()));
+                    }
+                }
+        );
+        return  commentDTOS;
+    }
+
+    @Override
+    public CommentDTO findCommentAndAnswers(Long id) {
+        Comment comment = findCommentById(id);
+        List<Comment> answers = findAllByAnsweredCommentId(id);
+        List<CommentResponseDTO> responses = new ArrayList<>();
+        answers.forEach(
+                answer -> {
+                    responses.add(
+                            CommentResponseDTO.builder()
+                                    .authorEmail(userRepository.findById(answer.getUserId()).orElse(null).getEmail())
+                                    .content(answer.getContent())
+                                    .creationDateTime(answer.getCreationDateTime())
+                                    .likes(answer.getLikes())
+                                    .build()
+                    );
+                }
+        );
+        return CommentDTO.builder()
+                .authorEmail(userRepository.findById(comment.getUserId()).orElse(null).getEmail())
+                .content(comment.getContent())
+                .creationDate(comment.getCreationDateTime())
+                .responses(responses)
+                .build();
+    }
+
+    private List<Comment> findAllByAnsweredCommentId(Long answeredCommentId){
+        return commentRepository.findAllByAnsweredCommentId(answeredCommentId);
+    }
+
+    private Comment findCommentById(Long id){
+        return commentRepository.findById(id).orElse(null);
+    }
+
+
+    @Override
     public Comment findById(Long id) throws InvalidContentException {
-        if (commentRepository.existsById(id)) {
+        if(commentRepository.existsById(id)){
             return commentRepository.findById(id).get();
         }
         throw new InvalidContentException("Invalid content, Id does not exist");
     }
-
-
-        @Override
-        public List<CommentDTO> findAllCommentsAndAnswersByQuiz(Long QuizId) {
-            List<Comment> comments = findAllByQuizId(QuizId);
-            List<CommentDTO> commentDTOS = new ArrayList<>();
-            comments.forEach(
-                    comment -> {
-                        if (comment.getAnsweredCommentId() == null) {
-                            commentDTOS.add(findCommentAndAnswers(comment.getId()));
-                        }
-                    }
-            );
-            return  commentDTOS;
-        }
-
-        @Override
-        public CommentDTO findCommentAndAnswers(Long id) {
-            Comment comment = findCommentById(id);
-            List<Comment> answers = findAllByAnsweredCommentId(id);
-            List<CommentResponseDTO> responses = new ArrayList<>();
-            answers.forEach(
-                    answer -> {
-                        responses.add(
-                                CommentResponseDTO.builder()
-                                        .authorEmail(userRepository.findById(answer.getUserId()).orElse(null).getEmail())
-                                        .content(answer.getContent())
-                                        .creationDateTime(answer.getCreationDate())
-                                        .likes(answer.getLikes())
-                                        .build()
-                        );
-                    }
-            );
-            return CommentDTO.builder()
-                    .authorEmail(userRepository.findById(comment.getUserId()).orElse(null).getEmail())
-                    .content(comment.getContent())
-                    .creationDate(comment.getCreationDate())
-                    .responses(responses)
-                    .build();
-        }
-
-        private List<Comment> findAllByAnsweredCommentId(Long answeredCommentId){
-            return commentRepository.findAllByAnsweredCommentId(answeredCommentId);
-        }
-
-        private Comment findCommentById(Long id){
-            return commentRepository.findById(id).orElse(null);
-        }
-
-
-        @Override
-        public Comment findById(Long id) throws InvalidContentException {
-            if(commentRepository.existsById(id)){
-                return commentRepository.findById(id).get();
-            }
-            throw new InvalidContentException("Invalid content, Id does not exist");
-        }
 
     @Override
     public void like(Long id, Boolean dislike) throws InvalidContentException {
