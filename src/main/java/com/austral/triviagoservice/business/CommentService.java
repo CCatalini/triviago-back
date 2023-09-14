@@ -13,7 +13,7 @@ public interface CommentService {
     Comment create(Comment comment);
     Comment editComment(Comment comment, String newContent);
     Comment deleteComment(Comment comment);
-    void like(Long id, Boolean dislike) throws InvalidContentException;
     Comment findById(Long id) throws InvalidContentException;
     void editContent(Long id, String Content) throws InvalidContentException;
+    void like(Long id, Boolean dislike, String token) throws InvalidContentException;
 }
