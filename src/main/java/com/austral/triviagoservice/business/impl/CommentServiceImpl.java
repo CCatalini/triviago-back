@@ -76,9 +76,8 @@ public class CommentServiceImpl implements CommentService {
 
 
         @Override
-        public void like(Long id, Boolean dislike, String token) throws InvalidContentException {
+        public void like(Long id, Boolean dislike) throws InvalidContentException {
             Comment comment = this.findById(id);
-            ValidateUser.validate(comment.getUserId(), token);
             if(dislike){comment.decrementLike();}
             else {comment.incrementLike();}
             commentRepository.save(comment);
