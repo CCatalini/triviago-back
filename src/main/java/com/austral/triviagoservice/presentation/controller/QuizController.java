@@ -32,7 +32,7 @@ public class QuizController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllQuizzes(@RequestBody QuizFilter quizFilter,
+    public ResponseEntity<?> getAllQuizzes(@ModelAttribute QuizFilter quizFilter,
                                         @RequestParam(value="page", defaultValue= "0" ) int page,
                                         @RequestParam(value="size", defaultValue="10") int size){
         Pageable pages = PageRequest.of(page, size);
@@ -85,6 +85,18 @@ public class QuizController {
         }
         catch (InvalidContentException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/private/{invitationCode}")
+    public ResponseEntity<?> getQuizByInvitationCode(@PathVariable("invitationCode") String invitationCode){
+        try {
+            QuizCreate dto = quizService.findByInvitationCode(invitationCode);
+            return new ResponseEntity<>(dto, HttpStatus.OK);
+        } catch (InvalidContentException e){
+            Map<String, String> response = new HashMap<>();
+            response.put("error", e.getMessage());
+            return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
         }
     }
 
