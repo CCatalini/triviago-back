@@ -9,6 +9,7 @@ import com.austral.triviagoservice.persistence.domain.User;
 import com.austral.triviagoservice.persistence.repository.CommentRepository;
 import com.austral.triviagoservice.persistence.repository.QuizRepository;
 import com.austral.triviagoservice.persistence.repository.UserRepository;
+import com.austral.triviagoservice.presentation.dto.AuthorDto;
 import com.austral.triviagoservice.presentation.dto.CommentDTO;
 import com.austral.triviagoservice.presentation.dto.CommentResponseDTO;
 import com.austral.triviagoservice.persistence.repository.UserRepository;
@@ -94,7 +95,7 @@ public class CommentServiceImpl implements CommentService {
                 answer -> {
                     responses.add(
                             CommentResponseDTO.builder()
-                                    .authorEmail(userRepository.findById(answer.getUserId()).orElse(null).getEmail())
+                                    .author(getAuthor(answer.getUserId()))
                                     .content(answer.getContent())
                                     .creationDateTime(answer.getCreationDateTime())
                                     .likes(answer.getLikes())
@@ -103,10 +104,20 @@ public class CommentServiceImpl implements CommentService {
                 }
         );
         return CommentDTO.builder()
-                .authorEmail(userRepository.findById(comment.getUserId()).orElse(null).getEmail())
+                .author(getAuthor(comment.getUserId()))
                 .content(comment.getContent())
                 .creationDate(comment.getCreationDateTime())
                 .responses(responses)
+                .build();
+    }
+
+    private AuthorDto getAuthor (Long userId){
+        User user = userRepository.findById(userId).orElse(null);
+        assert user != null;
+        return AuthorDto.builder()
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
                 .build();
     }
 
