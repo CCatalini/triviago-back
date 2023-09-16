@@ -1,5 +1,6 @@
 package com.austral.triviagoservice.business.impl;
 
+import com.austral.triviagoservice.business.UserService;
 import com.austral.triviagoservice.business.helper.ErrorCheckers;
 import com.austral.triviagoservice.business.QuizService;
 import com.austral.triviagoservice.business.exception.InvalidContentException;
@@ -24,8 +25,10 @@ import java.util.UUID;
 public class QuizServiceImpl implements QuizService {
 
     final private QuizRepository quizRepository;
-    public QuizServiceImpl(QuizRepository quizRepository) {
+    final private UserService userService;
+    public QuizServiceImpl(QuizRepository quizRepository, UserService userService) {
         this.quizRepository = quizRepository;
+        this.userService = userService;
     }
 
     @Override
@@ -33,8 +36,7 @@ public class QuizServiceImpl implements QuizService {
         Optional<Quiz> search = quizRepository.findById(id);
         if(search.isPresent()){
             Quiz quiz = search.get();
-            return QuizCreate.createDTO(quiz);
-
+            return quizCreateBuilder(quiz);
         }
         throw new InvalidContentException("Invalid quiz Id");
     }
@@ -73,7 +75,7 @@ public class QuizServiceImpl implements QuizService {
             quiz.setInvitationCode(code.toString());
         }
         Quiz created = quizRepository.save(quiz);
-        return QuizCreate.createDTO(created);
+        return quizCreateBuilder(created);
     }
 
     @Override
@@ -91,8 +93,23 @@ public class QuizServiceImpl implements QuizService {
         Optional<Quiz> search = quizRepository.findByInvitationCode(invitationCode);
         if (search.isPresent()){
             Quiz quiz = search.get();
-            return QuizCreate.createDTO(quiz);
+            return quizCreateBuilder(quiz);
         }
         throw new InvalidContentException("Invalid invitation Code");
+    }
+
+    private QuizCreate quizCreateBuilder (Quiz quiz) {
+        return QuizCreate.builder()
+                .id(quiz.getId())
+                .author(userService.findAuthorById(quiz.getUserId()))
+                .title(quiz.getTitle())
+                .description(quiz.getDescription())
+                .creationDate(quiz.getCreationDate())
+                .rating(quiz.getRating())
+                .invitationCode(quiz.getInvitationCode())
+                .isPrivate(quiz.getIsPrivate())
+                .questions(quiz.getQuestions())
+                .labels(quiz.getLabels())
+                .build();
     }
 }
