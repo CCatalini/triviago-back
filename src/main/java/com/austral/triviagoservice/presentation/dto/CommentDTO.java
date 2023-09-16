@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.util.List;
 @Builder
 public class CommentDTO {
+    private Long id;
     private String authorEmail;
     private String content;
     private LocalDate creationDate;
@@ -15,12 +16,31 @@ public class CommentDTO {
 
     public CommentDTO() {}
 
-    public CommentDTO(String authorEmail, String content, LocalDate creationDateTime, int likes, List<CommentResponseDTO> responses) {
+    public CommentDTO(Long id, String authorEmail, String content, LocalDate creationDateTime, int likes, List<CommentResponseDTO> responses) {
+        this.id = id;
         this.authorEmail = authorEmail;
         this.content = content;
         this.creationDate = creationDateTime;
         this.likes = likes;
         this.responses = responses;
+
+    }
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public LocalDate getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(LocalDate creationDate) {
+        this.creationDate = creationDate;
     }
 
     public String getAuthorEmail() {

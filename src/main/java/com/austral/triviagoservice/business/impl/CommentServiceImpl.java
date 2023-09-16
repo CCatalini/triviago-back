@@ -3,6 +3,7 @@ package com.austral.triviagoservice.business.impl;
 import com.austral.triviagoservice.business.CommentService;
 import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.persistence.domain.Comment;
+import com.austral.triviagoservice.persistence.domain.User;
 import com.austral.triviagoservice.persistence.repository.CommentRepository;
 import com.austral.triviagoservice.persistence.domain.Quiz;
 import com.austral.triviagoservice.persistence.repository.CommentRepository;
@@ -34,11 +35,13 @@ public class CommentServiceImpl implements CommentService {
         }
 
         @Override
-        public Comment create (Comment comment){
+        public CommentDTO create (Comment comment){
             comment.setLikes(0);
             comment.setCreationDate(LocalDate.now(ZoneId.of("America/Argentina/Buenos_Aires"))); //Buenos Aires time zone
-            commentRepository.save(comment);
-            return comment;
+            Comment com = commentRepository.save(comment);
+            User user = userRepository.findById(com.getUserId()).orElse(null);
+            assert user != null;
+            return new CommentDTO(com.getId(), user.getEmail(), com.getContent(), com.getCreationDate(), com.getLikes(), null);
         }
 
         @Override
@@ -90,6 +93,7 @@ public class CommentServiceImpl implements CommentService {
                     }
             );
             return CommentDTO.builder()
+                    .id(comment.getId())
                     .authorEmail(userRepository.findById(comment.getUserId()).orElse(null).getEmail())
                     .content(comment.getContent())
                     .creationDate(comment.getCreationDate())

@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface CommentService {
     List<Comment> findAllByQuizId(Long quizId);
-    Comment create(Comment comment);
+    CommentDTO create(Comment comment);
     Comment editComment(Comment comment, String newContent);
     Comment deleteComment(Comment comment);
     void like(Long id, Boolean dislike) throws InvalidContentException;
