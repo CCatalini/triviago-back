@@ -1,21 +1,22 @@
 package com.austral.triviagoservice.presentation.dto;
 
-import lombok.Builder;
+import com.sun.istack.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
-
 import java.time.LocalDateTime;
-import java.util.List;
-@Builder
-@Setter
+
+
 @Getter
-public class CommentDTO {
-    private AuthorDto author;
+@Setter
+public class CommentCreateDto  {
+    @NotNull
     private String content;
+    @NotNull
+    private Long quizId;
+    @NotNull
+    private Long userId;
     private LocalDateTime creationDate;
     private int likes;
-    private List<CommentResponseDTO> responses;
 
 }
