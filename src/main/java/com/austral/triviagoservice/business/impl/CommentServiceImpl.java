@@ -45,7 +45,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Comment create(CommentCreateDto commentDto) throws NotFoundException {
+    public CommentDTO create(CommentCreateDto commentDto) throws NotFoundException {
         Optional<User> user = userRepository.findById(commentDto.getUserId());
         if (user.isEmpty()) throw new NotFoundException("Not found user");
         Optional<Quiz> quiz = quizRepository.findById(commentDto.getQuizId());
@@ -53,10 +53,16 @@ public class CommentServiceImpl implements CommentService {
         commentDto.setCreationDate(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")));
         commentDto.setLikes(0);
         Comment comment = new Comment(commentDto);
-        commentRepository.save(comment);
-        return comment;
-    }
+        Comment aux = commentRepository.save(comment);
 
+        return CommentDTO.builder()
+                .id(aux.getId())
+                .author(getAuthor(aux.getUserId()))
+                .content(aux.getContent())
+                .creationDate(aux.getCreationDateTime())
+                .responses(List.of())
+                .build();
+    }
     @Override
     public Comment editComment(Comment comment, String newComment) {
         commentRepository.findById(comment.getId()).ifPresent(comment1 -> {
@@ -104,6 +110,7 @@ public class CommentServiceImpl implements CommentService {
                 }
         );
         return CommentDTO.builder()
+                .id(comment.getId())
                 .author(getAuthor(comment.getUserId()))
                 .content(comment.getContent())
                 .creationDate(comment.getCreationDateTime())
