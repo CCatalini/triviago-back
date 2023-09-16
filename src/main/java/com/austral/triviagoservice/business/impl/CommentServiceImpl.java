@@ -88,7 +88,7 @@ public class CommentServiceImpl implements CommentService {
         public void editContent(Long id, EditedContent content) throws InvalidContentException{
            Comment comment = this.findById(id);
            ValidateUser.validate(comment.getUserId(), content.getToken());
-           comment.setContent(content.getContent());
+           comment.setContent(content.getNewContent());
            commentRepository.save(comment);
         }
 

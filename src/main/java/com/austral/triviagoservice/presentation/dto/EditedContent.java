@@ -9,5 +9,5 @@ import lombok.Setter;
 public class EditedContent {
 
     private String token;
-    private String content;
+    private String newContent;
 }
