@@ -15,8 +15,11 @@ public class QuizFilter {
     Long userId;
     String title;
     List<String> labels;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     LocalDate dateFrom;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     LocalDate dateTo;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     LocalDate creationDate;
     Integer minQuestion;
     Integer maxQuestion;
