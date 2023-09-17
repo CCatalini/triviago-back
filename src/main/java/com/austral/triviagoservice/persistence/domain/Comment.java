@@ -40,7 +40,5 @@ public class Comment {
         likes += 1;
     }
 
-    public void decrementLike(){
-        likes -= 1;
-    }
+    public void decrementLike(){likes -= 1;}
 }

@@ -7,6 +7,7 @@ import com.austral.triviagoservice.business.impl.CommentServiceImpl;
 import com.austral.triviagoservice.persistence.domain.Comment;
 import com.austral.triviagoservice.presentation.dto.EditedContent;
 import com.austral.triviagoservice.presentation.dto.CommentCreateDto;
+import com.austral.triviagoservice.presentation.dto.EditedContent;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,11 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.web.bind.annotation.*;
 
+
 @RestController
 @RequestMapping("/comment")
 public class CommentController {
 
     private final CommentServiceImpl commentService;
+
 
     public CommentController(CommentServiceImpl commentService) {
         this.commentService = commentService;
@@ -47,9 +50,9 @@ public class CommentController {
     }
 
     @PostMapping("/{id}/like")
-    public ResponseEntity<?> likeComment(@PathVariable("id") Long id){
+    public ResponseEntity<?> likeComment(@PathVariable("id") Long id, @RequestParam("token") String token){
         try{
-            commentService.like(id, false);
+            commentService.like(id, false, token);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (InvalidContentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -57,9 +60,9 @@ public class CommentController {
     }
 
     @PostMapping("/{id}/dislike")
-    public ResponseEntity<?> dislikeComment(@PathVariable("id") Long id){
+    public ResponseEntity<?> dislikeComment(@PathVariable("id") Long id, @RequestParam("token") String token){
         try{
-            commentService.like(id, true);
+            commentService.like(id, true, token);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (InvalidContentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);

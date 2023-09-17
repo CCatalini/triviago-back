@@ -2,8 +2,6 @@ package com.austral.triviagoservice.business.impl;
 
 import com.austral.triviagoservice.business.CommentService;
 import com.austral.triviagoservice.business.exception.InvalidContentException;
-import com.austral.triviagoservice.business.helper.ValidateUser;
-import com.austral.triviagoservice.business.exception.NotFoundException;
 import com.austral.triviagoservice.persistence.domain.Comment;
 import com.austral.triviagoservice.persistence.domain.Quiz;
 import com.austral.triviagoservice.persistence.domain.User;
@@ -77,6 +75,7 @@ public class CommentServiceImpl implements CommentService {
         @Override
         public void like(Long id, Boolean dislike) throws InvalidContentException {
             Comment comment = this.findById(id);
+            ValidateUser.validate(comment.getUserId(), token);
             if(dislike){comment.decrementLike();}
             else {comment.incrementLike();}
             commentRepository.save(comment);
