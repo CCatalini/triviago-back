@@ -1,6 +1,5 @@
 package com.austral.triviagoservice.business.impl;
 
-import com.austral.triviagoservice.business.CommentService;
 import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.business.helper.ValidateUser;
 import com.austral.triviagoservice.business.exception.NotFoundException;

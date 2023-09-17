@@ -2,7 +2,6 @@ package com.austral.triviagoservice.presentation.controller;
 
 import com.austral.triviagoservice.business.exception.InvalidContentException;
 
-import com.austral.triviagoservice.business.exception.NotFoundException;
 import com.austral.triviagoservice.business.impl.CommentServiceImpl;
 import com.austral.triviagoservice.persistence.domain.Comment;
 import com.austral.triviagoservice.presentation.dto.EditedContent;
