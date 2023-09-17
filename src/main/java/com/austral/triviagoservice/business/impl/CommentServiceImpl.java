@@ -2,12 +2,14 @@ package com.austral.triviagoservice.business.impl;
 
 import com.austral.triviagoservice.business.CommentService;
 import com.austral.triviagoservice.business.exception.InvalidContentException;
+import com.austral.triviagoservice.business.helper.ValidateUser;
 import com.austral.triviagoservice.business.exception.NotFoundException;
 import com.austral.triviagoservice.persistence.domain.Comment;
 import com.austral.triviagoservice.persistence.domain.Quiz;
 import com.austral.triviagoservice.persistence.domain.User;
 import com.austral.triviagoservice.persistence.repository.CommentRepository;
 import com.austral.triviagoservice.persistence.repository.QuizRepository;
+import com.austral.triviagoservice.presentation.dto.EditedContent;
 import com.austral.triviagoservice.persistence.repository.UserRepository;
 import com.austral.triviagoservice.presentation.dto.CommentCreateDto;
 import org.springframework.stereotype.Service;
@@ -71,14 +73,21 @@ public class CommentServiceImpl implements CommentService {
         throw new InvalidContentException("Invalid content, Id does not exist");
     }
 
-    @Override
-    public void like(Long id, Boolean dislike) throws InvalidContentException {
-        Comment comment = this.findById(id);
-        if (dislike) {
-            comment.decrementLike();
-        } else {
-            comment.incrementLike();
+
+        @Override
+        public void like(Long id, Boolean dislike) throws InvalidContentException {
+            Comment comment = this.findById(id);
+            if(dislike){comment.decrementLike();}
+            else {comment.incrementLike();}
+            commentRepository.save(comment);
         }
-        commentRepository.save(comment);
-    }
+
+        @Override
+        public void editContent(Long id, EditedContent content) throws InvalidContentException{
+           Comment comment = this.findById(id);
+           ValidateUser.validate(comment.getUserId(), content.getToken());
+           comment.setContent(content.getNewContent());
+           commentRepository.save(comment);
+        }
+
 }
