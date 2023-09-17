@@ -20,7 +20,6 @@ public class QuizSpecification implements Specification<Quiz> {
     @Override
     public Predicate toPredicate(Root<Quiz> quiz, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
         List<Predicate> restrictions = new ArrayList<>();
-        List<Predicate> restrictions = new ArrayList<>();
         if(quizFilter.getTitle() != null && !quizFilter.getTitle().isEmpty()){
             restrictions.add(criteriaBuilder.equal(quiz.get("title"), quizFilter.getTitle()));
         }
