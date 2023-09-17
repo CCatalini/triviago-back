@@ -72,6 +72,7 @@ public class QuizServiceImpl implements QuizService {
             UUID code = UUID.randomUUID();
             quiz.setInvitationCode(code.toString());
         }
+        quiz.setRating(0.0);
         Quiz created = quizRepository.save(quiz);
         return QuizCreate.createDTO(created);
     }
