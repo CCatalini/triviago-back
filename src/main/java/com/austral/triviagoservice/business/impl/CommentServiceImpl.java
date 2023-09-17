@@ -10,7 +10,6 @@ import com.austral.triviagoservice.persistence.domain.User;
 import com.austral.triviagoservice.persistence.repository.CommentRepository;
 import com.austral.triviagoservice.persistence.repository.QuizRepository;
 import com.austral.triviagoservice.presentation.dto.EditedContent;
-import com.austral.triviagoservice.security.LuchoDecode;
 import com.austral.triviagoservice.persistence.repository.UserRepository;
 import com.austral.triviagoservice.presentation.dto.CommentCreateDto;
 import org.springframework.stereotype.Service;
@@ -76,9 +75,8 @@ public class CommentServiceImpl implements CommentService {
 
 
         @Override
-        public void like(Long id, Boolean dislike, String token) throws InvalidContentException {
+        public void like(Long id, Boolean dislike) throws InvalidContentException {
             Comment comment = this.findById(id);
-            ValidateUser.validate(comment.getUserId(), token);
             if(dislike){comment.decrementLike();}
             else {comment.incrementLike();}
             commentRepository.save(comment);
