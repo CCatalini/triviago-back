@@ -1,6 +1,5 @@
 package com.austral.triviagoservice.business.impl;
 
-import com.austral.triviagoservice.business.CommentService;
 import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.persistence.domain.Comment;
 import com.austral.triviagoservice.persistence.domain.Quiz;
