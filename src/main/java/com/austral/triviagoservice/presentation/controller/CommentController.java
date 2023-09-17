@@ -5,9 +5,11 @@ import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.business.exception.NotFoundException;
 import com.austral.triviagoservice.business.impl.CommentServiceImpl;
 import com.austral.triviagoservice.persistence.domain.Comment;
+import com.austral.triviagoservice.persistence.domain.User;
 import com.austral.triviagoservice.presentation.dto.CommentCreateDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +31,9 @@ public class CommentController {
     @PostMapping
     public ResponseEntity<?> createComment(@RequestBody CommentCreateDto commentDto) {
         try {
-            Comment comment = commentService.create(commentDto);
+            User user = SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof User ?
+                    (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal() : null;
+            Comment comment = commentService.create(commentDto, user);
             return new ResponseEntity<>(comment, HttpStatus.OK);
         } catch (NotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);

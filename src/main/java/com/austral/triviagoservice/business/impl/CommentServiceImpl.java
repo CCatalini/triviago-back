@@ -36,11 +36,11 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Comment create(CommentCreateDto commentDto) throws NotFoundException {
-        Optional<User> user = userRepository.findById(commentDto.getUserId());
-        if (user.isEmpty()) throw new NotFoundException("Not found user");
+    public Comment create(CommentCreateDto commentDto, User user) throws NotFoundException {
+        Long userId = user.getId();
         Optional<Quiz> quiz = quizRepository.findById(commentDto.getQuizId());
         if (quiz.isEmpty()) throw new NotFoundException("Not found quiz");
+        commentDto.setUserId(userId);
         commentDto.setCreationDate(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")));
         commentDto.setLikes(0);
         Comment comment = new Comment(commentDto);
