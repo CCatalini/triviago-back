@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -23,8 +25,7 @@ public class Comment {
     @Column(nullable = false, columnDefinition = "DATETIME(0)")
     private LocalDateTime creationDateTime;
 
-    @Column
-    private Integer likes;
+    private List<CommentLike> likes;
 
     public Comment(CommentCreateDto commentDto){
         this.content = commentDto.getContent();
@@ -36,9 +37,24 @@ public class Comment {
 
     public Comment(){}
 
-    public void incrementLike(){
-        likes += 1;
+    public Boolean hasLike(Long userId){
+        for(CommentLike l:likes){
+            if(Objects.equals(l.getUserId(), userId)){
+                return true;
+            }
+        }
+        return false;
     }
 
-    public void decrementLike(){likes -= 1;}
+    public void setLike(CommentLike like){
+        likes.add(like);
+    }
+    public CommentLike findLike(Long userId){
+        for(CommentLike l: likes){
+            if(l.getUserId().equals(userId)){
+                return l;
+            }
+        }
+        return null;
+    }
 }
