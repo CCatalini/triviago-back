@@ -5,6 +5,7 @@ import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.business.exception.NotFoundException;
 import com.austral.triviagoservice.business.helper.ValidateUser;
 import com.austral.triviagoservice.persistence.domain.Comment;
+import com.austral.triviagoservice.persistence.domain.CommentLike;
 import com.austral.triviagoservice.persistence.domain.Quiz;
 import com.austral.triviagoservice.persistence.domain.User;
 import com.austral.triviagoservice.persistence.repository.CommentRepository;
@@ -12,10 +13,12 @@ import com.austral.triviagoservice.persistence.repository.QuizRepository;
 import com.austral.triviagoservice.presentation.dto.EditedContent;
 import com.austral.triviagoservice.persistence.repository.UserRepository;
 import com.austral.triviagoservice.presentation.dto.CommentCreateDto;
+import com.austral.triviagoservice.security.TokenDecode;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,12 +27,14 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final QuizRepository quizRepository;
+    private final CommentLikeServiceImpl commentLikeService;
 
     public CommentServiceImpl(CommentRepository commentRepository, UserRepository userRepository,
-                              QuizRepository quizRepository) {
+                              QuizRepository quizRepository, CommentLikeServiceImpl commentLikeService) {
         this.commentRepository = commentRepository;
         this.userRepository = userRepository;
         this.quizRepository = quizRepository;
+        this.commentLikeService = commentLikeService;
     }
 
     @Override
@@ -44,7 +49,7 @@ public class CommentServiceImpl implements CommentService {
         Optional<Quiz> quiz = quizRepository.findById(commentDto.getQuizId());
         if (quiz.isEmpty()) throw new NotFoundException("Not found quiz");
         commentDto.setCreationDate(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")));
-        commentDto.setLikes(0);
+        commentDto.setLikes(new ArrayList<>());
         Comment comment = new Comment(commentDto);
         commentRepository.save(comment);
         return comment;
@@ -77,9 +82,26 @@ public class CommentServiceImpl implements CommentService {
         @Override
         public void like(Long id, Boolean dislike, String token) throws InvalidContentException {
             Comment comment = this.findById(id);
-            if(dislike){comment.decrementLike();}
-            else {comment.incrementLike();}
-            commentRepository.save(comment);
+            Long userId = TokenDecode.decodePayload(token).getLong("id");
+            CommentLike like = new CommentLike(userId, id, dislike);
+            Boolean existsL = comment.hasLike(userId);
+            if(existsL){//Already liked
+                CommentLike actual = comment.findLike(userId);
+                Boolean actualStatus = actual.getIsLike();
+                if(actualStatus && dislike){ //Invalid condition, can´t like an already liked comment
+                    throw new InvalidContentException("Invalid like petition: dislike =" + actualStatus.toString());
+                }
+                else{//Valid petition, like o dislike a comment that has been disliked or liked
+                    actual.setIsLike(dislike);
+                    commentLikeService.save(actual); //writes into database
+                    comment.setLike(actual);//writes into Comment entity
+                }
+            }
+            else{ //First like case
+                CommentLike newLike = commentLikeService.creat(like);
+                comment.setLike(newLike);
+            }
+            commentRepository.save(comment); //saves changes
         }
 
         @Override
