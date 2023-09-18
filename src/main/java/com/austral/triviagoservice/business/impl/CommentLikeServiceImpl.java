@@ -19,7 +19,7 @@ public class CommentLikeServiceImpl implements CommentLikeService {
 
     @Override
     public CommentLike creat(CommentLike commentLike) {
-        commentLikeRepository.save(commentLike);
+        return commentLikeRepository.save(commentLike);
     }
 
     @Override
