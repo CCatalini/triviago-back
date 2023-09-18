@@ -14,6 +14,7 @@ import com.austral.triviagoservice.presentation.dto.EditedContent;
 import com.austral.triviagoservice.persistence.repository.UserRepository;
 import com.austral.triviagoservice.presentation.dto.CommentCreateDto;
 import com.austral.triviagoservice.security.TokenDecode;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -82,14 +83,15 @@ public class CommentServiceImpl implements CommentService {
         @Override
         public void like(Long id, Boolean dislike) throws InvalidContentException {
             Comment comment = this.findById(id);
-
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();//gets actual user in session
+            Long userId = user.getId();
             CommentLike like = new CommentLike(userId, id, !dislike);
             Boolean existsL = comment.hasLike(userId);
             if(existsL){//Already liked
                 CommentLike actual = comment.findLike(userId);
                 Boolean actualStatus = actual.getIsLike();
                 if(actualStatus && !dislike){ //Invalid condition, can´t like an already liked comment
-                    throw new InvalidContentException("Invalid like petition: dislike =" + actualStatus.toString());
+                    return;
                 }
                 else{//Valid petition, like o dislike a comment that has been disliked or liked
                     comment.quitLike(actual); //quits actual from structure
