@@ -94,7 +94,7 @@ public class CommentServiceImpl implements CommentService {
                 else{//Valid petition, like o dislike a comment that has been disliked or liked
                     comment.quitLike(actual); //quits actual from structure
                     actual.setIsLike(like.getIsLike());//inverts status
-                    commentLikeService.save(actual); //writes into database
+                    commentLikeService.create(actual); //writes into database
                     comment.setLike(actual);//writes into Comment entity
                 }
             }
