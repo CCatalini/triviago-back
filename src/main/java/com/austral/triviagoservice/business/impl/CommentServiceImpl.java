@@ -87,7 +87,13 @@ public class CommentServiceImpl implements CommentService {
             CommentLike like = new CommentLike(userId, id, !dislike);
             Boolean existsL = comment.hasLike(userId);
             if(existsL){//Already liked
-                CommentLike actual = comment.findLike(userId);
+                CommentLike actual = null; //looks for actual, no POO
+                for(CommentLike l: comment.getLikes()) {
+                    if (l.getUserId().equals(userId)) {
+                        actual = l;
+                        break;
+                    }
+                }
                 Boolean actualStatus = actual.getIsLike();
                 if(actualStatus && !dislike){ //Invalid condition, can´t like an already liked comment
                     return;

@@ -52,12 +52,4 @@ public class Comment {
     public void quitLike(CommentLike like){
         likes.remove(like);
     }
-    public CommentLike findLike(Long userId){
-        for(CommentLike l: likes){
-            if(l.getUserId().equals(userId)){
-                return l;
-            }
-        }
-        return null;
-    }
 }
