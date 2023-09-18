@@ -4,9 +4,7 @@ import com.austral.triviagoservice.business.exception.InvalidContentException;
 
 import com.austral.triviagoservice.business.impl.CommentServiceImpl;
 import com.austral.triviagoservice.persistence.domain.Comment;
-import com.austral.triviagoservice.presentation.dto.EditedContent;
 import com.austral.triviagoservice.presentation.dto.CommentCreateDto;
-import com.austral.triviagoservice.presentation.dto.EditedContent;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -69,9 +67,9 @@ public class CommentController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> editContent(@PathVariable("id") Long id, @ModelAttribute EditedContent editedContent){
+    public ResponseEntity<?> editContent(@PathVariable("id") Long id, @RequestParam(name="content") String content){
         try{
-            commentService.editContent(id, editedContent);
+            commentService.editContent(id, content);
             return new ResponseEntity<>(HttpStatus.OK);
         }
         catch (InvalidContentException e){
