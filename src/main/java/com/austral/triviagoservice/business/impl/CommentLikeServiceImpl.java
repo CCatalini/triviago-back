@@ -30,4 +30,9 @@ public class CommentLikeServiceImpl implements CommentLikeService {
         }
         throw new InvalidContentException("Invalid like Id");
     }
+
+    @Override
+    public void save(CommentLike commentLike) {
+        commentLikeRepository.save(commentLike);
+    }
 }
