@@ -80,9 +80,9 @@ public class CommentServiceImpl implements CommentService {
 
 
         @Override
-        public void like(Long id, Boolean dislike, String token) throws InvalidContentException {
+        public void like(Long id, Boolean dislike) throws InvalidContentException {
             Comment comment = this.findById(id);
-            Long userId = TokenDecode.decodePayload(token).getLong("id");
+
             CommentLike like = new CommentLike(userId, id, !dislike);
             Boolean existsL = comment.hasLike(userId);
             if(existsL){//Already liked

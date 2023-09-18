@@ -50,9 +50,9 @@ public class CommentController {
     }
 
     @PostMapping("/{id}/like")
-    public ResponseEntity<?> likeComment(@PathVariable("id") Long id, @RequestParam("token") String token){
+    public ResponseEntity<?> likeComment(@PathVariable("id") Long id){
         try{
-            commentService.like(id, false, token);
+            commentService.like(id, false);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (InvalidContentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -60,9 +60,9 @@ public class CommentController {
     }
 
     @PostMapping("/{id}/dislike")
-    public ResponseEntity<?> dislikeComment(@PathVariable("id") Long id, @RequestParam("token") String token){
+    public ResponseEntity<?> dislikeComment(@PathVariable("id") Long id){
         try{
-            commentService.like(id, true, token);
+            commentService.like(id, true);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (InvalidContentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
