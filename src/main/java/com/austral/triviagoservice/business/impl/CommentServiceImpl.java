@@ -83,16 +83,17 @@ public class CommentServiceImpl implements CommentService {
         public void like(Long id, Boolean dislike, String token) throws InvalidContentException {
             Comment comment = this.findById(id);
             Long userId = TokenDecode.decodePayload(token).getLong("id");
-            CommentLike like = new CommentLike(userId, id, dislike);
+            CommentLike like = new CommentLike(userId, id, !dislike);
             Boolean existsL = comment.hasLike(userId);
             if(existsL){//Already liked
                 CommentLike actual = comment.findLike(userId);
                 Boolean actualStatus = actual.getIsLike();
-                if(actualStatus && dislike){ //Invalid condition, can´t like an already liked comment
+                if(actualStatus && !dislike){ //Invalid condition, can´t like an already liked comment
                     throw new InvalidContentException("Invalid like petition: dislike =" + actualStatus.toString());
                 }
                 else{//Valid petition, like o dislike a comment that has been disliked or liked
-                    actual.setIsLike(dislike);
+                    comment.quitLike(actual); //quits actual from structure
+                    actual.setIsLike(like.getIsLike());//inverts status
                     commentLikeService.save(actual); //writes into database
                     comment.setLike(actual);//writes into Comment entity
                 }

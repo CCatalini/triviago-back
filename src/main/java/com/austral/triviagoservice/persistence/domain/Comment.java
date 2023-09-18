@@ -49,6 +49,9 @@ public class Comment {
     public void setLike(CommentLike like){
         likes.add(like);
     }
+    public void quitLike(CommentLike like){
+        likes.remove(like);
+    }
     public CommentLike findLike(Long userId){
         for(CommentLike l: likes){
             if(l.getUserId().equals(userId)){
