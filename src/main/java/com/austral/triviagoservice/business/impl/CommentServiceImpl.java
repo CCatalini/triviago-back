@@ -99,7 +99,7 @@ public class CommentServiceImpl implements CommentService {
                 }
             }
             else{ //First like case
-                CommentLike newLike = commentLikeService.creat(like);
+                CommentLike newLike = commentLikeService.create(like);
                 comment.setLike(newLike);
             }
             commentRepository.save(comment); //saves changes
