@@ -85,16 +85,15 @@ public class CommentServiceImpl implements CommentService {
             User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();//gets actual user in session
             Long userId = user.getId();
             CommentLike like = new CommentLike(userId, id, !dislike);
-            Boolean existsL = comment.hasLike(userId);
-            if(existsL){//Already liked
-                CommentLike actual = null; //looks for actual, no POO
-                for(CommentLike l: comment.getLikes()) {
-                    if (l.getUserId().equals(userId)) {
-                        actual = l;
-                        break;
-                    }
+            CommentLike actual = null; //looks for actual, no POO
+            for(CommentLike l: comment.getLikes()) {
+                if (l.getUserId().equals(userId)) {
+                    actual = l;
+                    break;
                 }
-                Boolean actualStatus = actual.getIsLike();
+            }
+            if(actual.equals(null)){//Already liked
+                Boolean actualStatus = actual.getIsLike(); //gest actual status
                 if(actualStatus && !dislike){ //Invalid condition, can´t like an already liked comment
                     return;
                 }
@@ -120,5 +119,4 @@ public class CommentServiceImpl implements CommentService {
             comment.setContent(content.getNewContent());
             commentRepository.save(comment);
         }
-
 }
