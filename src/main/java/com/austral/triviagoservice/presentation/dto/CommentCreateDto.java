@@ -1,10 +1,12 @@
 package com.austral.triviagoservice.presentation.dto;
 
+import com.austral.triviagoservice.persistence.domain.CommentLike;
 import com.sun.istack.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Getter
@@ -17,6 +19,6 @@ public class CommentCreateDto  {
     @NotNull
     private Long userId;
     private LocalDateTime creationDate;
-    private int likes;
+    private List<CommentLike> likes;
 
 }
