@@ -3,7 +3,6 @@ package com.austral.triviagoservice.business.impl;
 import com.austral.triviagoservice.business.CommentService;
 import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.business.exception.NotFoundException;
-import com.austral.triviagoservice.business.helper.ValidateUser;
 import com.austral.triviagoservice.persistence.domain.Comment;
 import com.austral.triviagoservice.persistence.domain.CommentLike;
 import com.austral.triviagoservice.persistence.domain.Quiz;
@@ -13,7 +12,6 @@ import com.austral.triviagoservice.persistence.repository.QuizRepository;
 import com.austral.triviagoservice.presentation.dto.EditedContent;
 import com.austral.triviagoservice.persistence.repository.UserRepository;
 import com.austral.triviagoservice.presentation.dto.CommentCreateDto;
-import com.austral.triviagoservice.security.TokenDecode;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +19,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -109,10 +108,11 @@ public class CommentServiceImpl implements CommentService {
 
         @Override
         public void editContent(Long id, EditedContent content) throws InvalidContentException{
-           Comment comment = this.findById(id);
-           ValidateUser.validate(comment.getUserId(), content.getToken());
-           comment.setContent(content.getNewContent());
-           commentRepository.save(comment);
+            Comment comment = this.findById(id);
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();//gets actual user in session
+            if(!Objects.equals(user.getId(), comment.getUserId())){throw new InvalidContentException("Invalid user id");}
+            comment.setContent(content.getNewContent());
+            commentRepository.save(comment);
         }
 
 }
