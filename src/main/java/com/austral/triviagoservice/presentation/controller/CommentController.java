@@ -69,6 +69,17 @@ public class CommentController {
         }
     }
 
+    @PutMapping("/{id}/removeLike")
+    public ResponseEntity<?> remomveLikeFromComment(@PathVariable("id") Long id){
+        try{
+            commentService.removeLike(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        catch(InvalidContentException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<?> editContent(@PathVariable("id") Long id, @ModelAttribute EditedContent editedContent){
         try{

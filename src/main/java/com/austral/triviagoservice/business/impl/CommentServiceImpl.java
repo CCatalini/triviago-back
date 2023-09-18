@@ -119,4 +119,21 @@ public class CommentServiceImpl implements CommentService {
             comment.setContent(content.getNewContent());
             commentRepository.save(comment);
         }
+
+        @Override
+        public void removeLike(Long id) throws InvalidContentException {
+            Comment comment = this.findById(id);
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();//gets actual user in session
+            CommentLike actual = null; //looks for actual, no POO
+            for(CommentLike l: comment.getLikes()) {
+                if (l.getUserId().equals(user.getId())) {
+                    actual = l;
+                    break;
+                }
+            }
+            if(!actual.equals(null)) {
+                comment.quitLike(actual); //removes de like
+                commentRepository.save(comment); //saves comment
+            }
+        }
 }
