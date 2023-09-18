@@ -18,7 +18,7 @@ public class CommentLikeServiceImpl implements CommentLikeService {
     }
 
     @Override
-    public CommentLike creat(CommentLike commentLike) {
+    public CommentLike create(CommentLike commentLike) {
         return commentLikeRepository.save(commentLike);
     }
 
@@ -29,10 +29,5 @@ public class CommentLikeServiceImpl implements CommentLikeService {
             return optional.get();
         }
         throw new InvalidContentException("Invalid like Id");
-    }
-
-    @Override
-    public void save(CommentLike commentLike) {
-        commentLikeRepository.save(commentLike);
     }
 }
