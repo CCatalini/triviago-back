@@ -12,6 +12,7 @@ import java.util.List;
 @Setter
 @Getter
 public class CommentDTO {
+    private Long id;
     private AuthorDto author;
     private String content;
     private LocalDateTime creationDate;
