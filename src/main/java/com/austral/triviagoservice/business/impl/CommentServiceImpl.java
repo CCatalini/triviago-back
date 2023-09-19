@@ -91,7 +91,7 @@ public class CommentServiceImpl implements CommentService {
                     break;
                 }
             }
-            if(actual.equals(null)){//Already liked
+            if(actual == null){//Already liked
                 Boolean actualStatus = actual.getIsLike(); //gest actual status
                 if(actualStatus && !dislike){ //Invalid condition, can´t like an already liked comment
                     return;
