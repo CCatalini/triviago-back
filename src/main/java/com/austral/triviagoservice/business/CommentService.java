@@ -5,7 +5,6 @@ import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.business.exception.NotFoundException;
 import com.austral.triviagoservice.persistence.domain.Comment;
 
-import com.austral.triviagoservice.persistence.domain.Quiz;
 import com.austral.triviagoservice.presentation.dto.CommentCreateDto;
 
 import java.util.List;

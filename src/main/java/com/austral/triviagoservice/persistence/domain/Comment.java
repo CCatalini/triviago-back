@@ -26,11 +26,11 @@ public class Comment {
     @Column
     private Integer likes;
 
-    public Comment(CommentCreateDto commentDto){
+    public Comment(CommentCreateDto commentDto, Long userId){
         this.content = commentDto.getContent();
         this.creationDateTime = commentDto.getCreationDate();
         this.likes = commentDto.getLikes();
-        this.userId = commentDto.getUserId();
+        this.userId = userId;
         this.quizId = commentDto.getQuizId();
     }
 
