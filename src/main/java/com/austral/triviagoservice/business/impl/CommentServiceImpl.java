@@ -9,7 +9,6 @@ import com.austral.triviagoservice.persistence.domain.Quiz;
 import com.austral.triviagoservice.persistence.domain.User;
 import com.austral.triviagoservice.persistence.repository.CommentRepository;
 import com.austral.triviagoservice.persistence.repository.QuizRepository;
-import com.austral.triviagoservice.presentation.dto.EditedContent;
 import com.austral.triviagoservice.persistence.repository.UserRepository;
 import com.austral.triviagoservice.presentation.dto.CommentCreateDto;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -112,11 +111,11 @@ public class CommentServiceImpl implements CommentService {
         }
 
         @Override
-        public void editContent(Long id, EditedContent content) throws InvalidContentException{
+        public void editContent(Long id,String content) throws InvalidContentException{
             Comment comment = this.findById(id);
             User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();//gets actual user in session
             if(!Objects.equals(user.getId(), comment.getUserId())){throw new InvalidContentException("Invalid user id");}
-            comment.setContent(content.getNewContent());
+            comment.setContent(content);
             commentRepository.save(comment);
         }
 
