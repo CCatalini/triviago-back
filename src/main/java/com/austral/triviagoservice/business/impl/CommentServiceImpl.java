@@ -10,6 +10,7 @@ import com.austral.triviagoservice.persistence.repository.CommentRepository;
 import com.austral.triviagoservice.persistence.repository.QuizRepository;
 import com.austral.triviagoservice.persistence.repository.UserRepository;
 import com.austral.triviagoservice.presentation.dto.CommentCreateDto;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -36,14 +37,14 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Comment create(CommentCreateDto commentDto, User user) throws NotFoundException {
+    public Comment create(CommentCreateDto commentDto) throws NotFoundException {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long userId = user.getId();
         Optional<Quiz> quiz = quizRepository.findById(commentDto.getQuizId());
         if (quiz.isEmpty()) throw new NotFoundException("Not found quiz");
-        commentDto.setUserId(userId);
         commentDto.setCreationDate(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")));
         commentDto.setLikes(0);
-        Comment comment = new Comment(commentDto);
+        Comment comment = new Comment(commentDto, userId);
         commentRepository.save(comment);
         return comment;
     }

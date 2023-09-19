@@ -31,9 +31,7 @@ public class CommentController {
     @PostMapping
     public ResponseEntity<?> createComment(@RequestBody CommentCreateDto commentDto) {
         try {
-            User user = SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof User ?
-                    (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal() : null;
-            Comment comment = commentService.create(commentDto, user);
+            Comment comment = commentService.create(commentDto);
             return new ResponseEntity<>(comment, HttpStatus.OK);
         } catch (NotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);

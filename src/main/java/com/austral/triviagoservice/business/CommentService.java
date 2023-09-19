@@ -5,14 +5,13 @@ import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.business.exception.NotFoundException;
 import com.austral.triviagoservice.persistence.domain.Comment;
 
-import com.austral.triviagoservice.persistence.domain.User;
 import com.austral.triviagoservice.presentation.dto.CommentCreateDto;
 
 import java.util.List;
 
 public interface CommentService {
     List<Comment> findAllByQuizId(Long quizId);
-    Comment create(CommentCreateDto commentDto, User user) throws NotFoundException;
+    Comment create(CommentCreateDto commentDto) throws NotFoundException;
     Comment editComment(Comment comment, String newContent);
     Comment deleteComment(Comment comment);
     void like(Long id, Boolean dislike) throws InvalidContentException;
