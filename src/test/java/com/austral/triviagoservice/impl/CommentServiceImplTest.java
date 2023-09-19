@@ -36,8 +36,6 @@ class CommentServiceImplTest {
     private CommentLike commentLiked;
     private CommentLike commentDisliked;
 
-    private final String token = "eyJhbGciOiJIUzUxMiJ9.eyJmaXJzdE5hbWUiOiJtYXJrIiwibGFzdE5hbWUiOiJsYW1iIiwic3ViIjoibWFyayIsImlkIjoxLCJleHAiOjE2OTQ4MTQ4ODIsImJpcnRoRGF0ZSI6IjIwMDItMDYtMjMiLCJpYXQiOjE2OTQ3Mjg0ODJ9.91jsS6pzzV4YAv2MAyYR1nCwBsSoVgVR3mA9ocSLbpizG0hOXOwipuuFKF8o1VD-_VFd2MaWFm6flJcTTW7DUw";
-
     @BeforeEach
     void setUp(){
         comment = new Comment();  //define un comentario
