@@ -5,9 +5,7 @@ import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.business.exception.NotFoundException;
 import com.austral.triviagoservice.business.impl.CommentServiceImpl;
 import com.austral.triviagoservice.persistence.domain.Comment;
-import com.austral.triviagoservice.presentation.dto.EditedContent;
 import com.austral.triviagoservice.presentation.dto.CommentCreateDto;
-import com.austral.triviagoservice.presentation.dto.EditedContent;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,9 +48,9 @@ public class CommentController {
     }
 
     @PostMapping("/{id}/like")
-    public ResponseEntity<?> likeComment(@PathVariable("id") Long id, @RequestParam("token") String token){
+    public ResponseEntity<?> likeComment(@PathVariable("id") Long id){
         try{
-            commentService.like(id, false, token);
+            commentService.like(id, false);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (InvalidContentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -60,19 +58,30 @@ public class CommentController {
     }
 
     @PostMapping("/{id}/dislike")
-    public ResponseEntity<?> dislikeComment(@PathVariable("id") Long id, @RequestParam("token") String token){
+    public ResponseEntity<?> dislikeComment(@PathVariable("id") Long id){
         try{
-            commentService.like(id, true, token);
+            commentService.like(id, true);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (InvalidContentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> editContent(@PathVariable("id") Long id, @ModelAttribute EditedContent editedContent){
+    @PutMapping("/{id}/removeLike")
+    public ResponseEntity<?> remomveLikeFromComment(@PathVariable("id") Long id){
         try{
-            commentService.editContent(id, editedContent);
+            commentService.removeLike(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        catch(InvalidContentException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> editContent(@PathVariable("id") Long id, @RequestParam(name="content") String content){
+        try{
+            commentService.editContent(id, content);
             return new ResponseEntity<>(HttpStatus.OK);
         }
         catch (InvalidContentException e){

@@ -5,8 +5,6 @@ import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.business.exception.NotFoundException;
 import com.austral.triviagoservice.persistence.domain.Comment;
 
-import com.austral.triviagoservice.persistence.domain.Quiz;
-import com.austral.triviagoservice.presentation.dto.EditedContent;
 import com.austral.triviagoservice.presentation.dto.CommentCreateDto;
 
 
@@ -18,6 +16,7 @@ public interface CommentService {
     Comment editComment(Comment comment, String newContent);
     Comment deleteComment(Comment comment);
     Comment findById(Long id) throws InvalidContentException;
-    void editContent(Long id, EditedContent content) throws InvalidContentException;
-    void like(Long id, Boolean dislike, String token) throws InvalidContentException;
+    void editContent(Long id, String content) throws InvalidContentException;
+    void like(Long id, Boolean dislike) throws InvalidContentException;
+    void removeLike(Long id) throws InvalidContentException;
 }

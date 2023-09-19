@@ -37,27 +37,10 @@ public class Comment {
 
     public Comment(){}
 
-    public Boolean hasLike(Long userId){
-        for(CommentLike l:likes){
-            if(Objects.equals(l.getUserId(), userId)){
-                return true;
-            }
-        }
-        return false;
-    }
-
     public void setLike(CommentLike like){
         likes.add(like);
     }
     public void quitLike(CommentLike like){
         likes.remove(like);
-    }
-    public CommentLike findLike(Long userId){
-        for(CommentLike l: likes){
-            if(l.getUserId().equals(userId)){
-                return l;
-            }
-        }
-        return null;
     }
 }
