@@ -66,14 +66,14 @@ class CommentServiceImplTest {
         when(commentRepository.findById(comment.getId())).thenReturn(Optional.ofNullable(comment)); //le explico al simulador cómo comportarse
         when(commentRepository.existsById(comment.getId())).thenReturn(true);
         CommentLike dto = new CommentLike(commentLiked.getUserId(),commentLiked.getCommentId(), true);
-        when(commentLikeService.creat(argThat(like ->
+        when(commentLikeService.create(argThat(like ->
                 dto.getUserId().equals(commentLiked.getUserId()) &&
                         dto.getCommentId().equals(commentLiked.getCommentId()) &&
                             dto.getIsLike().equals(true)
         ))).thenReturn(commentLiked);
 
         assertEquals(commentService.findById(23L).getLikes().size(), 0); //should be an empty array
-        commentService.like(comment.getId(), false, token);
+        commentService.like(comment.getId(), false);
         assertEquals(commentService.findById(23L).getLikes().size(), 1);
 
         CommentLike newLike = comment.getLikes().get(0);
@@ -87,14 +87,14 @@ class CommentServiceImplTest {
         when(commentRepository.existsById(comment.getId())).thenReturn(true);
         CommentLike dto = new CommentLike(commentLiked.getUserId(),commentLiked.getCommentId(), false);
         commentLiked.setIsLike(false);
-        when(commentLikeService.creat(argThat(like ->
+        when(commentLikeService.create(argThat(like ->
                 dto.getUserId().equals(commentLiked.getUserId()) &&
                         dto.getCommentId().equals(commentLiked.getCommentId()) &&
                         dto.getIsLike().equals(false)
         ))).thenReturn(commentLiked);
 
         assertEquals(commentService.findById(23L).getLikes().size(), 0); //should be an empty array
-        commentService.like(comment.getId(), true, token);
+        commentService.like(comment.getId(), true);
         assertEquals(commentService.findById(23L).getLikes().size(), 1);
 
         CommentLike newLike = comment.getLikes().get(0);
@@ -110,7 +110,7 @@ class CommentServiceImplTest {
 
         comment.setLike(commentLiked); //setsOneLike
 
-        commentService.like(comment.getId(), true, token);
+        commentService.like(comment.getId(), true);
         CommentLike actual = comment.getLikes().get(0); //same id
         assertNotNull(actual);
         assertEquals(actual.getIsLike(), false); //is disliked
@@ -123,7 +123,7 @@ class CommentServiceImplTest {
 
         comment.setLike(commentDisliked); //setsOneLike
 
-        commentService.like(comment.getId(), false, token);
+        commentService.like(comment.getId(), false);
         CommentLike actual = comment.getLikes().get(0); //same id
         assertNotNull(actual);
         assertEquals(actual.getIsLike(), true); //is disliked
