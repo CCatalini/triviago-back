@@ -130,7 +130,7 @@ public class CommentServiceImpl implements CommentService {
                     break;
                 }
             }
-            if(!actual.equals(null)) {
+            if(actual != null) {
                 comment.quitLike(actual); //removes de like
                 commentRepository.save(comment); //saves comment
             }
