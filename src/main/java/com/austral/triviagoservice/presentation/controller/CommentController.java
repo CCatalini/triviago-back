@@ -67,7 +67,7 @@ public class CommentController {
         }
     }
 
-    @PutMapping("/{id}/removeLike")
+    @DeleteMapping("/{id}/removeLike")
     public ResponseEntity<?> removeLikeFromComment(@PathVariable("id") Long id){
         try{
             commentService.removeLike(id);
