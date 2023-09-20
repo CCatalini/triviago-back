@@ -110,14 +110,6 @@ public class CommentServiceImpl implements CommentService {
             commentRepository.save(comment); //saves changes
         }
 
-        @Override
-        public void editContent(Long id,String content) throws InvalidContentException{
-            Comment comment = this.findById(id);
-            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();//gets actual user in session
-            if(!Objects.equals(user.getId(), comment.getUserId())){throw new InvalidContentException("Invalid user id");}
-            comment.setContent(content);
-            commentRepository.save(comment);
-        }
 
         @Override
         public void removeLike(Long id) throws InvalidContentException {
