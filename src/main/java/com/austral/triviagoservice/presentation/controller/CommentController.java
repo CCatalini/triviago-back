@@ -78,15 +78,4 @@ public class CommentController {
         }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> editContent(@PathVariable("id") Long id, @RequestParam(name="content") String content){
-        try{
-            commentService.editContent(id, content);
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
-        catch (InvalidContentException e){
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
-    }
-
 }
