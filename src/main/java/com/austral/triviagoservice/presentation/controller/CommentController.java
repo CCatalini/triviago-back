@@ -68,7 +68,7 @@ public class CommentController {
     }
 
     @PutMapping("/{id}/removeLike")
-    public ResponseEntity<?> remomveLikeFromComment(@PathVariable("id") Long id){
+    public ResponseEntity<?> removeLikeFromComment(@PathVariable("id") Long id){
         try{
             commentService.removeLike(id);
             return new ResponseEntity<>(HttpStatus.OK);
