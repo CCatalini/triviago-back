@@ -17,6 +17,7 @@ import com.austral.triviagoservice.presentation.dto.CommentCreateDto;
 import org.springframework.stereotype.Service;
 
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import java.time.LocalDate;
@@ -59,7 +60,7 @@ public class CommentServiceImpl implements CommentService {
                 .id(aux.getId())
                 .author(getAuthor(aux.getUserId()))
                 .content(aux.getContent())
-                .creationDate(aux.getCreationDateTime().toString())
+                .creationDate(toDate(aux.getCreationDateTime().toString()))
                 .responses(List.of())
                 .build();
     }
@@ -103,7 +104,7 @@ public class CommentServiceImpl implements CommentService {
                             CommentResponseDTO.builder()
                                     .author(getAuthor(answer.getUserId()))
                                     .content(answer.getContent())
-                                    .creationDateTime(answer.getCreationDateTime().toString())
+                                    .creationDateTime(toDate(answer.getCreationDateTime().toString()))
                                     .likes(answer.getLikes())
                                     .build()
                     );
@@ -113,7 +114,7 @@ public class CommentServiceImpl implements CommentService {
                 .id(comment.getId())
                 .author(getAuthor(comment.getUserId()))
                 .content(comment.getContent())
-                .creationDate(comment.getCreationDateTime().toString())
+                .creationDate(toDate(comment.getCreationDateTime().toString()))
                 .responses(responses)
                 .build();
     }
@@ -155,4 +156,11 @@ public class CommentServiceImpl implements CommentService {
         }
         commentRepository.save(comment);
     }
+
+    private String toDate(String dateString) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+        LocalDateTime dateTime = LocalDateTime.parse(dateString, formatter);
+        return dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+    }
+
 }
