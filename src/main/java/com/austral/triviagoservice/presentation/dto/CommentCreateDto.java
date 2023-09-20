@@ -14,8 +14,6 @@ public class CommentCreateDto  {
     private String content;
     @NotNull
     private Long quizId;
-    @NotNull
-    private Long userId;
     private LocalDateTime creationDate;
     private int likes;
     private Long answerId;

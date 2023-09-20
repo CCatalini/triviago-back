@@ -27,11 +27,13 @@ public class Comment {
     @Column
     private Integer likes;
     private Long answeredCommentId;
-    public Comment(CommentCreateDto commentDto){
+
+
+    public Comment(CommentCreateDto commentDto, Long userId){
         this.content = commentDto.getContent();
         this.creationDateTime = commentDto.getCreationDate();
         this.likes = commentDto.getLikes();
-        this.userId = commentDto.getUserId();
+        this.userId = userId;
         this.quizId = commentDto.getQuizId();
         this.answeredCommentId = commentDto.getAnswerId();
     }
@@ -44,29 +46,5 @@ public class Comment {
 
     public void decrementLike(){
         likes -= 1;
-    }
-
-    public Long getAnsweredCommentId() {
-        return answeredCommentId;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public int getLikes() {
-        return likes;
-    }
-
-    public void setLikes(int likes) {
-        this.likes = likes;
-    }
-
-    public void setAnsweredCommentId(Long answeredCommentId) {
-        this.answeredCommentId = answeredCommentId;
-    }
-
-    public LocalDateTime getCreationDateTime() {
-        return creationDateTime;
     }
 }
