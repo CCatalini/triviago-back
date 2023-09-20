@@ -12,7 +12,6 @@ import com.austral.triviagoservice.persistence.repository.UserRepository;
 import com.austral.triviagoservice.presentation.dto.AuthorDto;
 import com.austral.triviagoservice.presentation.dto.CommentDTO;
 import com.austral.triviagoservice.presentation.dto.CommentResponseDTO;
-import com.austral.triviagoservice.persistence.repository.UserRepository;
 import com.austral.triviagoservice.presentation.dto.CommentCreateDto;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -21,7 +20,6 @@ import org.springframework.stereotype.Service;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
@@ -46,24 +44,16 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentDTO create(CommentCreateDto commentDto) throws NotFoundException {
+    public Comment create(CommentCreateDto commentDto) throws NotFoundException {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<Quiz> quiz = quizRepository.findById(commentDto.getQuizId());
         if (quiz.isEmpty()) throw new NotFoundException("Not found quiz");
         commentDto.setCreationDate(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")));
         commentDto.setLikes(0);
         Comment comment = new Comment(commentDto, user.getId());
-        Comment aux = commentRepository.save(comment);
+        commentRepository.save(comment);
+        return comment;
 
-
-
-        return CommentDTO.builder()
-                .id(aux.getId())
-                .author(getAuthor(aux.getUserId()))
-                .content(aux.getContent())
-                .creationDate(toDate(aux.getCreationDateTime().toString()))
-                .responses(List.of())
-                .build();
     }
     @Override
     public Comment editComment(Comment comment, String newComment) {
