@@ -33,6 +33,7 @@ public class Comment {
         this.likes = commentDto.getLikes();
         this.userId = commentDto.getUserId();
         this.quizId = commentDto.getQuizId();
+        this.answeredCommentId = commentDto.getAnswerId();
     }
 
     public Comment(){}

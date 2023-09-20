@@ -59,7 +59,7 @@ public class CommentServiceImpl implements CommentService {
                 .id(aux.getId())
                 .author(getAuthor(aux.getUserId()))
                 .content(aux.getContent())
-                .creationDate(aux.getCreationDateTime())
+                .creationDate(aux.getCreationDateTime().toString())
                 .responses(List.of())
                 .build();
     }
@@ -103,7 +103,7 @@ public class CommentServiceImpl implements CommentService {
                             CommentResponseDTO.builder()
                                     .author(getAuthor(answer.getUserId()))
                                     .content(answer.getContent())
-                                    .creationDateTime(answer.getCreationDateTime())
+                                    .creationDateTime(answer.getCreationDateTime().toString())
                                     .likes(answer.getLikes())
                                     .build()
                     );
@@ -113,7 +113,7 @@ public class CommentServiceImpl implements CommentService {
                 .id(comment.getId())
                 .author(getAuthor(comment.getUserId()))
                 .content(comment.getContent())
-                .creationDate(comment.getCreationDateTime())
+                .creationDate(comment.getCreationDateTime().toString())
                 .responses(responses)
                 .build();
     }

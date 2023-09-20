@@ -18,5 +18,6 @@ public class CommentCreateDto  {
     private Long userId;
     private LocalDateTime creationDate;
     private int likes;
+    private Long answerId;
 
 }
