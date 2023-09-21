@@ -27,8 +27,9 @@ public class User{
     @Column(name = "password", length = 50)
     private String password;
 
-    @OneToMany
+    @OneToMany(mappedBy="user")
     private List<CommentLike> likes;
+
     public User() {
     }
 
@@ -87,5 +88,5 @@ public class User{
     public void quitLike(CommentLike like){
         likes.remove(like);
     }
-    
+
 }
