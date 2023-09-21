@@ -1,12 +1,14 @@
 package com.austral.triviagoservice.persistence.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.austral.triviagoservice.presentation.dto.QuizCreateDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -22,7 +24,7 @@ public class Quiz {
     @Column
     private String description;
     @Column(nullable = false)
-    private LocalDate creationDate;
+    private LocalDateTime creationDate;
     @Column
     private double rating;
     @Column
@@ -31,7 +33,7 @@ public class Quiz {
     private Boolean isPrivate;
 
 
-    @OneToMany(targetEntity = Question.class, cascade = CascadeType.ALL)
+    @OneToMany(targetEntity = Question.class, cascade = CascadeType.ALL, mappedBy = "quiz")
     @JsonIgnore //json loop
     List<Question> questions;
 
@@ -39,4 +41,16 @@ public class Quiz {
     List<Label> labels;
   
     public Quiz(){}
+    public Quiz(QuizCreateDto quizCreateDto, Long userId){
+        this.userId = userId;
+        this.title = quizCreateDto.getTitle();
+        this.description = quizCreateDto.getDescription();
+        this.isPrivate = quizCreateDto.isPrivate();
+        this.questions = quizCreateDto.getQuestions().stream()
+                .map(questionCreateDto -> new Question(questionCreateDto, this)).collect(Collectors.toList());
+        this.labels = quizCreateDto.getLabels().stream().map(Label::new).collect(Collectors.toList());
+        this.creationDate = LocalDateTime.now();
+        this.rating = 0;
+        this.invitationCode = UUID.randomUUID().toString();
+    }
 }

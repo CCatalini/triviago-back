@@ -6,26 +6,26 @@ import com.austral.triviagoservice.persistence.domain.Label;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
 @Setter
-public class QuizCreate {
+public class QuizDto {
 
     private Long id;
     private Long userId;
     private String title;
     private String description;
-    private LocalDate creationDate;
+    private LocalDateTime creationDate;
     private Double rating;
     private String invitationCode;
     private Boolean isPrivate;
     private List<Question> questions;
     private List<Label> labels;
 
-    public static QuizCreate createDTO(Quiz quiz){
-        QuizCreate dto = new QuizCreate();
+    public static QuizDto createDto(Quiz quiz){
+        QuizDto dto = new QuizDto();
         dto.setTitle(quiz.getTitle());
         dto.setDescription(quiz.getDescription());
         dto.setCreationDate(quiz.getCreationDate());

@@ -4,18 +4,20 @@ import com.austral.triviagoservice.business.helper.ErrorCheckers;
 import com.austral.triviagoservice.business.QuizService;
 import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.persistence.domain.Quiz;
+import com.austral.triviagoservice.persistence.domain.User;
+import com.austral.triviagoservice.persistence.repository.LabelRepository;
 import com.austral.triviagoservice.persistence.repository.QuizRepository;
 import com.austral.triviagoservice.persistence.specification.QuizSpecification;
-import com.austral.triviagoservice.presentation.dto.QuizCreate;
+import com.austral.triviagoservice.presentation.dto.QuizDto;
+import com.austral.triviagoservice.presentation.dto.QuizCreateDto;
 import com.austral.triviagoservice.presentation.dto.QuizFilter;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -24,16 +26,20 @@ import java.util.UUID;
 public class QuizServiceImpl implements QuizService {
 
     final private QuizRepository quizRepository;
-    public QuizServiceImpl(QuizRepository quizRepository) {
+    private final LabelRepository labelRepository;
+
+    public QuizServiceImpl(QuizRepository quizRepository,
+                           LabelRepository labelRepository) {
         this.quizRepository = quizRepository;
+        this.labelRepository = labelRepository;
     }
 
     @Override
-    public QuizCreate findById(Long id) throws InvalidContentException {
+    public QuizDto findById(Long id) throws InvalidContentException {
         Optional<Quiz> search = quizRepository.findById(id);
         if(search.isPresent()){
             Quiz quiz = search.get();
-            return QuizCreate.createDTO(quiz);
+            return QuizDto.createDto(quiz);
 
         }
         throw new InvalidContentException("Invalid quiz Id");
@@ -65,17 +71,17 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public QuizCreate createQuiz(Quiz quiz) {
-        quiz.setCreationDate(LocalDate.now(ZoneId.of("America/Argentina/Buenos_Aires"))); //Buenos Aires time zone
-        if(quiz.getIsPrivate()){
-            //Se genera un código de invitación con un UUID random.
-            UUID code = UUID.randomUUID();
-            quiz.setInvitationCode(code.toString());
-        }
-        quiz.setRating(0.0);
-        Quiz created = quizRepository.save(quiz);
-        return QuizCreate.createDTO(created);
+    public QuizDto create(QuizCreateDto quizCreateDto) throws InvalidContentException {
+        if (quizCreateDto.getTitle() == null) throw new InvalidContentException("Invalid title");
+        if (quizCreateDto.getDescription() == null) throw new InvalidContentException("Invalid description");
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Quiz quiz = new Quiz(quizCreateDto, user.getId());
+        quizRepository.save(quiz);
+        labelRepository.saveAll(quiz.getLabels());// It is not saving in the database correctly in the entity with quiz
+        return QuizDto.createDto(quiz);
     }
+
+
 
     @Override
     public Long deleteById(Long id) throws InvalidContentException {
@@ -88,11 +94,11 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public QuizCreate findByInvitationCode(String invitationCode) throws InvalidContentException{
+    public QuizDto findByInvitationCode(String invitationCode) throws InvalidContentException{
         Optional<Quiz> search = quizRepository.findByInvitationCode(invitationCode);
         if (search.isPresent()){
             Quiz quiz = search.get();
-            return QuizCreate.createDTO(quiz);
+            return QuizDto.createDto(quiz);
         }
         throw new InvalidContentException("Invalid invitation Code");
     }

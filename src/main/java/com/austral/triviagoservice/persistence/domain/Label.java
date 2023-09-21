@@ -1,6 +1,7 @@
 package com.austral.triviagoservice.persistence.domain;
 
 
+import com.austral.triviagoservice.presentation.dto.LabelCreateDto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,7 +17,7 @@ public class Label {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long Id;
 
-    @Column
+    @Column(unique = true, nullable = false)
     String value;
 
     @ManyToMany(cascade = CascadeType.ALL)
@@ -25,4 +26,8 @@ public class Label {
     List<Quiz> quizzes;
 
     public Label() {}
+
+    public Label(LabelCreateDto labelCreateDto){
+        this.value = labelCreateDto.getValue();
+    }
 }

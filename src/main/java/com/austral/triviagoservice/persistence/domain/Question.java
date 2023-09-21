@@ -1,6 +1,8 @@
 package com.austral.triviagoservice.persistence.domain;
 
+import com.austral.triviagoservice.presentation.dto.QuestionCreateDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sun.istack.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,11 +20,22 @@ public class Question {
     @Column
     private String content;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+
+    @ManyToOne(cascade = CascadeType.ALL, targetEntity = Quiz.class)
     @JsonIgnore //json loop
     private Quiz quiz;
 
-    public Question(){}
+    public Question() {
+    }
+
+    public Question(QuestionCreateDto questionCreateDto) {
+        this.content = questionCreateDto.getContent();
+    }
+    public Question(QuestionCreateDto questionCreateDto, Quiz quiz) {
+        this.content = questionCreateDto.getContent();
+        this.quiz = quiz;
+    }
+
 
 
 
