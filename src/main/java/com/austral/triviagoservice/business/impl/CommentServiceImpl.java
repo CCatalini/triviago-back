@@ -12,14 +12,14 @@ import com.austral.triviagoservice.persistence.repository.UserRepository;
 import com.austral.triviagoservice.presentation.dto.AuthorDto;
 import com.austral.triviagoservice.presentation.dto.CommentDTO;
 import com.austral.triviagoservice.presentation.dto.CommentResponseDTO;
-import com.austral.triviagoservice.persistence.repository.UserRepository;
 import com.austral.triviagoservice.presentation.dto.CommentCreateDto;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
@@ -29,7 +29,6 @@ import java.util.Optional;
 public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
-
     private final QuizRepository quizRepository;
 
     public CommentServiceImpl(CommentRepository commentRepository, UserRepository userRepository,
@@ -46,17 +45,15 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Comment create(CommentCreateDto commentDto) throws NotFoundException {
-        Optional<User> user = userRepository.findById(commentDto.getUserId());
-        if (user.isEmpty()) throw new NotFoundException("Not found user");
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<Quiz> quiz = quizRepository.findById(commentDto.getQuizId());
         if (quiz.isEmpty()) throw new NotFoundException("Not found quiz");
         commentDto.setCreationDate(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")));
         commentDto.setLikes(0);
-        Comment comment = new Comment(commentDto);
+        Comment comment = new Comment(commentDto, user.getId());
         commentRepository.save(comment);
         return comment;
     }
-
     @Override
     public Comment editComment(Comment comment, String newComment) {
         commentRepository.findById(comment.getId()).ifPresent(comment1 -> {
@@ -102,7 +99,7 @@ public class CommentServiceImpl implements CommentService {
                                 CommentResponseDTO.builder()
                                         .author(getAuthor(answer.getUserId()))
                                         .content(answer.getContent())
-                                        .creationDateTime(answer.getCreationDateTime())
+                                        .creationDateTime(toDate(answer.getCreationDateTime().toString()))
                                         .likes(answer.getLikes())
                                         .build()
                         );
@@ -112,9 +109,10 @@ public class CommentServiceImpl implements CommentService {
                 }
         );
         return CommentDTO.builder()
+                .id(comment.getId())
                 .author(getAuthor(comment.getUserId()))
                 .content(comment.getContent())
-                .creationDate(comment.getCreationDateTime())
+                .creationDate(toDate(comment.getCreationDateTime().toString()))
                 .responses(responses)
                 .build();
     }
@@ -156,4 +154,11 @@ public class CommentServiceImpl implements CommentService {
         }
         commentRepository.save(comment);
     }
+
+    private String toDate(String dateString) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+        LocalDateTime dateTime = LocalDateTime.parse(dateString, formatter);
+        return dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+    }
+
 }

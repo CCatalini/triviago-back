@@ -31,11 +31,11 @@ public class Comment {
     @OneToOne
     private Comment parentComment;
 
-    public Comment(CommentCreateDto commentDto){
+    public Comment(CommentCreateDto commentDto, Long userId){
         this.content = commentDto.getContent();
         this.creationDateTime = commentDto.getCreationDate();
         this.likes = commentDto.getLikes();
-        this.userId = commentDto.getUserId();
+        this.userId = userId;
         this.quizId = commentDto.getQuizId();
         this.replies = new ArrayList<>();
         this.parentComment =  commentDto.getParentComment();

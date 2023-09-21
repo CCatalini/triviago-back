@@ -13,6 +13,6 @@ import java.time.LocalDateTime;
 public class CommentResponseDTO {
     private AuthorDto author;
     private String content;
-    private LocalDateTime creationDateTime;
+    private String creationDateTime;
     private int likes;
 }
