@@ -89,18 +89,20 @@ public class CommentServiceImpl implements CommentService {
                         like -> { //if optional has value
                             if (like.getIsLike() == dislike) { //valid case
                                 comment.quitLike(like); //quits actual from structure
+                                user.quitLike(like);
                                 like.setIsLike(!dislike);
                                 commentLikeService.create(like); //writes into database
                                 comment.setLike(like);//writes into Comment entity
+                                user.setLike(like);
                             }
                             //Else is an invalid
                         },
                         () -> { //If optional has no value
                             CommentLike value = commentLikeService.create(new CommentLike(user, comment, !dislike));
                             comment.setLike(value);
+                            user.setLike(value);
                         });
     }
-
 
 
     @Override
@@ -112,7 +114,8 @@ public class CommentServiceImpl implements CommentService {
                 .findFirst()
                 .ifPresent(
                         like -> {
-                            comment.quitLike(like); //removes de like
+                            user.quitLike(like);
+                            comment.quitLike(like); //removes the like
                             commentRepository.save(comment); //saves comment
                         });
     }

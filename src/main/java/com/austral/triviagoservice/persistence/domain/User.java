@@ -80,5 +80,12 @@ public class User{
         this.password = password;
     }
 
+    public void setLike(CommentLike like){
+        likes.add(like);
+    }
+
+    public void quitLike(CommentLike like){
+        likes.remove(like);
+    }
     
 }
