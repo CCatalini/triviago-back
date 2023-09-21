@@ -25,6 +25,7 @@ public class Comment {
     @Column(nullable = false, columnDefinition = "DATETIME(0)")
     private LocalDateTime creationDateTime;
 
+    @OneToMany(mappedBy="comment")
     private List<CommentLike> likes;
 
     public Comment(CommentCreateDto commentDto){
