@@ -43,8 +43,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Comment create(CommentCreateDto commentDto) throws NotFoundException {
-        Optional<User> user = userRepository.findById(commentDto.getUserId());
-        if (user.isEmpty()) throw new NotFoundException("Not found user");
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<Quiz> quiz = quizRepository.findById(commentDto.getQuizId());
         if (quiz.isEmpty()) throw new NotFoundException("Not found quiz");
         commentDto.setCreationDate(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")));
@@ -77,17 +76,15 @@ public class CommentServiceImpl implements CommentService {
         throw new InvalidContentException("Invalid content, Id does not exist");
     }
 
-
-
-
+    
     @Override
-    public void editContent(Long id,String content) throws InvalidContentException{
+    public void like(Long id, Boolean dislike) throws InvalidContentException {
         Comment comment = this.findById(id);
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();//gets actual user in session
-        if(!Objects.equals(user.getId(), comment.getUserId())){throw new InvalidContentException("Invalid user id");}
-        comment.setContent(content);
+        if (dislike) {
+            comment.decrementLike();
+        } else {
+            comment.incrementLike();
+        }
         commentRepository.save(comment);
     }
-
-
 }
