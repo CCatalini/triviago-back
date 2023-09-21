@@ -79,7 +79,11 @@ public class CommentServiceImpl implements CommentService {
         comments.forEach(
                 comment -> {
                     if (comment.getAnsweredCommentId() == null) {
-                        commentDTOS.add(findCommentAndAnswers(comment.getId()));
+                        try {
+                            commentDTOS.add(findCommentAndAnswers(comment.getId()));
+                        } catch (NotFoundException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 }
         );
@@ -87,20 +91,24 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentDTO findCommentAndAnswers(Long id) {
+    public CommentDTO findCommentAndAnswers(Long id) throws NotFoundException {
         Comment comment = findCommentById(id);
         List<Comment> answers = findAllByAnsweredCommentId(id);
         List<CommentResponseDTO> responses = new ArrayList<>();
         answers.forEach(
                 answer -> {
-                    responses.add(
-                            CommentResponseDTO.builder()
-                                    .author(getAuthor(answer.getUserId()))
-                                    .content(answer.getContent())
-                                    .creationDateTime(answer.getCreationDateTime())
-                                    .likes(answer.getLikes())
-                                    .build()
-                    );
+                    try {
+                        responses.add(
+                                CommentResponseDTO.builder()
+                                        .author(getAuthor(answer.getUserId()))
+                                        .content(answer.getContent())
+                                        .creationDateTime(answer.getCreationDateTime())
+                                        .likes(answer.getLikes())
+                                        .build()
+                        );
+                    } catch (NotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
         );
         return CommentDTO.builder()
@@ -111,8 +119,8 @@ public class CommentServiceImpl implements CommentService {
                 .build();
     }
 
-    private AuthorDto getAuthor (Long userId){
-        User user = userRepository.findById(userId).orElse(null);
+    private AuthorDto getAuthor (Long userId) throws NotFoundException {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User with id: " + userId + " not found!"));
         assert user != null;
         return AuthorDto.builder()
                 .firstName(user.getFirstName())

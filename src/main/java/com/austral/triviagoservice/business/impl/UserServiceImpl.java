@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public AuthorDto findAuthorById(Long id) {
+    public AuthorDto findById(Long id) {
         User user = userRepository.findById(id).orElse(null);
         if (user == null) return null;
         return AuthorDto.builder()

@@ -9,5 +9,5 @@ public interface UserService {
 
     User findByEmail(String username);
 
-    AuthorDto findAuthorById(Long id);
+    AuthorDto findById(Long id);
 }

@@ -101,7 +101,7 @@ public class QuizServiceImpl implements QuizService {
     private QuizCreate quizCreateBuilder (Quiz quiz) {
         return QuizCreate.builder()
                 .id(quiz.getId())
-                .author(userService.findAuthorById(quiz.getUserId()))
+                .author(userService.findById(quiz.getUserId()))
                 .title(quiz.getTitle())
                 .description(quiz.getDescription())
                 .creationDate(quiz.getCreationDate())

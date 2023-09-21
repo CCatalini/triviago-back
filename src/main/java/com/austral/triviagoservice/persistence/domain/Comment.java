@@ -7,6 +7,8 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -19,20 +21,24 @@ public class Comment {
     private Long userId;
     @Column(nullable = false)
     private Long quizId;
-
     private String content;
     @Column(nullable = false, columnDefinition = "DATETIME(0)")
     private LocalDateTime creationDateTime;
-
     @Column
     private Integer likes;
-    private Long answeredCommentId;
+    @OneToMany
+    private List<Comment> replies;
+    @OneToOne
+    private Comment parentComment;
+
     public Comment(CommentCreateDto commentDto){
         this.content = commentDto.getContent();
         this.creationDateTime = commentDto.getCreationDate();
         this.likes = commentDto.getLikes();
         this.userId = commentDto.getUserId();
         this.quizId = commentDto.getQuizId();
+        this.replies = new ArrayList<>();
+        this.parentComment =  commentDto.getParentComment();
     }
 
     public Comment(){}
@@ -45,27 +51,4 @@ public class Comment {
         likes -= 1;
     }
 
-    public Long getAnsweredCommentId() {
-        return answeredCommentId;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public int getLikes() {
-        return likes;
-    }
-
-    public void setLikes(int likes) {
-        this.likes = likes;
-    }
-
-    public void setAnsweredCommentId(Long answeredCommentId) {
-        this.answeredCommentId = answeredCommentId;
-    }
-
-    public LocalDateTime getCreationDateTime() {
-        return creationDateTime;
-    }
 }
