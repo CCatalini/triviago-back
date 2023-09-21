@@ -28,8 +28,7 @@ public class Comment {
     private Integer likes;
     @OneToMany
     private List<Comment> replies;
-    @OneToOne
-    private Comment parentComment;
+    private Long parentComment;
 
     public Comment(CommentCreateDto commentDto, Long userId){
         this.content = commentDto.getContent();

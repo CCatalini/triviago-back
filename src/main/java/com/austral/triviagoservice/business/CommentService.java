@@ -18,6 +18,6 @@ public interface CommentService {
     Comment deleteComment(Comment comment);
     void like(Long id, Boolean dislike) throws InvalidContentException;
     Comment findById(Long id) throws InvalidContentException;
-    CommentDTO findCommentAndAnswers(Long id) throws NotFoundException;
+    CommentDTO setCommentsAndRepliesToDto(Long id) throws NotFoundException;
     List<CommentDTO> findAllCommentsAndAnswersByQuiz(Long QuizId);
 }

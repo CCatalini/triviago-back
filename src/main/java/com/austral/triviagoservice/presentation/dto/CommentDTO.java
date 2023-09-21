@@ -17,6 +17,6 @@ public class CommentDTO {
     private String content;
     private String creationDate;
     private int likes;
-    private List<CommentResponseDTO> responses;
+    private List<CommentDTO> responses;
 
 }

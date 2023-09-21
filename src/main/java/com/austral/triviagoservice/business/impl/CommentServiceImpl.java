@@ -11,7 +11,6 @@ import com.austral.triviagoservice.persistence.repository.QuizRepository;
 import com.austral.triviagoservice.persistence.repository.UserRepository;
 import com.austral.triviagoservice.presentation.dto.AuthorDto;
 import com.austral.triviagoservice.presentation.dto.CommentDTO;
-import com.austral.triviagoservice.presentation.dto.CommentResponseDTO;
 import com.austral.triviagoservice.presentation.dto.CommentCreateDto;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -48,10 +47,17 @@ public class CommentServiceImpl implements CommentService {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<Quiz> quiz = quizRepository.findById(commentDto.getQuizId());
         if (quiz.isEmpty()) throw new NotFoundException("Not found quiz");
+        if (commentDto.getParentComment() != null) {
+            Optional<Comment> parentComment = commentRepository.findById(commentDto.getParentComment());
+            if (parentComment.isEmpty()) throw new NotFoundException("Not found parent comment");
+        }
         commentDto.setCreationDate(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")));
         commentDto.setLikes(0);
         Comment comment = new Comment(commentDto, user.getId());
+        Comment parentComment = commentRepository.findById(commentDto.getParentComment()).get();
+        parentComment.getReplies().add(comment);
         commentRepository.save(comment);
+        commentRepository.save(parentComment);
         return comment;
     }
     @Override
@@ -75,9 +81,9 @@ public class CommentServiceImpl implements CommentService {
         List<CommentDTO> commentDTOS = new ArrayList<>();
         comments.forEach(
                 comment -> {
-                    if (comment.getAnsweredCommentId() == null) {
+                    if (comment.getParentComment() == null) {
                         try {
-                            commentDTOS.add(findCommentAndAnswers(comment.getId()));
+                            commentDTOS.add(setCommentsAndRepliesToDto(comment.getId()));
                         } catch (NotFoundException e) {
                             throw new RuntimeException(e);
                         }
@@ -88,21 +94,13 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentDTO findCommentAndAnswers(Long id) throws NotFoundException {
+    public CommentDTO setCommentsAndRepliesToDto(Long id) throws NotFoundException {
         Comment comment = findCommentById(id);
-        List<Comment> answers = findAllByAnsweredCommentId(id);
-        List<CommentResponseDTO> responses = new ArrayList<>();
-        answers.forEach(
-                answer -> {
+        List<CommentDTO> replies = new ArrayList<>();
+        comment.getReplies().forEach(
+                reply -> {
                     try {
-                        responses.add(
-                                CommentResponseDTO.builder()
-                                        .author(getAuthor(answer.getUserId()))
-                                        .content(answer.getContent())
-                                        .creationDateTime(toDate(answer.getCreationDateTime().toString()))
-                                        .likes(answer.getLikes())
-                                        .build()
-                        );
+                        replies.add(setCommentsAndRepliesToDto(reply.getId()));
                     } catch (NotFoundException e) {
                         throw new RuntimeException(e);
                     }
@@ -113,13 +111,12 @@ public class CommentServiceImpl implements CommentService {
                 .author(getAuthor(comment.getUserId()))
                 .content(comment.getContent())
                 .creationDate(toDate(comment.getCreationDateTime().toString()))
-                .responses(responses)
+                .responses(replies)
                 .build();
     }
 
     private AuthorDto getAuthor (Long userId) throws NotFoundException {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User with id: " + userId + " not found!"));
-        assert user != null;
         return AuthorDto.builder()
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
@@ -127,14 +124,9 @@ public class CommentServiceImpl implements CommentService {
                 .build();
     }
 
-    private List<Comment> findAllByAnsweredCommentId(Long answeredCommentId){
-        return commentRepository.findAllByAnsweredCommentId(answeredCommentId);
-    }
-
     private Comment findCommentById(Long id){
         return commentRepository.findById(id).orElse(null);
     }
-
 
     @Override
     public Comment findById(Long id) throws InvalidContentException {

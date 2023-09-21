@@ -17,5 +17,5 @@ public class CommentCreateDto  {
     private Long quizId;
     private LocalDateTime creationDate;
     private int likes;
-    private Comment parentComment;
+    private Long parentComment;
 }
