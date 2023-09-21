@@ -77,6 +77,7 @@ public class CommentServiceImpl implements CommentService {
         throw new InvalidContentException("Invalid content, Id does not exist");
     }
 
+
     @Override
     public void like(Long id, Boolean dislike) throws InvalidContentException {
         Comment comment = this.findById(id);
@@ -86,10 +87,7 @@ public class CommentServiceImpl implements CommentService {
                 .findFirst()
                 .ifPresentOrElse(
                         like -> { //if optional has value
-                            if (like.getIsLike() == !dislike) { //Invalid case
-                                return;
-                            }
-                            else{ //valid case
+                            if (like.getIsLike() == dislike) { //valid case
                                 comment.quitLike(like); //quits actual from structure
                                 like.setIsLike(!dislike);
                                 commentLikeService.create(like); //writes into database
@@ -98,10 +96,11 @@ public class CommentServiceImpl implements CommentService {
                             //Else is an invalid
                         },
                         () -> { //If optional has no value
-                            CommentLike result = new CommentLike(user, comment, !dislike);
-                            comment.setLike(commentLikeService.create(result));
+                            CommentLike value = commentLikeService.create(new CommentLike(user, comment, !dislike));
+                            comment.setLike(value);
                         });
     }
+
 
 
     @Override
