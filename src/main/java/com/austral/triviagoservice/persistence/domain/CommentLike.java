@@ -3,10 +3,7 @@ package com.austral.triviagoservice.persistence.domain;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Getter
 @Setter
@@ -18,17 +15,19 @@ public class CommentLike {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long userId;
+    @ManyToOne
+    private User user;
 
-    private Long commentId;
+    @ManyToOne
+    private Comment comment;
 
     private Boolean isLike;
 
     public CommentLike(){}
 
-    public CommentLike(Long userId, Long commentId, Boolean isLike) {
-        this.userId = userId;
-        this.commentId = commentId;
+    public CommentLike(User user, Comment comment, Boolean isLike) {
+        this.user = user;
+        this.comment = comment;
         this.isLike = isLike;
     }
 }

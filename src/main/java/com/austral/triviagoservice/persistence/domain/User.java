@@ -1,12 +1,9 @@
 package com.austral.triviagoservice.persistence.domain;
 
 import java.time.LocalDate;
+import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class User{
@@ -29,6 +26,9 @@ public class User{
 
     @Column(name = "password", length = 50)
     private String password;
+
+    @OneToMany(mappedBy="user")
+    private List<CommentLike> likes;
 
     public User() {
     }
