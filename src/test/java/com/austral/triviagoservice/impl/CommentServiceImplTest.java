@@ -41,25 +41,6 @@ class CommentServiceImplTest {
     private User user;
     @BeforeEach
     void setUp(){
-        comment = new Comment();  //define un comentario
-        comment.setId(23L);
-        comment.setUserId(1L);
-        comment.setLikes(new ArrayList<>());
-        comment.setCreationDateTime(null);
-        comment.setQuizId(4567L);
-        comment.setContent("soy un comentario :)");
-
-        commentLiked = new CommentLike();
-        commentLiked.setId(2L);
-        commentLiked.setIsLike(true);
-        commentLiked.setCommentId(23L);
-        commentLiked.setUserId(1L);
-
-        commentDisliked = new CommentLike();
-        commentDisliked.setId(2L);
-        commentDisliked.setIsLike(false);
-        commentDisliked.setCommentId(23L);
-        commentDisliked.setUserId(1L);
 
         user = new User();
         user.setId(1L);
@@ -73,17 +54,37 @@ class CommentServiceImplTest {
         when(securityContext.getAuthentication()).thenReturn(authentication);
 
         SecurityContextHolder.setContext(securityContext);
+
+        comment = new Comment();  //define un comentario
+        comment.setId(23L);
+        comment.setUserId(1L);
+        comment.setLikes(new ArrayList<>());
+        comment.setCreationDateTime(null);
+        comment.setQuizId(4567L);
+        comment.setContent("soy un comentario :)");
+
+        commentLiked = new CommentLike();
+        commentLiked.setId(2L);
+        commentLiked.setIsLike(true);
+        commentLiked.setUser(user);
+        commentLiked.setComment(comment);
+
+        commentDisliked = new CommentLike();
+        commentDisliked.setId(2L);
+        commentDisliked.setIsLike(false);
+        commentDisliked.setUser(user);
+        commentDisliked.setComment(comment);
+
     }
 
     @Test
     void likeEmptyCommentTest() throws InvalidContentException {
         when(commentRepository.findById(comment.getId())).thenReturn(Optional.ofNullable(comment)); //le explico al simulador cómo comportarse
         when(commentRepository.existsById(comment.getId())).thenReturn(true);
-        CommentLike dto = new CommentLike(); dto.setCommentId(commentLiked.getCommentId());dto.setUserId(commentLiked.getUserId());dto.setIsLike(true);
         when(commentLikeService.create(argThat(like ->
-                dto.getUserId().equals(commentLiked.getUserId()) &&
-                        dto.getCommentId().equals(commentLiked.getCommentId()) &&
-                        dto.getIsLike().equals(true)
+                like.getUser().equals(commentLiked.getUser()) &&
+                        like.getComment().equals(commentLiked.getComment()) &&
+                        like.getIsLike().equals(true)
         ))).thenReturn(commentLiked);
 
         assertEquals(commentService.findById(23L).getLikes().size(), 0); //should be an empty array
@@ -92,19 +93,19 @@ class CommentServiceImplTest {
 
         CommentLike newLike = comment.getLikes().get(0);
         assertEquals(newLike, commentLiked);
-    }
+
+        }
 
 
     @Test
     void dislikeTest() throws InvalidContentException {
         when(commentRepository.findById(comment.getId())).thenReturn(Optional.ofNullable(comment));
         when(commentRepository.existsById(comment.getId())).thenReturn(true);
-        CommentLike dto = new CommentLike(commentLiked.getUserId(),commentLiked.getCommentId(), false);
-        commentLiked.setIsLike(false);
+       commentLiked.setIsLike(false);
         when(commentLikeService.create(argThat(like ->
-                dto.getUserId().equals(commentLiked.getUserId()) &&
-                        dto.getCommentId().equals(commentLiked.getCommentId()) &&
-                        dto.getIsLike().equals(false)
+                like.getUser().equals(commentLiked.getUser()) &&
+                        like.getComment().equals(commentLiked.getComment()) &&
+                        like.getIsLike().equals(false)
         ))).thenReturn(commentLiked);
 
         assertEquals(commentService.findById(23L).getLikes().size(), 0); //should be an empty array
@@ -135,13 +136,36 @@ class CommentServiceImplTest {
         when(commentRepository.findById(comment.getId())).thenReturn(Optional.ofNullable(comment));
         when(commentRepository.existsById(comment.getId())).thenReturn(true);
 
-        comment.setLike(commentDisliked); //setsOneLike
+        comment.setLike(commentDisliked); //setsOneDislike
 
         commentService.like(comment.getId(), false);
         CommentLike actual = comment.getLikes().get(0); //same id
         assertNotNull(actual);
         assertEquals(actual.getIsLike(), true); //is disliked
+    }
 
+    @Test
+    void InvalidDislikeADislikedCommentTest() throws InvalidContentException {
+        when(commentRepository.findById(comment.getId())).thenReturn(Optional.ofNullable(comment));
+        when(commentRepository.existsById(comment.getId())).thenReturn(true);
+        comment.setLike(commentDisliked); //setsOneDislike
+
+        commentService.like(comment.getId(), true); //dislike a disliked comment
+        CommentLike actual = comment.getLikes().get(0); //same id
+        assertNotNull(actual);
+        assertEquals(actual.getIsLike(), false); //is still dislike
+    }
+
+    @Test
+    void InvalidLikeALikedCommentTest() throws InvalidContentException {
+        when(commentRepository.findById(comment.getId())).thenReturn(Optional.ofNullable(comment));
+        when(commentRepository.existsById(comment.getId())).thenReturn(true);
+        comment.setLike(commentLiked); //setsOnLike
+
+        commentService.like(comment.getId(), false); //like a liked comment
+        CommentLike actual = comment.getLikes().get(0); //same id
+        assertNotNull(actual);
+        assertEquals(actual.getIsLike(), true); //is still like
     }
 
     @Test
