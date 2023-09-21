@@ -78,28 +78,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
 
-    @Override
-    public void like(Long id, Boolean dislike) throws InvalidContentException {
-        Comment comment = this.findById(id);
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();//gets actual user in session
-        comment.getLikes().stream()
-                .filter(like -> like.getUser().getId().equals(user.getId())) //filters likes by userId
-                .findFirst()
-                .ifPresentOrElse(
-                        like -> { //if optional has value
-                            if (like.getIsLike() && dislike) { //valid case
-                                comment.quitLike(like); //quits actual from structure
-                                like.setIsLike(!dislike);
-                                commentLikeService.create(like); //writes into database
-                                comment.setLike(like);//writes into Comment entity
-                            }
-                            //Else is an invalid
-                        },
-                        () -> { //If optional has no value
-                            CommentLike value = commentLikeService.create(new CommentLike(user, comment, !dislike));
-                            comment.setLike(value);
-                        });
-    }
+
 
     @Override
     public void editContent(Long id,String content) throws InvalidContentException{
@@ -110,17 +89,5 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.save(comment);
     }
 
-    @Override
-    public void removeLike(Long id) throws InvalidContentException {
-        Comment comment = this.findById(id);
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();//gets actual user in session
-        comment.getLikes().stream().filter(
-                like -> user.getId().equals(like.getId()))
-                .findFirst()
-                .ifPresent(
-                        like -> {
-                            comment.quitLike(like); //removes de like
-                            commentRepository.save(comment); //saves comment
-                        });
-    }
+
 }
