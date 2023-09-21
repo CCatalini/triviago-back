@@ -78,61 +78,49 @@ public class CommentServiceImpl implements CommentService {
     }
 
 
-        @Override
-        public void like(Long id, Boolean dislike) throws InvalidContentException {
-            Comment comment = this.findById(id);
-            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();//gets actual user in session
-            Long userId = user.getId();
-            CommentLike like = new CommentLike(userId, id, !dislike);
-            CommentLike actual = null; //looks for actual, no POO
-            for(CommentLike l: comment.getLikes()) {
-                if (l.getUserId().equals(userId)) {
-                    actual = l;
-                    break;
-                }
-            }
-            if(actual != null){//Already liked
-                Boolean actualStatus = actual.getIsLike(); //gest actual status
-                if(actualStatus && !dislike){ //Invalid condition, can´t like an already liked comment
-                    return;
-                }
-                else{//Valid petition, like o dislike a comment that has been disliked or liked
-                    comment.quitLike(actual); //quits actual from structure
-                    actual.setIsLike(like.getIsLike());//inverts status
-                    commentLikeService.create(actual); //writes into database
-                    comment.setLike(actual);//writes into Comment entity
-                }
-            }
-            else{ //First like case
-                CommentLike newLike = commentLikeService.create(like);
-                comment.setLike(newLike);
-            }
-            commentRepository.save(comment); //saves changes
-        }
+    @Override
+    public void like(Long id, Boolean dislike) throws InvalidContentException {
+        Comment comment = this.findById(id);
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();//gets actual user in session
+        comment.getLikes().stream()
+                .filter(like -> like.getUser().getId().equals(user.getId())) //filters likes by userId
+                .findFirst()
+                .ifPresentOrElse(
+                        like -> { //if optional has value
+                            if (like.getIsLike() && dislike) { //valid case
+                                comment.quitLike(like); //quits actual from structure
+                                like.setIsLike(!dislike);
+                                commentLikeService.create(like); //writes into database
+                                comment.setLike(like);//writes into Comment entity
+                            }
+                            //Else is an invalid
+                        },
+                        () -> { //If optional has no value
+                            CommentLike value = commentLikeService.create(new CommentLike(user, comment, !dislike));
+                            comment.setLike(value);
+                        });
+    }
 
-        @Override
-        public void editContent(Long id,String content) throws InvalidContentException{
-            Comment comment = this.findById(id);
-            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();//gets actual user in session
-            if(!Objects.equals(user.getId(), comment.getUserId())){throw new InvalidContentException("Invalid user id");}
-            comment.setContent(content);
-            commentRepository.save(comment);
-        }
+    @Override
+    public void editContent(Long id,String content) throws InvalidContentException{
+        Comment comment = this.findById(id);
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();//gets actual user in session
+        if(!Objects.equals(user.getId(), comment.getUserId())){throw new InvalidContentException("Invalid user id");}
+        comment.setContent(content);
+        commentRepository.save(comment);
+    }
 
-        @Override
-        public void removeLike(Long id) throws InvalidContentException {
-            Comment comment = this.findById(id);
-            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();//gets actual user in session
-            CommentLike actual = null; //looks for actual, no POO
-            for(CommentLike l: comment.getLikes()) {
-                if (l.getUserId().equals(user.getId())) {
-                    actual = l;
-                    break;
-                }
-            }
-            if(actual != null) {
-                comment.quitLike(actual); //removes de like
-                commentRepository.save(comment); //saves comment
-            }
-        }
+    @Override
+    public void removeLike(Long id) throws InvalidContentException {
+        Comment comment = this.findById(id);
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();//gets actual user in session
+        comment.getLikes().stream().filter(
+                like -> user.getId().equals(like.getId()))
+                .findFirst()
+                .ifPresent(
+                        like -> {
+                            comment.quitLike(like); //removes de like
+                            commentRepository.save(comment); //saves comment
+                        });
+    }
 }
