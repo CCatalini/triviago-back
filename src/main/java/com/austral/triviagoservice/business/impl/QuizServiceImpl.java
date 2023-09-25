@@ -3,8 +3,7 @@ package com.austral.triviagoservice.business.impl;
 import com.austral.triviagoservice.business.helper.ErrorCheckers;
 import com.austral.triviagoservice.business.QuizService;
 import com.austral.triviagoservice.business.exception.InvalidContentException;
-import com.austral.triviagoservice.persistence.domain.Quiz;
-import com.austral.triviagoservice.persistence.domain.User;
+import com.austral.triviagoservice.persistence.domain.*;
 import com.austral.triviagoservice.persistence.repository.LabelRepository;
 import com.austral.triviagoservice.persistence.repository.QuizRepository;
 import com.austral.triviagoservice.persistence.specification.QuizSpecification;
@@ -18,9 +17,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class QuizServiceImpl implements QuizService {
@@ -77,7 +78,6 @@ public class QuizServiceImpl implements QuizService {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Quiz quiz = new Quiz(quizCreateDto, user.getId());
         quizRepository.save(quiz);
-        labelRepository.saveAll(quiz.getLabels());// It is not saving in the database correctly in the entity with quiz
         return QuizDto.createDto(quiz);
     }
 

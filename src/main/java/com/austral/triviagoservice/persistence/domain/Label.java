@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -20,14 +21,16 @@ public class Label {
     @Column(unique = true, nullable = false)
     String value;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(joinColumns = @JoinColumn,
             inverseJoinColumns = @JoinColumn)
-    List<Quiz> quizzes;
+    List<Quiz> quizzes = new ArrayList<>();
+
 
     public Label() {}
 
-    public Label(LabelCreateDto labelCreateDto){
+    public Label(LabelCreateDto labelCreateDto, Quiz quiz){
         this.value = labelCreateDto.getValue();
     }
+
 }

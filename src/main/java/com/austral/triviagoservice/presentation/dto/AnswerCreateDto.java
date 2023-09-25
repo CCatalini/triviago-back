@@ -1,18 +1,18 @@
 package com.austral.triviagoservice.presentation.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sun.istack.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-
-
 @Getter
 @Setter
+public class AnswerCreateDto {
 
-public class QuestionCreateDto {
     @NotNull
     private String content;
+
+    @JsonProperty("isCorrect")
     @NotNull
-    private List<AnswerCreateDto> answers;
+    private boolean isCorrect;
 }

@@ -55,10 +55,8 @@ public class QuizController {
             QuizDto quiz = quizService.create(quizCreateDto);
             return new ResponseEntity<>(quiz, HttpStatus.OK);
         } catch (InvalidContentException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-
-
     }
 
     @GetMapping("/{id}")

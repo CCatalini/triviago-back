@@ -20,7 +20,7 @@ public class QuizDto {
     private LocalDateTime creationDate;
     private Double rating;
     private String invitationCode;
-    private Boolean isPrivate;
+    private boolean isPrivate;
     private List<Question> questions;
     private List<Label> labels;
 
@@ -33,7 +33,7 @@ public class QuizDto {
         dto.setUserId(quiz.getUserId());
         dto.setInvitationCode(quiz.getInvitationCode());
         dto.setId(quiz.getId());
-        dto.setIsPrivate(quiz.getIsPrivate());
+        dto.setPrivate(quiz.isPrivate());
         dto.setQuestions(quiz.getQuestions());
         dto.setLabels(quiz.getLabels());
         return dto;

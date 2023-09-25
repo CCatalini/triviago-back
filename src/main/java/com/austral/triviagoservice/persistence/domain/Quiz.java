@@ -1,5 +1,6 @@
 package com.austral.triviagoservice.persistence.domain;
 
+import com.austral.triviagoservice.presentation.dto.QuestionCreateDto;
 import com.austral.triviagoservice.presentation.dto.QuizCreateDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
@@ -30,7 +31,7 @@ public class Quiz {
     @Column
     private String invitationCode;
     @Column
-    private Boolean isPrivate;
+    private boolean isPrivate;
 
 
     @OneToMany(targetEntity = Question.class, cascade = CascadeType.ALL, mappedBy = "quiz")
@@ -46,9 +47,9 @@ public class Quiz {
         this.title = quizCreateDto.getTitle();
         this.description = quizCreateDto.getDescription();
         this.isPrivate = quizCreateDto.isPrivate();
-        this.questions = quizCreateDto.getQuestions().stream()
-                .map(questionCreateDto -> new Question(questionCreateDto, this)).collect(Collectors.toList());
-        this.labels = quizCreateDto.getLabels().stream().map(Label::new).collect(Collectors.toList());
+        this.questions = quizCreateDto.getQuestions().stream().map(questionCreateDto -> new Question(questionCreateDto, this)).collect(Collectors.toList());
+        this.labels = quizCreateDto.getLabels().stream()
+                .map(labelCreateDto -> new Label(labelCreateDto, this)).collect(Collectors.toList());
         this.creationDate = LocalDateTime.now();
         this.rating = 0;
         this.invitationCode = UUID.randomUUID().toString();
