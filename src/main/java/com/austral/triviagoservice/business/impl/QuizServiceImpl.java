@@ -7,6 +7,7 @@ import com.austral.triviagoservice.persistence.domain.*;
 import com.austral.triviagoservice.persistence.repository.LabelRepository;
 import com.austral.triviagoservice.persistence.repository.QuizRepository;
 import com.austral.triviagoservice.persistence.specification.QuizSpecification;
+import com.austral.triviagoservice.presentation.dto.AnswerCreateDto;
 import com.austral.triviagoservice.presentation.dto.QuizDto;
 import com.austral.triviagoservice.presentation.dto.QuizCreateDto;
 import com.austral.triviagoservice.presentation.dto.QuizFilter;
@@ -75,6 +76,15 @@ public class QuizServiceImpl implements QuizService {
     public QuizDto create(QuizCreateDto quizCreateDto) throws InvalidContentException {
         if (quizCreateDto.getTitle() == null) throw new InvalidContentException("Invalid title");
         if (quizCreateDto.getDescription() == null) throw new InvalidContentException("Invalid description");
+        if (quizCreateDto.getQuestions().isEmpty()) throw new InvalidContentException("Invalid questions quantity");
+        if (quizCreateDto.getQuestions().stream().anyMatch(q -> q.getContent() == null))
+            throw new InvalidContentException("Invalid question content");
+        if (quizCreateDto.getQuestions().stream().anyMatch(q -> q.getAnswers().stream().anyMatch(a -> a.getContent() == null)))
+            throw new InvalidContentException("Invalid answer content");
+        if (quizCreateDto.getQuestions().stream().anyMatch(q -> q.getAnswers().size() < 2))
+            throw new InvalidContentException("Invalid answers quantity, there must be at least two possible answers for each question");
+        if (quizCreateDto.getQuestions().stream().anyMatch(q -> q.getAnswers().stream().noneMatch(AnswerCreateDto::isCorrect)))
+            throw new InvalidContentException("Invalid answers, there must be at least one correct answer for each question");
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Quiz quiz = new Quiz(quizCreateDto, user.getId());
         quizRepository.save(quiz);

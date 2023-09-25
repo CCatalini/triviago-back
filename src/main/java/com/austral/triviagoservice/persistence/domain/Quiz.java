@@ -52,6 +52,6 @@ public class Quiz {
                 .map(labelCreateDto -> new Label(labelCreateDto, this)).collect(Collectors.toList());
         this.creationDate = LocalDateTime.now();
         this.rating = 0;
-        this.invitationCode = UUID.randomUUID().toString();
+        if (quizCreateDto.isPrivate()) this.invitationCode = UUID.randomUUID().toString();
     }
 }
