@@ -1,5 +1,6 @@
 package com.austral.triviagoservice.business.impl;
 
+import com.austral.triviagoservice.business.UserService;
 import com.austral.triviagoservice.business.helper.ErrorCheckers;
 import com.austral.triviagoservice.business.QuizService;
 import com.austral.triviagoservice.business.exception.InvalidContentException;
@@ -8,6 +9,9 @@ import com.austral.triviagoservice.persistence.repository.LabelRepository;
 import com.austral.triviagoservice.persistence.repository.QuizRepository;
 import com.austral.triviagoservice.persistence.specification.QuizSpecification;
 import com.austral.triviagoservice.presentation.dto.*;
+import com.austral.triviagoservice.presentation.dto.QuizDto;
+import com.austral.triviagoservice.presentation.dto.QuizFilter;
+import lombok.SneakyThrows;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,11 +28,13 @@ public class QuizServiceImpl implements QuizService {
 
     final private QuizRepository quizRepository;
     private final LabelRepository labelRepository;
+    private final UserService userService;
 
     public QuizServiceImpl(QuizRepository quizRepository,
-                           LabelRepository labelRepository) {
+                           LabelRepository labelRepository, UserService userService) {
         this.quizRepository = quizRepository;
         this.labelRepository = labelRepository;
+        this.userService = userService;
     }
 
     @Override
@@ -94,8 +100,6 @@ public class QuizServiceImpl implements QuizService {
         return QuizDto.createDto(quiz);
     }
 
-
-
     @Override
     public Long deleteById(Long id) throws InvalidContentException {
         if(quizRepository.existsById(id)){
@@ -114,5 +118,21 @@ public class QuizServiceImpl implements QuizService {
             return QuizDto.createDto(quiz);
         }
         throw new InvalidContentException("Invalid invitation Code");
+    }
+
+    @SneakyThrows
+    private QuizDto quizCreateBuilder (Quiz quiz) {
+        return QuizDto.builder()
+                .id(quiz.getId())
+                .author(userService.findById(quiz.getUserId()))
+                .title(quiz.getTitle())
+                .description(quiz.getDescription())
+                .creationDate(quiz.getCreationDate())
+                .rating(quiz.getRating())
+                .invitationCode(quiz.getInvitationCode())
+                .isPrivate(quiz.IsPrivate())
+                .questions(quiz.getQuestions())
+                .labels(quiz.getLabels())
+                .build();
     }
 }
