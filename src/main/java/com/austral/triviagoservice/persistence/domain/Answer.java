@@ -1,55 +1,36 @@
 package com.austral.triviagoservice.persistence.domain;
 
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import com.austral.triviagoservice.presentation.dto.AnswerCreateDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.persistence.*;
 
 @Entity
+@Getter
+@Setter
 public class Answer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long questionId;
-
     private String content;
 
     private boolean isCorrect;
 
-    public Answer(Long questionId, String content, boolean isCorrect) {
-        this.questionId = questionId;
-        this.content = content;
-        this.isCorrect = isCorrect;
+    @ManyToOne(cascade = CascadeType.ALL, targetEntity = Question.class)
+    @JsonIgnore
+    private Question question;
+
+    public Answer() {
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public boolean getCorrect() {
-        return isCorrect;
-    }
-
-    public void setCorrect(boolean correct) {
-        isCorrect = correct;
+    public Answer(AnswerCreateDto answerCreateDto, Question question) {
+        this.content = answerCreateDto.getContent();
+        this.isCorrect = answerCreateDto.isCorrect();
+        this.question = question;
     }
 }

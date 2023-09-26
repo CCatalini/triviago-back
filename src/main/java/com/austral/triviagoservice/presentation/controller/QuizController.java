@@ -3,10 +3,11 @@ package com.austral.triviagoservice.presentation.controller;
 import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.business.impl.CommentServiceImpl;
 import com.austral.triviagoservice.business.impl.QuizServiceImpl;
-import com.austral.triviagoservice.persistence.domain.Comment;
+import com.austral.triviagoservice.presentation.dto.CommentDto;
 import com.austral.triviagoservice.persistence.domain.Quiz;
-import com.austral.triviagoservice.presentation.dto.CommentDTO;
-import com.austral.triviagoservice.presentation.dto.QuizCreate;
+import com.austral.triviagoservice.presentation.dto.CommentDto;
+import com.austral.triviagoservice.presentation.dto.QuizDto;
+import com.austral.triviagoservice.presentation.dto.QuizCreateDto;
 import com.austral.triviagoservice.presentation.dto.QuizFilter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -49,14 +50,19 @@ public class QuizController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createQuiz(@RequestBody Quiz quiz)  {
-        return new ResponseEntity<>(quizService.createQuiz(quiz),HttpStatus.OK);
+    public ResponseEntity<?> createQuiz(@RequestBody QuizCreateDto quizCreateDto)  {
+        try {
+            QuizDto quiz = quizService.create(quizCreateDto);
+            return new ResponseEntity<>(quiz, HttpStatus.OK);
+        } catch (InvalidContentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable("id") Long quizId){
         try{
-            QuizCreate dto = quizService.findById(quizId);
+            QuizDto dto = quizService.findById(quizId);
             return new ResponseEntity<>(dto, HttpStatus.OK);
         }
         catch (InvalidContentException e){
@@ -67,7 +73,7 @@ public class QuizController {
     }
 
     @GetMapping("/{quizId}/comment")
-    public ResponseEntity<List<CommentDTO>> getComments(@PathVariable("quizId") long quizId) {
+    public ResponseEntity<List<CommentDto>> getComments(@PathVariable("quizId") long quizId) {
         try {
             if (quizService.findById(quizId) == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             else {
@@ -92,7 +98,7 @@ public class QuizController {
     @GetMapping("/private/{invitationCode}")
     public ResponseEntity<?> getQuizByInvitationCode(@PathVariable("invitationCode") String invitationCode){
         try {
-            QuizCreate dto = quizService.findByInvitationCode(invitationCode);
+            QuizDto dto = quizService.findByInvitationCode(invitationCode);
             return new ResponseEntity<>(dto, HttpStatus.OK);
         } catch (InvalidContentException e){
             Map<String, String> response = new HashMap<>();

@@ -9,7 +9,7 @@ import com.austral.triviagoservice.persistence.repository.CommentRepository;
 import com.austral.triviagoservice.persistence.repository.QuizRepository;
 import com.austral.triviagoservice.persistence.repository.UserRepository;
 import com.austral.triviagoservice.presentation.dto.AuthorDto;
-import com.austral.triviagoservice.presentation.dto.CommentDTO;
+import com.austral.triviagoservice.presentation.dto.CommentDto;
 import com.austral.triviagoservice.presentation.dto.CommentCreateDto;
 import lombok.SneakyThrows;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -69,7 +69,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<CommentDTO> findAllByQuizId(Long quizId) {
+    public List<CommentDto> findAllByQuizId(Long quizId) {
         return commentRepository.findAllByQuizId(quizId)
                 .stream()
                 .filter(c -> c.getParentCommentId() == null)
@@ -78,8 +78,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @SneakyThrows
-    private CommentDTO entityToDto(Comment comment) {
-        return CommentDTO.builder()
+    private CommentDto entityToDto(Comment comment) {
+        return CommentDto.builder()
                 .id(comment.getId())
                 .author(getAuthor(comment.getUserId()))
                 .content(comment.getContent())
@@ -91,11 +91,7 @@ public class CommentServiceImpl implements CommentService {
 
     private AuthorDto getAuthor (Long userId) throws NotFoundException {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User with id: " + userId + " not found!"));
-        return AuthorDto.builder()
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .email(user.getEmail())
-                .build();
+        return new AuthorDto(user);
     }
 
     private Comment findCommentById(Long id) throws NotFoundException {
