@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
-@Builder
 public class QuizDto {
 
     private Long id;
