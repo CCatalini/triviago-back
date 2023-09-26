@@ -7,10 +7,7 @@ import com.austral.triviagoservice.persistence.domain.*;
 import com.austral.triviagoservice.persistence.repository.LabelRepository;
 import com.austral.triviagoservice.persistence.repository.QuizRepository;
 import com.austral.triviagoservice.persistence.specification.QuizSpecification;
-import com.austral.triviagoservice.presentation.dto.AnswerCreateDto;
-import com.austral.triviagoservice.presentation.dto.QuizDto;
-import com.austral.triviagoservice.presentation.dto.QuizCreateDto;
-import com.austral.triviagoservice.presentation.dto.QuizFilter;
+import com.austral.triviagoservice.presentation.dto.*;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,8 +18,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class QuizServiceImpl implements QuizService {
@@ -42,7 +37,6 @@ public class QuizServiceImpl implements QuizService {
         if(search.isPresent()){
             Quiz quiz = search.get();
             return QuizDto.createDto(quiz);
-
         }
         throw new InvalidContentException("Invalid quiz Id");
     }
@@ -85,8 +79,17 @@ public class QuizServiceImpl implements QuizService {
             throw new InvalidContentException("Invalid answers quantity, there must be at least two possible answers for each question");
         if (quizCreateDto.getQuestions().stream().anyMatch(q -> q.getAnswers().stream().noneMatch(AnswerCreateDto::isCorrect)))
             throw new InvalidContentException("Invalid answers, there must be at least one correct answer for each question");
+        if (quizCreateDto.getLabels().stream().anyMatch(l -> l.getValue() == null))
+            throw new InvalidContentException("Invalid label value");
+        if (quizCreateDto.getLabels().stream().noneMatch(l -> labelRepository.existsByValue(l.getValue())))
+            throw new InvalidContentException("Invalid label, it must exist in the database");
+        List<Label> labels = new ArrayList<>();
+        for (LabelCreateDto labelCreateDto : quizCreateDto.getLabels()) {
+            Optional<Label> search = labelRepository.findByValue(labelCreateDto.getValue());
+            search.ifPresent(labels::add);
+        }
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Quiz quiz = new Quiz(quizCreateDto, user.getId());
+        Quiz quiz = new Quiz(quizCreateDto, user.getId(), labels);
         quizRepository.save(quiz);
         return QuizDto.createDto(quiz);
     }

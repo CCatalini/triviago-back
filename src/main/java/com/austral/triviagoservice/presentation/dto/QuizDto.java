@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -22,7 +23,7 @@ public class QuizDto {
     private String invitationCode;
     private boolean isPrivate;
     private List<Question> questions;
-    private List<Label> labels;
+    private List<String > labels;
 
     public static QuizDto createDto(Quiz quiz){
         QuizDto dto = new QuizDto();
@@ -35,7 +36,7 @@ public class QuizDto {
         dto.setId(quiz.getId());
         dto.setPrivate(quiz.isPrivate());
         dto.setQuestions(quiz.getQuestions());
-        dto.setLabels(quiz.getLabels());
+        dto.setLabels(quiz.getLabels().stream().map(Label::getValue).collect(Collectors.toList()));
         return dto;
     }
 }

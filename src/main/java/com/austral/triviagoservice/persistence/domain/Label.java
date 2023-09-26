@@ -21,7 +21,7 @@ public class Label {
     @Column(unique = true, nullable = false)
     String value;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(joinColumns = @JoinColumn,
             inverseJoinColumns = @JoinColumn)
     List<Quiz> quizzes = new ArrayList<>();
@@ -29,7 +29,7 @@ public class Label {
 
     public Label() {}
 
-    public Label(LabelCreateDto labelCreateDto, Quiz quiz){
+    public Label(LabelCreateDto labelCreateDto){
         this.value = labelCreateDto.getValue();
     }
 
