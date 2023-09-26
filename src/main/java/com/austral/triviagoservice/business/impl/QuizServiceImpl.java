@@ -81,7 +81,7 @@ public class QuizServiceImpl implements QuizService {
             throw new InvalidContentException("Invalid answers, there must be at least one correct answer for each question");
         if (quizCreateDto.getLabels().stream().anyMatch(l -> l.getValue() == null))
             throw new InvalidContentException("Invalid label value");
-        if (quizCreateDto.getLabels().stream().noneMatch(l -> labelRepository.existsByValue(l.getValue())))
+        if (quizCreateDto.getLabels().stream().anyMatch(l -> !labelRepository.existsByValue(l.getValue())))
             throw new InvalidContentException("Invalid label, it must exist in the database");
         List<Label> labels = new ArrayList<>();
         for (LabelCreateDto labelCreateDto : quizCreateDto.getLabels()) {

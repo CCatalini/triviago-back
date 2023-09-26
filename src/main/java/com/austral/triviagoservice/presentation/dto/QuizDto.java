@@ -22,7 +22,7 @@ public class QuizDto {
     private Double rating;
     private String invitationCode;
     private boolean isPrivate;
-    private List<Question> questions;
+    private List<QuestionDto> questions;
     private List<String > labels;
 
     public static QuizDto createDto(Quiz quiz){
@@ -35,7 +35,7 @@ public class QuizDto {
         dto.setInvitationCode(quiz.getInvitationCode());
         dto.setId(quiz.getId());
         dto.setPrivate(quiz.isPrivate());
-        dto.setQuestions(quiz.getQuestions());
+        dto.setQuestions(quiz.getQuestions().stream().map(QuestionDto::new).collect(Collectors.toList()));
         dto.setLabels(quiz.getLabels().stream().map(Label::getValue).collect(Collectors.toList()));
         return dto;
     }
