@@ -25,7 +25,7 @@ public class Quiz {
     private String title;
     @Column
     private String description;
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "DATETIME(0)")
     private LocalDateTime creationDate;
     @Column
     private double rating;
