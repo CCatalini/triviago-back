@@ -9,6 +9,7 @@ import com.austral.triviagoservice.persistence.repository.QuizRepository;
 import com.austral.triviagoservice.persistence.specification.QuizSpecification;
 import com.austral.triviagoservice.presentation.dto.QuizCreate;
 import com.austral.triviagoservice.presentation.dto.QuizFilter;
+import lombok.SneakyThrows;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -99,6 +100,7 @@ public class QuizServiceImpl implements QuizService {
         throw new InvalidContentException("Invalid invitation Code");
     }
 
+    @SneakyThrows
     private QuizCreate quizCreateBuilder (Quiz quiz) {
         return QuizCreate.builder()
                 .id(quiz.getId())

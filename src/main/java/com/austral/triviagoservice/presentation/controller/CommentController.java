@@ -6,7 +6,6 @@ import com.austral.triviagoservice.business.exception.NotFoundException;
 import com.austral.triviagoservice.business.impl.CommentServiceImpl;
 import com.austral.triviagoservice.persistence.domain.Comment;
 import com.austral.triviagoservice.presentation.dto.CommentCreateDto;
-import com.austral.triviagoservice.presentation.dto.CommentDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

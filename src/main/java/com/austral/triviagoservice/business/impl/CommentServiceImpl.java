@@ -12,6 +12,7 @@ import com.austral.triviagoservice.persistence.repository.UserRepository;
 import com.austral.triviagoservice.presentation.dto.AuthorDto;
 import com.austral.triviagoservice.presentation.dto.CommentDTO;
 import com.austral.triviagoservice.presentation.dto.CommentCreateDto;
+import lombok.SneakyThrows;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -37,27 +39,25 @@ public class CommentServiceImpl implements CommentService {
         this.quizRepository = quizRepository;
     }
 
-    @Override
-    public List<Comment> findAllByQuizId(Long quizId) {
-        return commentRepository.findByQuizId(quizId);
-    }
 
     @Override
     public Comment create(CommentCreateDto commentDto) throws NotFoundException {
+        // Check that related quiz exists
+        if (!quizRepository.existsById(commentDto.getQuizId()))
+            throw new NotFoundException("Quiz with id " + commentDto.getQuizId() + " not found");
+
+        // Create and save comment
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Optional<Quiz> quiz = quizRepository.findById(commentDto.getQuizId());
-        if (quiz.isEmpty()) throw new NotFoundException("Not found quiz");
-        if (commentDto.getParentComment() != null) {
-            Optional<Comment> parentComment = commentRepository.findById(commentDto.getParentComment());
-            if (parentComment.isEmpty()) throw new NotFoundException("Not found parent comment");
-        }
-        commentDto.setCreationDate(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")));
-        commentDto.setLikes(0);
         Comment comment = new Comment(commentDto, user.getId());
-        Comment parentComment = commentRepository.findById(commentDto.getParentComment()).get();
-        parentComment.getReplies().add(comment);
         commentRepository.save(comment);
-        commentRepository.save(parentComment);
+
+        // Update parent comment (if necessary)
+        if (commentDto.getParentCommentId() != null) {
+            Comment parentComment = findCommentById(commentDto.getParentCommentId());
+            parentComment.getReplies().add(comment);
+            commentRepository.save(parentComment);
+        }
+
         return comment;
     }
     @Override
@@ -76,42 +76,23 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<CommentDTO> findAllCommentsAndAnswersByQuiz(Long QuizId) {
-        List<Comment> comments = findAllByQuizId(QuizId);
-        List<CommentDTO> commentDTOS = new ArrayList<>();
-        comments.forEach(
-                comment -> {
-                    if (comment.getParentComment() == null) {
-                        try {
-                            commentDTOS.add(setCommentsAndRepliesToDto(comment.getId()));
-                        } catch (NotFoundException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                }
-        );
-        return  commentDTOS;
+    public List<CommentDTO> findAllByQuizId(Long quizId) {
+        return commentRepository.findAllByQuizId(quizId)
+                .stream()
+                .filter(c -> c.getParentCommentId() == null)
+                .map(this::entityToDto)
+                .collect(Collectors.toList());
     }
 
-    @Override
-    public CommentDTO setCommentsAndRepliesToDto(Long id) throws NotFoundException {
-        Comment comment = findCommentById(id);
-        List<CommentDTO> replies = new ArrayList<>();
-        comment.getReplies().forEach(
-                reply -> {
-                    try {
-                        replies.add(setCommentsAndRepliesToDto(reply.getId()));
-                    } catch (NotFoundException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-        );
+    @SneakyThrows
+    private CommentDTO entityToDto(Comment comment) {
         return CommentDTO.builder()
                 .id(comment.getId())
                 .author(getAuthor(comment.getUserId()))
                 .content(comment.getContent())
                 .creationDate(toDate(comment.getCreationDateTime().toString()))
-                .responses(replies)
+                .responses(comment.getReplies().stream().map(this::entityToDto).collect(Collectors.toList()))
+                .parentCommentId(comment.getParentCommentId())
                 .build();
     }
 
@@ -124,8 +105,8 @@ public class CommentServiceImpl implements CommentService {
                 .build();
     }
 
-    private Comment findCommentById(Long id){
-        return commentRepository.findById(id).orElse(null);
+    private Comment findCommentById(Long id) throws NotFoundException {
+        return commentRepository.findById(id).orElseThrow(() -> new NotFoundException("Comment with id: " + id + " not found!"));
     }
 
     @Override

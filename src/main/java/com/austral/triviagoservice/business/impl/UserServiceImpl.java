@@ -1,6 +1,7 @@
 package com.austral.triviagoservice.business.impl;
 
 import com.austral.triviagoservice.business.UserService;
+import com.austral.triviagoservice.business.exception.NotFoundException;
 import com.austral.triviagoservice.persistence.domain.User;
 import com.austral.triviagoservice.persistence.repository.UserRepository;
 import com.austral.triviagoservice.presentation.dto.AuthorDto;
@@ -26,8 +27,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public AuthorDto findById(Long id) {
-        User user = userRepository.findById(id).orElse(null);
+    public AuthorDto findById(Long id) throws NotFoundException {
+        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User with id: " + id + " not found!"));
         if (user == null) return null;
         return AuthorDto.builder()
                 .firstName(user.getFirstName())

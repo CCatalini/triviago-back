@@ -71,7 +71,7 @@ public class QuizController {
         try {
             if (quizService.findById(quizId) == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             else {
-                return new ResponseEntity<>(commentService.findAllCommentsAndAnswersByQuiz(quizId), HttpStatus.OK);
+                return new ResponseEntity<>(commentService.findAllByQuizId(quizId), HttpStatus.OK);
             }
         } catch (InvalidContentException e) {
             throw new RuntimeException(e);

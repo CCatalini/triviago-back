@@ -7,6 +7,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,16 +29,16 @@ public class Comment {
     private Integer likes;
     @OneToMany
     private List<Comment> replies;
-    private Long parentComment;
+    private Long parentCommentId;
 
     public Comment(CommentCreateDto commentDto, Long userId){
         this.content = commentDto.getContent();
-        this.creationDateTime = commentDto.getCreationDate();
-        this.likes = commentDto.getLikes();
+        this.creationDateTime = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires"));
+        this.likes = 0;
         this.userId = userId;
         this.quizId = commentDto.getQuizId();
         this.replies = new ArrayList<>();
-        this.parentComment =  commentDto.getParentComment();
+        this.parentCommentId =  commentDto.getParentCommentId();
     }
 
     public Comment(){}
