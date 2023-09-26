@@ -119,7 +119,7 @@ public class QuizServiceImpl implements QuizService {
         }
         throw new InvalidContentException("Invalid invitation Code");
     }
-
+    /*
     @SneakyThrows
     private QuizDto quizCreateBuilder (Quiz quiz) {
         return QuizDto.builder()
@@ -134,5 +134,5 @@ public class QuizServiceImpl implements QuizService {
                 .questions(quiz.getQuestions())
                 .labels(quiz.getLabels())
                 .build();
-    }
+    }*/
 }

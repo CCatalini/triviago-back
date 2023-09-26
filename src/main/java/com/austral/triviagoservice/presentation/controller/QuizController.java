@@ -1,11 +1,11 @@
 package com.austral.triviagoservice.presentation.controller;
 
 import com.austral.triviagoservice.business.exception.InvalidContentException;
-import com.austral.triviagoservice.business.exception.NotFoundException;
 import com.austral.triviagoservice.business.impl.CommentServiceImpl;
 import com.austral.triviagoservice.business.impl.QuizServiceImpl;
-import com.austral.triviagoservice.persistence.domain.CommentDto;
+import com.austral.triviagoservice.presentation.dto.CommentDto;
 import com.austral.triviagoservice.persistence.domain.Quiz;
+import com.austral.triviagoservice.presentation.dto.CommentDto;
 import com.austral.triviagoservice.presentation.dto.QuizDto;
 import com.austral.triviagoservice.presentation.dto.QuizCreateDto;
 import com.austral.triviagoservice.presentation.dto.QuizFilter;
@@ -73,7 +73,7 @@ public class QuizController {
     }
 
     @GetMapping("/{quizId}/comment")
-    public ResponseEntity<List<CommentDTO>> getComments(@PathVariable("quizId") long quizId) {
+    public ResponseEntity<List<CommentDto>> getComments(@PathVariable("quizId") long quizId) {
         try {
             if (quizService.findById(quizId) == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             else {

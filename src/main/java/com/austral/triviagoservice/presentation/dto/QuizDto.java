@@ -2,6 +2,7 @@ package com.austral.triviagoservice.presentation.dto;
 
 import com.austral.triviagoservice.persistence.domain.Quiz;
 import com.austral.triviagoservice.persistence.domain.Label;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +12,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
+@Builder
 public class QuizDto {
 
     private Long id;
@@ -23,6 +25,10 @@ public class QuizDto {
     private boolean isPrivate;
     private List<QuestionDto> questions;
     private List<String > labels;
+
+    public QuizDto() {
+
+    }
 
     public static QuizDto createDto(Quiz quiz){
         QuizDto dto = new QuizDto();
@@ -38,4 +44,5 @@ public class QuizDto {
         dto.setLabels(quiz.getLabels().stream().map(Label::getValue).collect(Collectors.toList()));
         return dto;
     }
+
 }
