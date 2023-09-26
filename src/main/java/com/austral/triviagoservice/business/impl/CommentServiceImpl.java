@@ -91,11 +91,7 @@ public class CommentServiceImpl implements CommentService {
 
     private AuthorDto getAuthor (Long userId) throws NotFoundException {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User with id: " + userId + " not found!"));
-        return AuthorDto.builder()
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .email(user.getEmail())
-                .build();
+        return new AuthorDto(user);
     }
 
     private Comment findCommentById(Long id) throws NotFoundException {

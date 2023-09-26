@@ -42,7 +42,8 @@ public class QuizServiceImpl implements QuizService {
         Optional<Quiz> search = quizRepository.findById(id);
         if(search.isPresent()){
             Quiz quiz = search.get();
-            return QuizDto.createDto(quiz);
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            return QuizDto.createDto(quiz, user);
         }
         throw new InvalidContentException("Invalid quiz Id");
     }
@@ -97,7 +98,7 @@ public class QuizServiceImpl implements QuizService {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Quiz quiz = new Quiz(quizCreateDto, user.getId(), labels);
         quizRepository.save(quiz);
-        return QuizDto.createDto(quiz);
+        return QuizDto.createDto(quiz, user);
     }
 
     @Override
@@ -115,7 +116,8 @@ public class QuizServiceImpl implements QuizService {
         Optional<Quiz> search = quizRepository.findByInvitationCode(invitationCode);
         if (search.isPresent()){
             Quiz quiz = search.get();
-            return QuizDto.createDto(quiz);
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            return QuizDto.createDto(quiz, user);
         }
         throw new InvalidContentException("Invalid invitation Code");
     }

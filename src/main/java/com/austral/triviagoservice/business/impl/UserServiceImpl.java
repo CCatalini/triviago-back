@@ -29,10 +29,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public AuthorDto findById(Long id) throws NotFoundException {
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User with id: " + id + " not found!"));
-        return AuthorDto.builder()
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .email(user.getEmail())
-                .build();
+        return new AuthorDto(user);
     }
 }
