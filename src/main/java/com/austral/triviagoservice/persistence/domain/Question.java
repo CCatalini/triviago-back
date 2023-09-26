@@ -2,10 +2,9 @@ package com.austral.triviagoservice.persistence.domain;
 
 import com.austral.triviagoservice.presentation.dto.QuestionCreateDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sun.istack.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import org.w3c.dom.stylesheets.LinkStyle;
+
 
 import javax.persistence.*;
 import java.util.List;

@@ -1,8 +1,7 @@
 package com.austral.triviagoservice.presentation.dto;
 
 
-import com.austral.triviagoservice.persistence.domain.Label;
-import com.austral.triviagoservice.persistence.domain.Question;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sun.istack.NotNull;
 import lombok.Getter;
