@@ -1,8 +1,10 @@
 package com.austral.triviagoservice.business.impl;
 
 import com.austral.triviagoservice.business.UserService;
+import com.austral.triviagoservice.business.exception.NotFoundException;
 import com.austral.triviagoservice.persistence.domain.User;
 import com.austral.triviagoservice.persistence.repository.UserRepository;
+import com.austral.triviagoservice.presentation.dto.AuthorDto;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,5 +24,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByEmail(String username) {
         return (User) userRepository.findByEmail(username).orElse(null);
+    }
+
+    @Override
+    public AuthorDto findById(Long id) throws NotFoundException {
+        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User with id: " + id + " not found!"));
+        return AuthorDto.builder()
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .build();
     }
 }

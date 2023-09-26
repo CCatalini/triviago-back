@@ -1,5 +1,6 @@
 package com.austral.triviagoservice.presentation.dto;
 
+import com.austral.triviagoservice.persistence.domain.Comment;
 import com.sun.istack.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +15,5 @@ public class CommentCreateDto  {
     private String content;
     @NotNull
     private Long quizId;
-    private LocalDateTime creationDate;
-    private int likes;
-
+    private Long parentCommentId;
 }
