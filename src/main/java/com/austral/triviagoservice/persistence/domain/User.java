@@ -27,7 +27,7 @@ public class User{
     @Column(name = "password", length = 50)
     private String password;
 
-    @OneToMany(mappedBy="user")
+    @OneToMany(mappedBy="user", fetch = FetchType.EAGER)
     private List<CommentLike> likes;
 
     public User() {
