@@ -11,7 +11,6 @@ import com.austral.triviagoservice.persistence.specification.QuizSpecification;
 import com.austral.triviagoservice.presentation.dto.*;
 import com.austral.triviagoservice.presentation.dto.QuizDto;
 import com.austral.triviagoservice.presentation.dto.QuizFilter;
-import lombok.SneakyThrows;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class QuizServiceImpl implements QuizService {
@@ -55,7 +55,7 @@ public class QuizServiceImpl implements QuizService {
 
         final QuizSpecification specification = new QuizSpecification(filter);
         List<Quiz> quizzes = quizRepository.findAll(specification);
-
+        quizzes = quizzes.stream().filter(quiz -> !quiz.isPrivate()).collect(Collectors.toList());
         int pageSize = pageable.getPageSize();
         int currentPage = pageable.getPageNumber();
         int startItem = currentPage * pageSize;
