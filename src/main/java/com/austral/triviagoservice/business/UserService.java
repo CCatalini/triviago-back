@@ -11,4 +11,6 @@ public interface UserService {
     User findByEmail(String username);
 
     AuthorDto findById(Long id) throws NotFoundException;
+
+
 }

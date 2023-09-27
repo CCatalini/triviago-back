@@ -39,7 +39,7 @@ public class QuizController {
                                         @RequestParam(value="size", defaultValue="10") int size){
         Pageable pages = PageRequest.of(page, size);
         try {
-            Page<Quiz> result = quizService.findAll(quizFilter, pages);
+            Page<QuizDto> result = quizService.findAll(quizFilter, pages);
             return new ResponseEntity<>(result, HttpStatus.OK);
         }
         catch (InvalidContentException e) {

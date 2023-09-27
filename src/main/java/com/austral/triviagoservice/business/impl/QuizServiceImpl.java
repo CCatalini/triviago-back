@@ -7,6 +7,7 @@ import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.persistence.domain.*;
 import com.austral.triviagoservice.persistence.repository.LabelRepository;
 import com.austral.triviagoservice.persistence.repository.QuizRepository;
+import com.austral.triviagoservice.persistence.repository.UserRepository;
 import com.austral.triviagoservice.persistence.specification.QuizSpecification;
 import com.austral.triviagoservice.presentation.dto.*;
 import com.austral.triviagoservice.presentation.dto.QuizDto;
@@ -29,12 +30,15 @@ public class QuizServiceImpl implements QuizService {
     final private QuizRepository quizRepository;
     private final LabelRepository labelRepository;
     private final UserService userService;
+    private final UserRepository userRepository;
 
     public QuizServiceImpl(QuizRepository quizRepository,
-                           LabelRepository labelRepository, UserService userService) {
+                           LabelRepository labelRepository, UserService userService,
+                           UserRepository userRepository) {
         this.quizRepository = quizRepository;
         this.labelRepository = labelRepository;
         this.userService = userService;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -49,18 +53,21 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public Page<Quiz> findAll(QuizFilter filter, Pageable pageable) throws InvalidContentException {
+    public Page<QuizDto> findAll(QuizFilter filter, Pageable pageable) throws InvalidContentException {
         ErrorCheckers checker = new ErrorCheckers();
         checker.checkQuizFilter(filter); //checks for invalid content on filter
 
         final QuizSpecification specification = new QuizSpecification(filter);
-        List<Quiz> quizzes = quizRepository.findAll(specification);
+        List<QuizDto> quizzes = quizRepository.findAll(specification).stream().map(quiz -> {
+            User user = userRepository.findById(quiz.getUserId()).get();
+            return QuizDto.createDto(quiz, user);
+        }).collect(Collectors.toList());
         quizzes = quizzes.stream().filter(quiz -> !quiz.isPrivate()).collect(Collectors.toList());
         int pageSize = pageable.getPageSize();
         int currentPage = pageable.getPageNumber();
         int startItem = currentPage * pageSize;
 
-        List<Quiz> pageQuizzes;
+        List<QuizDto> pageQuizzes;
 
         if (quizzes.size() < startItem) {
             pageQuizzes = List.of(); //Por si no hay suficientes elementos para llenar esa página
