@@ -3,11 +3,10 @@ package com.austral.triviagoservice.presentation.dto;
 import com.austral.triviagoservice.persistence.domain.Quiz;
 import com.austral.triviagoservice.persistence.domain.Label;
 import com.austral.triviagoservice.persistence.domain.User;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,7 +18,7 @@ public class QuizDto {
     private AuthorDto author;
     private String title;
     private String description;
-    private LocalDateTime creationDate;
+    private LocalDate creationDate;
     private Double rating;
     private String invitationCode;
     private boolean isPrivate;
