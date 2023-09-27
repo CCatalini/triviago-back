@@ -38,8 +38,8 @@ public class Comment {
 
     public Comment(CommentCreateDto commentDto, Long userId){
         this.content = commentDto.getContent();
-        this.creationDateTime = commentDto.getCreationDate();
-        this.likes = commentDto.getLikes();
+        this.creationDateTime = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires"));
+        this.likes = new ArrayList<>();
         this.userId = userId;
         this.quizId = commentDto.getQuizId();
         this.replies = new ArrayList<>();

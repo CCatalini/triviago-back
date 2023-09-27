@@ -52,8 +52,6 @@ public class CommentServiceImpl implements CommentService {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<Quiz> quiz = quizRepository.findById(commentDto.getQuizId());
         if (quiz.isEmpty()) throw new NotFoundException("Not found quiz");
-        commentDto.setCreationDate(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")));
-        commentDto.setLikes(new ArrayList<>());
         Comment comment = new Comment(commentDto, user.getId());
         commentRepository.save(comment);
 
