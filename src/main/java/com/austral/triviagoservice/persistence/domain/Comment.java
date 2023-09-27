@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -31,10 +33,13 @@ public class Comment {
     private List<Comment> replies;
     private Long parentCommentId;
 
+    @OneToMany(mappedBy="comment")
+    private List<CommentLike> likes;
+
     public Comment(CommentCreateDto commentDto, Long userId){
         this.content = commentDto.getContent();
         this.creationDateTime = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires"));
-        this.likes = 0;
+        this.likes = new ArrayList<>();
         this.userId = userId;
         this.quizId = commentDto.getQuizId();
         this.replies = new ArrayList<>();
@@ -43,12 +48,10 @@ public class Comment {
 
     public Comment(){}
 
-    public void incrementLike(){
-        likes += 1;
+    public void setLike(CommentLike like){
+        likes.add(like);
     }
-
-    public void decrementLike(){
-        likes -= 1;
+    public void quitLike(CommentLike like){
+        likes.remove(like);
     }
-
 }
