@@ -1,11 +1,10 @@
 package com.austral.triviagoservice.presentation.dto;
 
-import com.austral.triviagoservice.persistence.domain.Comment;
+
 import com.sun.istack.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
 
 
 @Getter
