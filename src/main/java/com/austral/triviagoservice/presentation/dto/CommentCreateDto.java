@@ -18,7 +18,5 @@ public class CommentCreateDto  {
     @NotNull
     private Long quizId;
     private Long parentCommentId;
-    private LocalDateTime creationDate;
-    private List<CommentLike> likes;
 
 }
