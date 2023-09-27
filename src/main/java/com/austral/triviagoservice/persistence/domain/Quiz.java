@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -25,8 +25,8 @@ public class Quiz {
     private String title;
     @Column
     private String description;
-    @Column(nullable = false, columnDefinition = "DATETIME(0)")
-    private LocalDateTime creationDate;
+    @Column(nullable = false, columnDefinition = "DATE")
+    private LocalDate creationDate;
     @Column
     private double rating;
     @Column
@@ -54,7 +54,7 @@ public class Quiz {
         this.questions = quizCreateDto.getQuestions().stream().map(questionCreateDto -> new Question(questionCreateDto, this)).collect(Collectors.toList());
         this.labels = labels;
         labels.forEach(label -> label.getQuizzes().add(this));
-        this.creationDate = LocalDateTime.now();
+        this.creationDate = LocalDate.now();
         this.rating = 0;
         if (quizCreateDto.isPrivate()) this.invitationCode = UUID.randomUUID().toString();
     }
