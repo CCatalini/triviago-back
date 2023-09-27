@@ -1,9 +1,9 @@
 package com.austral.triviagoservice.business;
 
-import com.austral.triviagoservice.persistence.domain.Label;
+import com.austral.triviagoservice.presentation.dto.LabelDto;
 
 import java.util.List;
 
 public interface LabelService {
-    List<Label> findAll();
+    List<LabelDto> findAll();
 }
