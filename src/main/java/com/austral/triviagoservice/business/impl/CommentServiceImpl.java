@@ -115,6 +115,7 @@ public class CommentServiceImpl implements CommentService {
                         like -> {
                             user.quitLike(like);
                             comment.quitLike(like); //removes the like
+                            commentLikeService.delete(like); //delets from database
                             commentRepository.save(comment); //saves comment
                         });
     }
