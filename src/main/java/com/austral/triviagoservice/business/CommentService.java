@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface CommentService {
     List<CommentDto> findAllByQuizId(Long quizId);
-    Comment create(CommentCreateDto commentDto) throws NotFoundException;
+    CommentDto create(CommentCreateDto commentDto) throws NotFoundException;
     Comment editComment(Comment comment, String newContent);
     Comment deleteComment(Comment comment);
     void like(Long id, Boolean dislike) throws InvalidContentException;

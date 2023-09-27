@@ -34,7 +34,7 @@ public class CommentServiceImpl implements CommentService {
 
 
     @Override
-    public Comment create(CommentCreateDto commentDto) throws NotFoundException {
+    public CommentDto create(CommentCreateDto commentDto) throws NotFoundException {
         // Check that related quiz exists
         if (!quizRepository.existsById(commentDto.getQuizId()))
             throw new NotFoundException("Quiz with id " + commentDto.getQuizId() + " not found");
@@ -51,7 +51,7 @@ public class CommentServiceImpl implements CommentService {
             commentRepository.save(parentComment);
         }
 
-        return comment;
+        return entityToDto(comment);
     }
     @Override
     public Comment editComment(Comment comment, String newComment) {
