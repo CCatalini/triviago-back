@@ -27,4 +27,9 @@ public class CommentLikeServiceImpl implements CommentLikeService {
     public CommentLike getById(Long id) throws NotFoundException {
         return commentLikeRepository.findById(id).orElseThrow(() -> new NotFoundException("Comment like with id: " + id + " not found!"));
     }
+
+    @Override
+    public void delete(CommentLike commentLike){
+        commentLikeRepository.delete(commentLike);
+    }
 }

@@ -8,4 +8,5 @@ public interface CommentLikeService {
 
     CommentLike create(CommentLike commentLike);
     CommentLike getById(Long id) throws InvalidContentException, NotFoundException;
+    void delete(CommentLike commentLike);
 }
