@@ -95,6 +95,8 @@ public class CommentServiceImpl implements CommentService {
                 .creationDate(comment.getCreationDateTime().toString())
                 .responses(comment.getReplies().stream().map(this::entityToDto).collect(Collectors.toList()))
                 .parentCommentId(comment.getParentCommentId())
+                .likes(comment.getLikes().stream().mapToInt(like ->
+                                                            like.getIsLike() ? 1 : -1).sum())
                 .build();
     }
 
