@@ -27,8 +27,7 @@ public class Comment {
     private String content;
     @Column(nullable = false, columnDefinition = "DATETIME(0)")
     private LocalDateTime creationDateTime;
-    @Column
-    private Integer likes;
+    
     @OneToMany
     private List<Comment> replies;
     private Long parentCommentId;
