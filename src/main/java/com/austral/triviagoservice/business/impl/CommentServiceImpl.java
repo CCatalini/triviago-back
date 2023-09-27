@@ -10,16 +10,21 @@ import com.austral.triviagoservice.persistence.domain.User;
 import com.austral.triviagoservice.persistence.repository.CommentRepository;
 import com.austral.triviagoservice.persistence.repository.QuizRepository;
 import com.austral.triviagoservice.persistence.repository.UserRepository;
+import com.austral.triviagoservice.presentation.dto.AuthorDto;
+import com.austral.triviagoservice.presentation.dto.CommentDto;
 import com.austral.triviagoservice.presentation.dto.CommentCreateDto;
+import lombok.SneakyThrows;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -36,23 +41,31 @@ public class CommentServiceImpl implements CommentService {
         this.commentLikeService = commentLikeService;
     }
 
-    @Override
-    public List<Comment> findAllByQuizId(Long quizId) {
-        return commentRepository.findByQuizId(quizId);
-    }
 
     @Override
     public Comment create(CommentCreateDto commentDto) throws NotFoundException {
+        // Check that related quiz exists
+        if (!quizRepository.existsById(commentDto.getQuizId()))
+            throw new NotFoundException("Quiz with id " + commentDto.getQuizId() + " not found");
+
+        // Create and save comment
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<Quiz> quiz = quizRepository.findById(commentDto.getQuizId());
         if (quiz.isEmpty()) throw new NotFoundException("Not found quiz");
         commentDto.setCreationDate(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")));
         commentDto.setLikes(new ArrayList<>());
-        Comment comment = new Comment(commentDto);
+        Comment comment = new Comment(commentDto, user.getId());
         commentRepository.save(comment);
+
+        // Update parent comment (if necessary)
+        if (commentDto.getParentCommentId() != null) {
+            Comment parentComment = findCommentById(commentDto.getParentCommentId());
+            parentComment.getReplies().add(comment);
+            commentRepository.save(parentComment);
+        }
+
         return comment;
     }
-
     @Override
     public Comment editComment(Comment comment, String newComment) {
         commentRepository.findById(comment.getId()).ifPresent(comment1 -> {
@@ -69,8 +82,38 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    public List<CommentDto> findAllByQuizId(Long quizId) {
+        return commentRepository.findAllByQuizId(quizId)
+                .stream()
+                .filter(c -> c.getParentCommentId() == null)
+                .map(this::entityToDto)
+                .collect(Collectors.toList());
+    }
+
+    @SneakyThrows
+    private CommentDto entityToDto(Comment comment) {
+        return CommentDto.builder()
+                .id(comment.getId())
+                .author(getAuthor(comment.getUserId()))
+                .content(comment.getContent())
+                .creationDate(comment.getCreationDateTime().toString())
+                .responses(comment.getReplies().stream().map(this::entityToDto).collect(Collectors.toList()))
+                .parentCommentId(comment.getParentCommentId())
+                .build();
+    }
+
+    private AuthorDto getAuthor (Long userId) throws NotFoundException {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User with id: " + userId + " not found!"));
+        return new AuthorDto(user);
+    }
+
+    private Comment findCommentById(Long id) throws NotFoundException {
+        return commentRepository.findById(id).orElseThrow(() -> new NotFoundException("Comment with id: " + id + " not found!"));
+    }
+
+    @Override
     public Comment findById(Long id) throws InvalidContentException {
-        if (commentRepository.existsById(id)) {
+        if(commentRepository.existsById(id)){
             return commentRepository.findById(id).get();
         }
         throw new InvalidContentException("Invalid content, Id does not exist");

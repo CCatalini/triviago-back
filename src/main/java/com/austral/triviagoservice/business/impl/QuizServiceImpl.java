@@ -1,40 +1,49 @@
 package com.austral.triviagoservice.business.impl;
 
+import com.austral.triviagoservice.business.UserService;
 import com.austral.triviagoservice.business.helper.ErrorCheckers;
 import com.austral.triviagoservice.business.QuizService;
 import com.austral.triviagoservice.business.exception.InvalidContentException;
-import com.austral.triviagoservice.persistence.domain.Quiz;
+import com.austral.triviagoservice.persistence.domain.*;
+import com.austral.triviagoservice.persistence.repository.LabelRepository;
 import com.austral.triviagoservice.persistence.repository.QuizRepository;
 import com.austral.triviagoservice.persistence.specification.QuizSpecification;
-import com.austral.triviagoservice.presentation.dto.QuizCreate;
+import com.austral.triviagoservice.presentation.dto.*;
+import com.austral.triviagoservice.presentation.dto.QuizDto;
 import com.austral.triviagoservice.presentation.dto.QuizFilter;
+import lombok.SneakyThrows;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class QuizServiceImpl implements QuizService {
 
     final private QuizRepository quizRepository;
-    public QuizServiceImpl(QuizRepository quizRepository) {
+    private final LabelRepository labelRepository;
+    private final UserService userService;
+
+    public QuizServiceImpl(QuizRepository quizRepository,
+                           LabelRepository labelRepository, UserService userService) {
         this.quizRepository = quizRepository;
+        this.labelRepository = labelRepository;
+        this.userService = userService;
     }
 
     @Override
-    public QuizCreate findById(Long id) throws InvalidContentException {
+    public QuizDto findById(Long id) throws InvalidContentException {
         Optional<Quiz> search = quizRepository.findById(id);
         if(search.isPresent()){
             Quiz quiz = search.get();
-            return QuizCreate.createDTO(quiz);
-
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            return QuizDto.createDto(quiz, user);
         }
         throw new InvalidContentException("Invalid quiz Id");
     }
@@ -65,16 +74,31 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public QuizCreate createQuiz(Quiz quiz) {
-        quiz.setCreationDate(LocalDate.now(ZoneId.of("America/Argentina/Buenos_Aires"))); //Buenos Aires time zone
-        if(quiz.getIsPrivate()){
-            //Se genera un código de invitación con un UUID random.
-            UUID code = UUID.randomUUID();
-            quiz.setInvitationCode(code.toString());
+    public QuizDto create(QuizCreateDto quizCreateDto) throws InvalidContentException {
+        if (quizCreateDto.getTitle() == null) throw new InvalidContentException("Invalid title");
+        if (quizCreateDto.getDescription() == null) throw new InvalidContentException("Invalid description");
+        if (quizCreateDto.getQuestions().isEmpty()) throw new InvalidContentException("Invalid questions quantity");
+        if (quizCreateDto.getQuestions().stream().anyMatch(q -> q.getContent() == null))
+            throw new InvalidContentException("Invalid question content");
+        if (quizCreateDto.getQuestions().stream().anyMatch(q -> q.getAnswers().stream().anyMatch(a -> a.getContent() == null)))
+            throw new InvalidContentException("Invalid answer content");
+        if (quizCreateDto.getQuestions().stream().anyMatch(q -> q.getAnswers().size() < 2))
+            throw new InvalidContentException("Invalid answers quantity, there must be at least two possible answers for each question");
+        if (quizCreateDto.getQuestions().stream().anyMatch(q -> q.getAnswers().stream().noneMatch(AnswerCreateDto::isCorrect)))
+            throw new InvalidContentException("Invalid answers, there must be at least one correct answer for each question");
+        if (quizCreateDto.getLabels().stream().anyMatch(l -> l.getValue() == null))
+            throw new InvalidContentException("Invalid label value");
+        if (quizCreateDto.getLabels().stream().anyMatch(l -> !labelRepository.existsByValue(l.getValue())))
+            throw new InvalidContentException("Invalid label, it must exist in the database");
+        List<Label> labels = new ArrayList<>();
+        for (LabelCreateDto labelCreateDto : quizCreateDto.getLabels()) {
+            Optional<Label> search = labelRepository.findByValue(labelCreateDto.getValue());
+            search.ifPresent(labels::add);
         }
-        quiz.setRating(0.0);
-        Quiz created = quizRepository.save(quiz);
-        return QuizCreate.createDTO(created);
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Quiz quiz = new Quiz(quizCreateDto, user.getId(), labels);
+        quizRepository.save(quiz);
+        return QuizDto.createDto(quiz, user);
     }
 
     @Override
@@ -88,12 +112,29 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public QuizCreate findByInvitationCode(String invitationCode) throws InvalidContentException{
+    public QuizDto findByInvitationCode(String invitationCode) throws InvalidContentException{
         Optional<Quiz> search = quizRepository.findByInvitationCode(invitationCode);
         if (search.isPresent()){
             Quiz quiz = search.get();
-            return QuizCreate.createDTO(quiz);
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            return QuizDto.createDto(quiz, user);
         }
         throw new InvalidContentException("Invalid invitation Code");
     }
+    /*
+    @SneakyThrows
+    private QuizDto quizCreateBuilder (Quiz quiz) {
+        return QuizDto.builder()
+                .id(quiz.getId())
+                .author(userService.findById(quiz.getUserId()))
+                .title(quiz.getTitle())
+                .description(quiz.getDescription())
+                .creationDate(quiz.getCreationDate())
+                .rating(quiz.getRating())
+                .invitationCode(quiz.getInvitationCode())
+                .isPrivate(quiz.IsPrivate())
+                .questions(quiz.getQuestions())
+                .labels(quiz.getLabels())
+                .build();
+    }*/
 }
