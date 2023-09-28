@@ -73,9 +73,6 @@ public class QuizSpecification implements Specification<Quiz> {
         if (quizFilter.getIsPrivate() != null) {
             restrictions.add(criteriaBuilder.equal(quiz.get("isPrivate"), quizFilter.getIsPrivate()));
         }
-        if (quizFilter.getLabels() != null) {
-            restrictions.add(criteriaBuilder.equal(quiz.get("labels"), quizFilter.getLabels().stream().collect(Collectors.toList())));
-        }
         return criteriaBuilder.and(restrictions.toArray(new Predicate[0]));
     }
 }

@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -54,6 +55,10 @@ public class QuizServiceImpl implements QuizService {
         final QuizSpecification specification = new QuizSpecification(filter);
         List<QuizDto> quizzes = quizRepository.findAll(specification)
                 .stream().map(QuizDto::createDto).collect(Collectors.toList());
+        if (filter.getLabels() != null && !filter.getLabels().isEmpty()) {
+            quizzes = quizzes.stream().filter(quiz -> new HashSet<>(quiz.getLabels()).containsAll(filter.getLabels()))
+                    .collect(Collectors.toList());
+        }
         int pageSize = pageable.getPageSize();
         int currentPage = pageable.getPageNumber();
         int startItem = currentPage * pageSize;
