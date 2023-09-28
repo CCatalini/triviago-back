@@ -27,7 +27,7 @@ public class User{
     @Column(name = "birthDate")
     private LocalDate birthDate;
 
-    @Column(name = "email", length = 50)
+    @Column(name = "email", length = 50, unique = true)
     private String email;
 
     @Column(name = "password", length = 50)
