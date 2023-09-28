@@ -1,7 +1,6 @@
 package com.austral.triviagoservice.presentation.dto;
 
 import com.austral.triviagoservice.persistence.domain.User;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 

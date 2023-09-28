@@ -1,9 +1,8 @@
 package com.austral.triviagoservice.persistence.repository;
 
+import com.austral.triviagoservice.persistence.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import com.austral.triviagoservice.persistence.domain.User;
 
 import java.util.Optional;
 

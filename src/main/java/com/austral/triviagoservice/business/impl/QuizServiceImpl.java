@@ -1,21 +1,20 @@
 package com.austral.triviagoservice.business.impl;
 
-import com.austral.triviagoservice.business.helper.ErrorCheckers;
 import com.austral.triviagoservice.business.QuizService;
 import com.austral.triviagoservice.business.exception.InvalidContentException;
-import com.austral.triviagoservice.persistence.domain.*;
+import com.austral.triviagoservice.business.helper.ErrorCheckers;
+import com.austral.triviagoservice.persistence.domain.Label;
+import com.austral.triviagoservice.persistence.domain.Quiz;
+import com.austral.triviagoservice.persistence.domain.User;
 import com.austral.triviagoservice.persistence.repository.LabelRepository;
 import com.austral.triviagoservice.persistence.repository.QuizRepository;
 import com.austral.triviagoservice.persistence.specification.QuizSpecification;
 import com.austral.triviagoservice.presentation.dto.*;
-import com.austral.triviagoservice.presentation.dto.QuizDto;
-import com.austral.triviagoservice.presentation.dto.QuizFilter;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
 
 import java.util.ArrayList;
 import java.util.HashSet;

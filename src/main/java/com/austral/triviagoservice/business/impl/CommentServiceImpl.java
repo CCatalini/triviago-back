@@ -6,7 +6,6 @@ import com.austral.triviagoservice.business.exception.NotFoundException;
 import com.austral.triviagoservice.business.exception.UnauthorizedException;
 import com.austral.triviagoservice.persistence.domain.Comment;
 import com.austral.triviagoservice.persistence.domain.CommentLike;
-import com.austral.triviagoservice.persistence.domain.Quiz;
 import com.austral.triviagoservice.persistence.domain.User;
 import com.austral.triviagoservice.persistence.repository.CommentRepository;
 import com.austral.triviagoservice.persistence.repository.QuizRepository;
@@ -16,12 +15,7 @@ import lombok.SneakyThrows;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.ArrayList;
-
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
