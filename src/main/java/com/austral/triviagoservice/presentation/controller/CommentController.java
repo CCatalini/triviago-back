@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.web.bind.annotation.*;
 
+
 @RestController
 @RequestMapping("/comment")
 public class CommentController {
@@ -48,8 +49,8 @@ public class CommentController {
     }
 
     @PostMapping("/{id}/like")
-    public ResponseEntity<?> likeComment(@PathVariable("id") Long id) {
-        try {
+    public ResponseEntity<?> likeComment(@PathVariable("id") Long id){
+        try{
             commentService.like(id, false);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (InvalidContentException e) {
@@ -58,8 +59,8 @@ public class CommentController {
     }
 
     @PostMapping("/{id}/dislike")
-    public ResponseEntity<?> dislikeComment(@PathVariable("id") Long id) {
-        try {
+    public ResponseEntity<?> dislikeComment(@PathVariable("id") Long id){
+        try{
             commentService.like(id, true);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (InvalidContentException e) {
@@ -67,5 +68,15 @@ public class CommentController {
         }
     }
 
+    @DeleteMapping("/{id}/removeLike")
+    public ResponseEntity<?> removeLikeFromComment(@PathVariable("id") Long id){
+        try{
+            commentService.removeLike(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        catch(InvalidContentException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
 
 }

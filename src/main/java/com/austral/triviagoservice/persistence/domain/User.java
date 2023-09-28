@@ -34,6 +34,10 @@ public class User{
     @Column(name = "password", length = 50)
     private String password;
 
+    @OneToMany(mappedBy="user", fetch = FetchType.EAGER)
+    private List<CommentLike> likes;
+
+    public User() {}    
 
     @OneToMany(targetEntity = Quiz.class, cascade = CascadeType.ALL, mappedBy = "user")
     @JsonIgnore
@@ -42,5 +46,13 @@ public class User{
     public User() {
     }
 
+
+    public void setLike(CommentLike like){
+        likes.add(like);
+    }
+
+    public void quitLike(CommentLike like){
+        likes.remove(like);
+    }
 
 }
