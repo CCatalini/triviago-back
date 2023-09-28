@@ -1,5 +1,6 @@
 package com.austral.triviagoservice.presentation.controller;
 
+import com.austral.triviagoservice.business.exception.UserAlreadyExistsException;
 import com.austral.triviagoservice.business.impl.AuthService;
 import com.austral.triviagoservice.presentation.dto.AuthenticationRequest;
 import com.austral.triviagoservice.presentation.dto.AuthenticationResponse;
@@ -21,7 +22,11 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<AuthenticationResponse> signUpUser(@RequestBody SignUpForm user){
-        return ResponseEntity.ok(authService.signUp(user));
+        try {
+            return ResponseEntity.ok(authService.signUp(user));
+        } catch (UserAlreadyExistsException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
     @PostMapping("/login")
