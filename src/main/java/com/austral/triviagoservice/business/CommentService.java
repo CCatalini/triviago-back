@@ -5,12 +5,10 @@ import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.business.exception.NotFoundException;
 import com.austral.triviagoservice.business.exception.UnauthorizedException;
 import com.austral.triviagoservice.persistence.domain.Comment;
-
-import com.austral.triviagoservice.presentation.dto.CommentDto;
 import com.austral.triviagoservice.presentation.dto.CommentCreateDto;
+import com.austral.triviagoservice.presentation.dto.CommentDto;
 import com.austral.triviagoservice.presentation.dto.CommentEditDto;
 import com.austral.triviagoservice.presentation.dto.TotalLikesDto;
-
 
 import java.util.List;
 
