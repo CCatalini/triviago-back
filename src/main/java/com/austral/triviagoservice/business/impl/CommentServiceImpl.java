@@ -11,10 +11,7 @@ import com.austral.triviagoservice.persistence.domain.User;
 import com.austral.triviagoservice.persistence.repository.CommentRepository;
 import com.austral.triviagoservice.persistence.repository.QuizRepository;
 import com.austral.triviagoservice.persistence.repository.UserRepository;
-import com.austral.triviagoservice.presentation.dto.AuthorDto;
-import com.austral.triviagoservice.presentation.dto.CommentDto;
-import com.austral.triviagoservice.presentation.dto.CommentCreateDto;
-import com.austral.triviagoservice.presentation.dto.CommentEditDto;
+import com.austral.triviagoservice.presentation.dto.*;
 import lombok.SneakyThrows;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -94,16 +91,19 @@ public class CommentServiceImpl implements CommentService {
 
     @SneakyThrows
     private CommentDto entityToDto(Comment comment) {
-        return CommentDto.builder()
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        CommentDto commentDto = CommentDto.builder()
                 .id(comment.getId())
                 .author(getAuthor(comment.getUserId()))
                 .content(comment.getContent())
                 .creationDate(comment.getCreationDateTime().toString())
                 .responses(comment.getReplies().stream().map(this::entityToDto).collect(Collectors.toList()))
                 .parentCommentId(comment.getParentCommentId())
-                .likes(comment.getLikes().stream().mapToInt(like ->
-                                                            like.getIsLike() ? 1 : -1).sum())
+                .likes(comment.getLikes().stream().mapToInt(like -> like.getIsLike() ? 1 : -1).sum())
                 .build();
+        Optional<CommentLike> optionalCommentLike = comment.getLikes().stream().filter(like -> like.getUser().getId().equals(user.getId())).findFirst();
+        optionalCommentLike.ifPresent(commentLike -> commentDto.setIsLikedByUser(commentLike.getIsLike()));
+        return commentDto;
     }
 
     private AuthorDto getAuthor (Long userId) throws NotFoundException {
@@ -125,7 +125,7 @@ public class CommentServiceImpl implements CommentService {
 
 
     @Override
-    public void like(Long id, Boolean dislike) throws InvalidContentException {
+    public TotalLikesDto like(Long id, Boolean dislike) throws InvalidContentException {
         Comment comment = this.findById(id);
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();//gets actual user in session
         comment.getLikes().stream()
@@ -140,6 +140,10 @@ public class CommentServiceImpl implements CommentService {
                                 commentLikeService.create(like); //writes into database
                                 comment.setLike(like);//writes into Comment entity
                                 user.setLike(like);
+                            } else {
+                                comment.quitLike(like); //quits actual from structure
+                                user.quitLike(like);
+                                commentLikeService.delete(like);
                             }
                             //Else is an invalid
                         },
@@ -148,11 +152,12 @@ public class CommentServiceImpl implements CommentService {
                             comment.setLike(value);
                             user.setLike(value);
                         });
+        return new TotalLikesDto(comment.getLikes().stream().mapToInt(like -> like.getIsLike() ? 1 : -1).sum());
     }
 
 
     @Override
-    public void removeLike(Long id) throws InvalidContentException {
+    public TotalLikesDto removeLike(Long id) throws InvalidContentException {
         Comment comment = this.findById(id);
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();//gets actual user in session
         comment.getLikes().stream().filter(
@@ -164,5 +169,6 @@ public class CommentServiceImpl implements CommentService {
                             comment.quitLike(like); //removes the like
                             commentLikeService.delete(like); //delets from database
                         });
+        return new TotalLikesDto(comment.getLikes().stream().mapToInt(like -> like.getIsLike() ? 1 : -1).sum());
     }
 }

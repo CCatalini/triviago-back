@@ -9,6 +9,7 @@ import com.austral.triviagoservice.persistence.domain.Comment;
 import com.austral.triviagoservice.presentation.dto.CommentDto;
 import com.austral.triviagoservice.presentation.dto.CommentCreateDto;
 import com.austral.triviagoservice.presentation.dto.CommentEditDto;
+import com.austral.triviagoservice.presentation.dto.TotalLikesDto;
 
 
 import java.util.List;
@@ -19,6 +20,6 @@ public interface CommentService {
     CommentDto editComment(Long id, CommentEditDto commentEditDto) throws NotFoundException, UnauthorizedException;
     void deleteComment(Long id) throws NotFoundException, UnauthorizedException;
     Comment findById(Long id) throws InvalidContentException;
-    void like(Long id, Boolean dislike) throws InvalidContentException;
-    void removeLike(Long id) throws InvalidContentException;
+    TotalLikesDto like(Long id, Boolean dislike) throws InvalidContentException;
+    TotalLikesDto removeLike(Long id) throws InvalidContentException;
 }

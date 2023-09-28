@@ -16,5 +16,5 @@ public class CommentDto {
     private int likes;
     private List<CommentDto> responses;
     private Long parentCommentId;
-
+    private Boolean isLikedByUser;
 }
