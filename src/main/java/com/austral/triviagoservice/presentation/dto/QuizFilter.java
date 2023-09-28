@@ -27,4 +27,5 @@ public class QuizFilter {
     Double rating;
     Double minRating;
     Double maxRating;
+    Boolean isPrivate;
 }

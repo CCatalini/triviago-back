@@ -23,24 +23,24 @@ public class QuizDto {
     private String invitationCode;
     private boolean isPrivate;
     private List<QuestionDto> questions;
-    private List<String > labels;
+    private List<LabelDto> labels;
 
     public QuizDto() {
 
     }
 
-    public static QuizDto createDto(Quiz quiz, User author){
+    public static QuizDto createDto(Quiz quiz){
         QuizDto dto = new QuizDto();
         dto.setTitle(quiz.getTitle());
         dto.setDescription(quiz.getDescription());
         dto.setCreationDate(quiz.getCreationDate());
         dto.setRating(quiz.getRating());
-        dto.setAuthor(new AuthorDto(author));
+        dto.setAuthor(new AuthorDto(quiz.getUser()));
         dto.setInvitationCode(quiz.getInvitationCode());
         dto.setId(quiz.getId());
         dto.setPrivate(quiz.isPrivate());
         dto.setQuestions(quiz.getQuestions().stream().map(QuestionDto::new).collect(Collectors.toList()));
-        dto.setLabels(quiz.getLabels().stream().map(Label::getValue).collect(Collectors.toList()));
+        dto.setLabels(quiz.getLabels().stream().map(LabelDto::new).collect(Collectors.toList()));
         return dto;
     }
 

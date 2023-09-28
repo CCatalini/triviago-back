@@ -1,7 +1,9 @@
 package com.austral.triviagoservice.business.impl;
 
 import com.austral.triviagoservice.business.LabelService;
+import com.austral.triviagoservice.persistence.domain.Label;
 import com.austral.triviagoservice.persistence.repository.LabelRepository;
+import com.austral.triviagoservice.presentation.dto.LabelCreateDto;
 import com.austral.triviagoservice.presentation.dto.LabelDto;
 import org.springframework.stereotype.Service;
 
@@ -20,5 +22,9 @@ public class LabelServiceImpl implements LabelService {
     @Override
     public List<LabelDto> findAll() {
         return labelRepository.findAll().stream().map(LabelDto::new).collect(Collectors.toList());
+    }
+
+    public LabelDto save(LabelCreateDto labelCreateDto) {
+        return new LabelDto(labelRepository.save(new Label(labelCreateDto)));
     }
 }

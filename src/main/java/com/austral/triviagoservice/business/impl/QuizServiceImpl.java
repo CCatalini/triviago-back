@@ -1,13 +1,11 @@
 package com.austral.triviagoservice.business.impl;
 
-import com.austral.triviagoservice.business.UserService;
 import com.austral.triviagoservice.business.helper.ErrorCheckers;
 import com.austral.triviagoservice.business.QuizService;
 import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.persistence.domain.*;
 import com.austral.triviagoservice.persistence.repository.LabelRepository;
 import com.austral.triviagoservice.persistence.repository.QuizRepository;
-import com.austral.triviagoservice.persistence.repository.UserRepository;
 import com.austral.triviagoservice.persistence.specification.QuizSpecification;
 import com.austral.triviagoservice.presentation.dto.*;
 import com.austral.triviagoservice.presentation.dto.QuizDto;
@@ -29,16 +27,13 @@ public class QuizServiceImpl implements QuizService {
 
     final private QuizRepository quizRepository;
     private final LabelRepository labelRepository;
-    private final UserService userService;
-    private final UserRepository userRepository;
+
 
     public QuizServiceImpl(QuizRepository quizRepository,
-                           LabelRepository labelRepository, UserService userService,
-                           UserRepository userRepository) {
+                           LabelRepository labelRepository) {
         this.quizRepository = quizRepository;
         this.labelRepository = labelRepository;
-        this.userService = userService;
-        this.userRepository = userRepository;
+
     }
 
     @Override
@@ -46,8 +41,7 @@ public class QuizServiceImpl implements QuizService {
         Optional<Quiz> search = quizRepository.findById(id);
         if(search.isPresent()){
             Quiz quiz = search.get();
-            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            return QuizDto.createDto(quiz, user);
+            return QuizDto.createDto(quiz);
         }
         throw new InvalidContentException("Invalid quiz Id");
     }
@@ -56,13 +50,10 @@ public class QuizServiceImpl implements QuizService {
     public Page<QuizDto> findAll(QuizFilter filter, Pageable pageable) throws InvalidContentException {
         ErrorCheckers checker = new ErrorCheckers();
         checker.checkQuizFilter(filter); //checks for invalid content on filter
-
+        filter.setIsPrivate(false);
         final QuizSpecification specification = new QuizSpecification(filter);
-        List<QuizDto> quizzes = quizRepository.findAll(specification).stream().map(quiz -> {
-            User user = userRepository.findById(quiz.getUserId()).get();
-            return QuizDto.createDto(quiz, user);
-        }).collect(Collectors.toList());
-        quizzes = quizzes.stream().filter(quiz -> !quiz.isPrivate()).collect(Collectors.toList());
+        List<QuizDto> quizzes = quizRepository.findAll(specification)
+                .stream().map(QuizDto::createDto).collect(Collectors.toList());
         int pageSize = pageable.getPageSize();
         int currentPage = pageable.getPageNumber();
         int startItem = currentPage * pageSize;
@@ -75,8 +66,6 @@ public class QuizServiceImpl implements QuizService {
             int toIndex = Math.min(startItem + pageSize, quizzes.size());
             pageQuizzes = quizzes.subList(startItem, toIndex); //Si es menor, crea la sublista
         }
-
-
         return new PageImpl<>(pageQuizzes, pageable, quizzes.size());
     }
 
@@ -103,9 +92,9 @@ public class QuizServiceImpl implements QuizService {
             search.ifPresent(labels::add);
         }
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Quiz quiz = new Quiz(quizCreateDto, user.getId(), labels);
+        Quiz quiz = new Quiz(quizCreateDto, user, labels);
         quizRepository.save(quiz);
-        return QuizDto.createDto(quiz, user);
+        return QuizDto.createDto(quiz);
     }
 
     @Override
@@ -123,25 +112,8 @@ public class QuizServiceImpl implements QuizService {
         Optional<Quiz> search = quizRepository.findByInvitationCode(invitationCode);
         if (search.isPresent()){
             Quiz quiz = search.get();
-            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            return QuizDto.createDto(quiz, user);
+            return QuizDto.createDto(quiz);
         }
         throw new InvalidContentException("Invalid invitation Code");
     }
-    /*
-    @SneakyThrows
-    private QuizDto quizCreateBuilder (Quiz quiz) {
-        return QuizDto.builder()
-                .id(quiz.getId())
-                .author(userService.findById(quiz.getUserId()))
-                .title(quiz.getTitle())
-                .description(quiz.getDescription())
-                .creationDate(quiz.getCreationDate())
-                .rating(quiz.getRating())
-                .invitationCode(quiz.getInvitationCode())
-                .isPrivate(quiz.IsPrivate())
-                .questions(quiz.getQuestions())
-                .labels(quiz.getLabels())
-                .build();
-    }*/
 }

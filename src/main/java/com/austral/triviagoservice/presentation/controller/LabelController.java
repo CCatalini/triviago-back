@@ -2,15 +2,13 @@ package com.austral.triviagoservice.presentation.controller;
 
 import com.austral.triviagoservice.business.impl.LabelServiceImpl;
 import com.austral.triviagoservice.persistence.domain.Label;
+import com.austral.triviagoservice.presentation.dto.LabelCreateDto;
 import com.austral.triviagoservice.presentation.dto.LabelDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,6 +27,14 @@ public class LabelController {
     public ResponseEntity<List<LabelDto>> findAll(){
         return ResponseEntity.ok(labelService.findAll());
 
+    }
+    @PostMapping()
+    public ResponseEntity<?> save(@RequestBody LabelCreateDto labelDto){
+        try {
+            return new ResponseEntity<>(labelService.save(labelDto), HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
 }

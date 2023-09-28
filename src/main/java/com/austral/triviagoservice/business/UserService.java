@@ -12,5 +12,4 @@ public interface UserService {
 
     AuthorDto findById(Long id) throws NotFoundException;
 
-
 }

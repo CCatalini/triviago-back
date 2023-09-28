@@ -12,5 +12,4 @@ import java.util.Optional;
 public interface QuizRepository extends JpaRepository<Quiz, Long>, JpaSpecificationExecutor<Quiz> {
     Optional<Quiz> findByInvitationCode(String invitationCode);
 
-    List<Quiz> findAllByIsPrivateFalse();
 }
