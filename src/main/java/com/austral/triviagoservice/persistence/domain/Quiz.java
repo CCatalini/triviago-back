@@ -20,8 +20,6 @@ public class Quiz {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false)
-    private Long userId;
-    @Column(nullable = false)
     private String title;
     @Column
     private String description;
@@ -39,6 +37,9 @@ public class Quiz {
     @JsonIgnore //json loop
     List<Question> questions;
 
+    @ManyToOne(targetEntity = User.class)
+    private User user;
+
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "quizzes")
     @JsonIgnore
     List<Label> labels = new ArrayList<>();
@@ -46,8 +47,8 @@ public class Quiz {
     public Quiz() {
     }
 
-    public Quiz(QuizCreateDto quizCreateDto, Long userId, List<Label> labels) {
-        this.userId = userId;
+    public Quiz(QuizCreateDto quizCreateDto, User user, List<Label> labels) {
+        this.user = user;
         this.title = quizCreateDto.getTitle();
         this.description = quizCreateDto.getDescription();
         this.isPrivate = quizCreateDto.isPrivate();

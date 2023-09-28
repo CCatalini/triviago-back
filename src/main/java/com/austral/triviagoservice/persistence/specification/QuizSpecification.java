@@ -10,6 +10,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class QuizSpecification implements Specification<Quiz> {
 
@@ -68,6 +69,9 @@ public class QuizSpecification implements Specification<Quiz> {
         }
         if(quizFilter.getUserId() != null){
             restrictions.add(criteriaBuilder.equal(quiz.get("userId"), quizFilter.getUserId()));
+        }
+        if (quizFilter.getIsPrivate() != null) {
+            restrictions.add(criteriaBuilder.equal(quiz.get("isPrivate"), quizFilter.getIsPrivate()));
         }
         return criteriaBuilder.and(restrictions.toArray(new Predicate[0]));
     }

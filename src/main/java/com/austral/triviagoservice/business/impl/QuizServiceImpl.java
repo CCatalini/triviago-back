@@ -1,6 +1,5 @@
 package com.austral.triviagoservice.business.impl;
 
-import com.austral.triviagoservice.business.UserService;
 import com.austral.triviagoservice.business.helper.ErrorCheckers;
 import com.austral.triviagoservice.business.QuizService;
 import com.austral.triviagoservice.business.exception.InvalidContentException;
@@ -11,7 +10,6 @@ import com.austral.triviagoservice.persistence.specification.QuizSpecification;
 import com.austral.triviagoservice.presentation.dto.*;
 import com.austral.triviagoservice.presentation.dto.QuizDto;
 import com.austral.triviagoservice.presentation.dto.QuizFilter;
-import lombok.SneakyThrows;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,21 +18,23 @@ import org.springframework.stereotype.Service;
 
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class QuizServiceImpl implements QuizService {
 
     final private QuizRepository quizRepository;
     private final LabelRepository labelRepository;
-    private final UserService userService;
+
 
     public QuizServiceImpl(QuizRepository quizRepository,
-                           LabelRepository labelRepository, UserService userService) {
+                           LabelRepository labelRepository) {
         this.quizRepository = quizRepository;
         this.labelRepository = labelRepository;
-        this.userService = userService;
+
     }
 
     @Override
@@ -42,25 +42,28 @@ public class QuizServiceImpl implements QuizService {
         Optional<Quiz> search = quizRepository.findById(id);
         if(search.isPresent()){
             Quiz quiz = search.get();
-            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            return QuizDto.createDto(quiz, user);
+            return QuizDto.createDto(quiz);
         }
         throw new InvalidContentException("Invalid quiz Id");
     }
 
     @Override
-    public Page<Quiz> findAll(QuizFilter filter, Pageable pageable) throws InvalidContentException {
+    public Page<QuizDto> findAll(QuizFilter filter, Pageable pageable) throws InvalidContentException {
         ErrorCheckers checker = new ErrorCheckers();
         checker.checkQuizFilter(filter); //checks for invalid content on filter
-
+        filter.setIsPrivate(false);
         final QuizSpecification specification = new QuizSpecification(filter);
-        List<Quiz> quizzes = quizRepository.findAll(specification);
-
+        List<QuizDto> quizzes = quizRepository.findAll(specification)
+                .stream().map(QuizDto::createDto).collect(Collectors.toList());
+        if (filter.getLabels() != null && !filter.getLabels().isEmpty()) {
+            quizzes = quizzes.stream().filter(quiz -> new HashSet<>(quiz.getLabels()).containsAll(filter.getLabels()))
+                    .collect(Collectors.toList());
+        }
         int pageSize = pageable.getPageSize();
         int currentPage = pageable.getPageNumber();
         int startItem = currentPage * pageSize;
 
-        List<Quiz> pageQuizzes;
+        List<QuizDto> pageQuizzes;
 
         if (quizzes.size() < startItem) {
             pageQuizzes = List.of(); //Por si no hay suficientes elementos para llenar esa página
@@ -68,8 +71,6 @@ public class QuizServiceImpl implements QuizService {
             int toIndex = Math.min(startItem + pageSize, quizzes.size());
             pageQuizzes = quizzes.subList(startItem, toIndex); //Si es menor, crea la sublista
         }
-
-
         return new PageImpl<>(pageQuizzes, pageable, quizzes.size());
     }
 
@@ -96,9 +97,9 @@ public class QuizServiceImpl implements QuizService {
             search.ifPresent(labels::add);
         }
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Quiz quiz = new Quiz(quizCreateDto, user.getId(), labels);
+        Quiz quiz = new Quiz(quizCreateDto, user, labels);
         quizRepository.save(quiz);
-        return QuizDto.createDto(quiz, user);
+        return QuizDto.createDto(quiz);
     }
 
     @Override
@@ -116,25 +117,8 @@ public class QuizServiceImpl implements QuizService {
         Optional<Quiz> search = quizRepository.findByInvitationCode(invitationCode);
         if (search.isPresent()){
             Quiz quiz = search.get();
-            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            return QuizDto.createDto(quiz, user);
+            return QuizDto.createDto(quiz);
         }
         throw new InvalidContentException("Invalid invitation Code");
     }
-    /*
-    @SneakyThrows
-    private QuizDto quizCreateBuilder (Quiz quiz) {
-        return QuizDto.builder()
-                .id(quiz.getId())
-                .author(userService.findById(quiz.getUserId()))
-                .title(quiz.getTitle())
-                .description(quiz.getDescription())
-                .creationDate(quiz.getCreationDate())
-                .rating(quiz.getRating())
-                .invitationCode(quiz.getInvitationCode())
-                .isPrivate(quiz.IsPrivate())
-                .questions(quiz.getQuestions())
-                .labels(quiz.getLabels())
-                .build();
-    }*/
 }
