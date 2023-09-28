@@ -3,10 +3,12 @@ package com.austral.triviagoservice.presentation.controller;
 import com.austral.triviagoservice.business.exception.InvalidContentException;
 
 import com.austral.triviagoservice.business.exception.NotFoundException;
+import com.austral.triviagoservice.business.exception.UnauthorizedException;
 import com.austral.triviagoservice.business.impl.CommentServiceImpl;
 import com.austral.triviagoservice.persistence.domain.Comment;
 import com.austral.triviagoservice.presentation.dto.CommentCreateDto;
 import com.austral.triviagoservice.presentation.dto.CommentDto;
+import com.austral.triviagoservice.presentation.dto.CommentEditDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -76,6 +78,34 @@ public class CommentController {
         }
         catch(InvalidContentException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> editComment(@PathVariable("id") Long id, @RequestBody CommentEditDto editDto){
+        try{
+           CommentDto commentDto = commentService.editComment(id, editDto);
+            return new ResponseEntity<>(commentDto, HttpStatus.OK);
+        }
+        catch(NotFoundException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+        catch (UnauthorizedException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteComment(@PathVariable("id") Long id){
+        try{
+            commentService.deleteComment(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        catch(NotFoundException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+        catch (UnauthorizedException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
         }
     }
 
