@@ -1,13 +1,10 @@
 package com.austral.triviagoservice.presentation.controller;
 
 import com.austral.triviagoservice.business.impl.LabelServiceImpl;
-import com.austral.triviagoservice.persistence.domain.Label;
 import com.austral.triviagoservice.presentation.dto.LabelCreateDto;
 import com.austral.triviagoservice.presentation.dto.LabelDto;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

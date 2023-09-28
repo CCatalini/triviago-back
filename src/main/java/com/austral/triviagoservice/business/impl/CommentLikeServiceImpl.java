@@ -1,13 +1,11 @@
 package com.austral.triviagoservice.business.impl;
 
 import com.austral.triviagoservice.business.CommentLikeService;
-import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.business.exception.NotFoundException;
 import com.austral.triviagoservice.persistence.domain.CommentLike;
 import com.austral.triviagoservice.persistence.repository.CommentLikeRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 
 @Service
 public class CommentLikeServiceImpl implements CommentLikeService {

@@ -1,8 +1,9 @@
 package com.austral.triviagoservice.business.impl;
 
-import com.austral.triviagoservice.presentation.dto.AuthenticationRequest;
+import com.austral.triviagoservice.business.exception.UserAlreadyExistsException;
 import com.austral.triviagoservice.persistence.domain.User;
 import com.austral.triviagoservice.persistence.repository.UserRepository;
+import com.austral.triviagoservice.presentation.dto.AuthenticationRequest;
 import com.austral.triviagoservice.presentation.dto.AuthenticationResponse;
 import com.austral.triviagoservice.presentation.dto.SignUpForm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,8 @@ public class AuthService {
     private JwtService jwtService;
 
     public AuthenticationResponse signUp(SignUpForm signUpForm) {
-
+        if (userRepository.existsByEmail(signUpForm.getEmail()))
+            throw new UserAlreadyExistsException("User with email " + signUpForm.getEmail() + " already exists");
 //        newUser.setPassword(passwordEncoder.encode(user.getPassword()));
         User user = new User();
         user.setEmail(signUpForm.getEmail());

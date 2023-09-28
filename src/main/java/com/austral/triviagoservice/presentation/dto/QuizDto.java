@@ -1,8 +1,7 @@
 package com.austral.triviagoservice.presentation.dto;
 
-import com.austral.triviagoservice.persistence.domain.Quiz;
 import com.austral.triviagoservice.persistence.domain.Label;
-import com.austral.triviagoservice.persistence.domain.User;
+import com.austral.triviagoservice.persistence.domain.Quiz;
 import lombok.Getter;
 import lombok.Setter;
 

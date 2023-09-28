@@ -1,6 +1,5 @@
 package com.austral.triviagoservice.presentation.dto;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 

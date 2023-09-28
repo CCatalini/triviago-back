@@ -1,7 +1,6 @@
 package com.austral.triviagoservice.presentation.controller;
 
 import com.austral.triviagoservice.business.exception.InvalidContentException;
-
 import com.austral.triviagoservice.business.exception.NotFoundException;
 import com.austral.triviagoservice.business.exception.UnauthorizedException;
 import com.austral.triviagoservice.business.impl.CommentServiceImpl;
@@ -12,11 +11,6 @@ import com.austral.triviagoservice.presentation.dto.CommentEditDto;
 import com.austral.triviagoservice.presentation.dto.TotalLikesDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import org.springframework.web.bind.annotation.*;
 
 
@@ -74,8 +68,8 @@ public class CommentController {
     @DeleteMapping("/{id}/removeLike")
     public ResponseEntity<?> removeLikeFromComment(@PathVariable("id") Long id){
         try{
-            commentService.removeLike(id);
-            return new ResponseEntity<>(HttpStatus.OK);
+            TotalLikesDto totalLikesDto = commentService.removeLike(id);
+            return new ResponseEntity<>(totalLikesDto, HttpStatus.OK);
         }
         catch(InvalidContentException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
