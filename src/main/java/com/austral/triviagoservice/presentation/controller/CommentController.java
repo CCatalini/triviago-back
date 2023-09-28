@@ -68,8 +68,8 @@ public class CommentController {
     @DeleteMapping("/{id}/removeLike")
     public ResponseEntity<?> removeLikeFromComment(@PathVariable("id") Long id){
         try{
-            commentService.removeLike(id);
-            return new ResponseEntity<>(HttpStatus.OK);
+            TotalLikesDto totalLikesDto = commentService.removeLike(id);
+            return new ResponseEntity<>(totalLikesDto, HttpStatus.OK);
         }
         catch(InvalidContentException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);

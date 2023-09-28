@@ -71,6 +71,11 @@ public class CommentServiceImpl implements CommentService {
         if (comment.isEmpty()) throw new NotFoundException("Comment with id " + id + " not found");
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (!comment.get().getUserId().equals(user.getId())) throw new UnauthorizedException("You are not authorized to delete this comment");
+        if (comment.get().getParentCommentId() != null) {
+            Optional<Comment> parentComment = commentRepository.findById(comment.get().getParentCommentId());
+            parentComment.get().getReplies().remove(comment.get());
+            comment.get().setParentCommentId(null);
+        }
         commentRepository.deleteById(id);
     }
 
@@ -146,9 +151,12 @@ public class CommentServiceImpl implements CommentService {
                             comment.setLike(value);
                             user.setLike(value);
                         });
-        return new TotalLikesDto(comment.getLikes().stream().mapToInt(like -> like.getIsLike() ? 1 : -1).sum());
+        Optional<CommentLike> optionalCommentLike = comment.getLikes().stream().filter(like -> like.getUser().getId().equals(user.getId())).findFirst();
+        return new TotalLikesDto(
+                comment.getLikes().stream().mapToInt(like -> like.getIsLike() ? 1 : -1).sum(),
+                optionalCommentLike.map(CommentLike::getIsLike).orElse(null)
+        );
     }
-
 
     @Override
     public TotalLikesDto removeLike(Long id) throws InvalidContentException {
@@ -163,6 +171,8 @@ public class CommentServiceImpl implements CommentService {
                             comment.quitLike(like); //removes the like
                             commentLikeService.delete(like); //delets from database
                         });
-        return new TotalLikesDto(comment.getLikes().stream().mapToInt(like -> like.getIsLike() ? 1 : -1).sum());
+        return new TotalLikesDto(
+                comment.getLikes().stream().mapToInt(like -> like.getIsLike() ? 1 : -1).sum(),
+                null);
     }
 }

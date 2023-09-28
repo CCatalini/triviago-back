@@ -8,7 +8,10 @@ import lombok.Setter;
 public class TotalLikesDto {
     private int totalLikes;
 
-    public TotalLikesDto(int totalLikes) {
+    private Boolean isLikeByUser;
+
+    public TotalLikesDto(int totalLikes, Boolean isLikeByUser) {
         this.totalLikes = totalLikes;
+        this.isLikeByUser = isLikeByUser;
     }
 }
