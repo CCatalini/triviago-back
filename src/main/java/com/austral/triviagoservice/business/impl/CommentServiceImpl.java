@@ -3,6 +3,7 @@ package com.austral.triviagoservice.business.impl;
 import com.austral.triviagoservice.business.CommentService;
 import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.business.exception.NotFoundException;
+import com.austral.triviagoservice.business.exception.UnauthorizedException;
 import com.austral.triviagoservice.persistence.domain.Comment;
 import com.austral.triviagoservice.persistence.domain.CommentLike;
 import com.austral.triviagoservice.persistence.domain.Quiz;
@@ -13,6 +14,7 @@ import com.austral.triviagoservice.persistence.repository.UserRepository;
 import com.austral.triviagoservice.presentation.dto.AuthorDto;
 import com.austral.triviagoservice.presentation.dto.CommentDto;
 import com.austral.triviagoservice.presentation.dto.CommentCreateDto;
+import com.austral.triviagoservice.presentation.dto.CommentEditDto;
 import lombok.SneakyThrows;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -63,18 +65,22 @@ public class CommentServiceImpl implements CommentService {
         return entityToDto(comment);
     }
     @Override
-    public Comment editComment(Comment comment, String newComment) {
-        commentRepository.findById(comment.getId()).ifPresent(comment1 -> {
-            comment1.setContent(newComment);
-            commentRepository.save(comment1);
-        });
-        return comment;
+    public CommentDto editComment(Long id, CommentEditDto commentDto) throws NotFoundException, UnauthorizedException {
+        Optional<Comment> comment = commentRepository.findById(id);
+        if (comment.isEmpty()) throw new NotFoundException("Comment with id " + id + " not found");
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!comment.get().getUserId().equals(user.getId())) throw new UnauthorizedException("You are not authorized to edit this comment");
+        comment.get().setContent(commentDto.getNewContent());
+        return entityToDto(commentRepository.save(comment.get()));
     }
 
     @Override
-    public Comment deleteComment(Comment comment) {
-        commentRepository.delete(comment);
-        return comment;
+    public void deleteComment(Long id) throws NotFoundException, UnauthorizedException {
+        Optional<Comment> comment = commentRepository.findById(id);
+        if (comment.isEmpty()) throw new NotFoundException("Comment with id " + id + " not found");
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!comment.get().getUserId().equals(user.getId())) throw new UnauthorizedException("You are not authorized to delete this comment");
+        commentRepository.deleteById(id);
     }
 
     @Override
