@@ -26,12 +26,13 @@ public class Quiz {
     @Column(nullable = false, columnDefinition = "DATE")
     private LocalDate creationDate;
     @Column
-    private double rating;
-    @Column
     private String invitationCode;
     @Column
     private boolean isPrivate;
 
+    @OneToMany
+    @JsonIgnore
+    private List<QuizRating> rating;
 
     @OneToMany(targetEntity = Question.class, cascade = CascadeType.ALL, mappedBy = "quiz")
     @JsonIgnore //json loop
@@ -56,7 +57,7 @@ public class Quiz {
         this.labels = labels;
         labels.forEach(label -> label.getQuizzes().add(this));
         this.creationDate = LocalDate.now();
-        this.rating = 0;
+        this.rating = new ArrayList<>();
         if (quizCreateDto.isPrivate()) this.invitationCode = UUID.randomUUID().toString();
     }
 }

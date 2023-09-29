@@ -2,6 +2,7 @@ package com.austral.triviagoservice.presentation.dto;
 
 import com.austral.triviagoservice.persistence.domain.Label;
 import com.austral.triviagoservice.persistence.domain.Quiz;
+import com.austral.triviagoservice.persistence.domain.QuizRating;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,7 +19,7 @@ public class QuizDto {
     private String title;
     private String description;
     private LocalDate creationDate;
-    private Double rating;
+    private List<QuizRating> rating;
     private String invitationCode;
     private boolean isPrivate;
     private List<QuestionDto> questions;
