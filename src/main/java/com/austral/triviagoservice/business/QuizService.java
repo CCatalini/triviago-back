@@ -18,4 +18,7 @@ public interface QuizService {
     Long deleteById(Long id) throws InvalidContentException;
 
     QuizDto findByInvitationCode(String invitationCode) throws InvalidContentException;
+
+    void rateQuiz(Long quizId, Integer rate) throws InvalidContentException;
 }
+
