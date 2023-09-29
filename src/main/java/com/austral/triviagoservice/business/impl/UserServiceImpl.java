@@ -43,9 +43,10 @@ public class UserServiceImpl implements UserService {
     public User addQuizToWishlist (Long userId, Long quizId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User with id: " + userId + " not found!"));
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new NotFoundException("Quiz with id: " + quizId + " not found!"));
-        user.getSavedQuizzes().add(quiz);
-        userRepository.save(user);
-
+        if (!user.getSavedQuizzes().contains(quiz)) {
+            user.getSavedQuizzes().add(quiz);
+            userRepository.save(user);
+        }
         return user;
     }
 
@@ -53,9 +54,10 @@ public class UserServiceImpl implements UserService {
     public User removeFromWishlist (Long userId, Long quizId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User with id: " + userId + " not found!"));
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new NotFoundException("Quiz with id: " + quizId + " not found!"));
-        user.getSavedQuizzes().remove(quiz);
-        userRepository.save(user);
-
+        if (user.getSavedQuizzes().contains(quiz)) {
+            user.getSavedQuizzes().remove(quiz);
+            userRepository.save(user);
+        }
         return user;
     }
 
