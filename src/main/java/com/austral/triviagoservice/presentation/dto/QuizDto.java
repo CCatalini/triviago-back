@@ -19,7 +19,7 @@ public class QuizDto {
     private String title;
     private String description;
     private LocalDate creationDate;
-    private List<QuizRating> rating;
+    private int rating;
     private String invitationCode;
     private boolean isPrivate;
     private List<QuestionDto> questions;
@@ -34,13 +34,15 @@ public class QuizDto {
         dto.setTitle(quiz.getTitle());
         dto.setDescription(quiz.getDescription());
         dto.setCreationDate(quiz.getCreationDate());
-        dto.setRating(quiz.getRating());
         dto.setAuthor(new AuthorDto(quiz.getUser()));
         dto.setInvitationCode(quiz.getInvitationCode());
         dto.setId(quiz.getId());
         dto.setPrivate(quiz.isPrivate());
         dto.setQuestions(quiz.getQuestions().stream().map(QuestionDto::new).collect(Collectors.toList()));
         dto.setLabels(quiz.getLabels().stream().map(Label::getValue).collect(Collectors.toList()));
+
+        List<QuizRating> ratings = quiz.getRating();
+        dto.setRating((int) (ratings.stream().mapToInt(QuizRating::getRating).sum()) / ratings.size());
         return dto;
     }
 
