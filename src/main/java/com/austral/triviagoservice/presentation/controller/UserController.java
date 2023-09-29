@@ -20,13 +20,13 @@ public class UserController {
     }
 
     @PutMapping("/{userId}/save-quiz/{quizId}")
-    public ResponseEntity<?> addQuizToWishlist(@PathVariable("userId")Long userId,  @PathVariable("quizId") Long quizId) {
+    public ResponseEntity<User> addQuizToWishlist(@PathVariable("userId")Long userId,  @PathVariable("quizId") Long quizId) {
         User user = userService.addQuizToWishlist(userId, quizId);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @PutMapping("/{userId}/remove-quiz/{quizId}")
-    public ResponseEntity<?> removeQuizFromWishlist(@PathVariable("userId")Long userId,  @PathVariable("quizId") Long quizId) {
+    public ResponseEntity<User> removeQuizFromWishlist(@PathVariable("userId")Long userId,  @PathVariable("quizId") Long quizId) {
         User user = userService.removeFromWishlist(userId, quizId);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
