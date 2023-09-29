@@ -105,4 +105,15 @@ public class QuizController {
         }
     }
 
+    @PutMapping("/{id}/rate")
+    public ResponseEntity<?> rate(@PathVariable("id") Long quizId, @RequestParam("rating")  int rate){
+        try{
+            quizService.rateQuiz(quizId, (Integer) rate);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        catch (InvalidContentException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }
