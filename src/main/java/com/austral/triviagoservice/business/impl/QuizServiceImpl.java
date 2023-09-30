@@ -2,6 +2,7 @@ package com.austral.triviagoservice.business.impl;
 
 import com.austral.triviagoservice.business.QuizService;
 import com.austral.triviagoservice.business.exception.InvalidContentException;
+import com.austral.triviagoservice.business.exception.NotFoundException;
 import com.austral.triviagoservice.business.helper.ErrorCheckers;
 import com.austral.triviagoservice.persistence.domain.Label;
 import com.austral.triviagoservice.persistence.domain.Quiz;
@@ -119,5 +120,13 @@ public class QuizServiceImpl implements QuizService {
             return QuizDto.createDto(quiz);
         }
         throw new InvalidContentException("Invalid invitation Code");
+    }
+
+    @Override
+    public long deleteMyQuizById(Long quizId, Long userId) throws NotFoundException {
+        if (quizRepository.deleteMyQuizById(quizId, userId) == 0){
+            throw new NotFoundException("No quiz record found for the specified ID and user ID");
+        }
+        return quizId;
     }
 }
