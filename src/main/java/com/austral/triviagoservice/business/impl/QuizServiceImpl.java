@@ -123,7 +123,7 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public long deleteMyQuizById(Long quizId, Long userId) throws NotFoundException {
+    public long deleteMyQuizById(Long quizId, User userId) throws NotFoundException {
         if (quizRepository.deleteMyQuizById(quizId, userId) == 0){
             throw new NotFoundException("No quiz record found for the specified ID and user ID");
         }

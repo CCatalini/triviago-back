@@ -100,7 +100,7 @@ public class QuizController {
     public ResponseEntity<?> deleteQuizById(@PathVariable("id") Long quizId){
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         try{
-            Long value = quizService.deleteMyQuizById(quizId, user.getId());
+            Long value = quizService.deleteMyQuizById(quizId, user);
             return new ResponseEntity<>(value, HttpStatus.OK);
         }
         catch (NotFoundException e){
