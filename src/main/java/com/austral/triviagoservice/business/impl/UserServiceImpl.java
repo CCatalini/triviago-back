@@ -1,5 +1,6 @@
 package com.austral.triviagoservice.business.impl;
 
+import com.austral.triviagoservice.business.QuizService;
 import com.austral.triviagoservice.business.UserService;
 import com.austral.triviagoservice.business.exception.NotFoundException;
 import com.austral.triviagoservice.persistence.domain.Quiz;
@@ -15,16 +16,17 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final QuizRepository quizRepository;
-    public UserServiceImpl(UserRepository userRepository, QuizRepository quizRepository) {
+    private final QuizService quizService;
+    public UserServiceImpl(UserRepository userRepository, QuizService quizService) {
         this.userRepository = userRepository;
-        this.quizRepository = quizRepository;
+        this.quizService = quizService;
     }
 
     @Override
@@ -38,21 +40,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public AuthorDto findById(Long id) throws NotFoundException {
-        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User with id: " + id + " not found!"));
-        return new AuthorDto(user);
+    public User findById(Long id) throws NotFoundException {
+        return userRepository.findById(id).orElseThrow(() -> new NotFoundException("User with id: " + id + " not found!"));
     }
 
+    @Override
     @SneakyThrows
-    public UserDto addQuizToWishlist (Long userId, Long quizId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User with id: " + userId + " not found!"));
-        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new NotFoundException("Quiz with id: " + quizId + " not found!"));
+    public UserDto addQuizToSavedList (Long userId, Long quizId) {
+        User user = findById(userId);
+        Quiz quiz = quizService.findById(quizId);
         if (!user.getSavedQuizzes().contains(quiz)) {
             user.getSavedQuizzes().add(quiz);
             userRepository.save(user);
         }
-        List<QuizDto> savedQuizzes = new ArrayList<>();
-        user.getSavedQuizzes().forEach(quiz1 -> savedQuizzes.add(QuizDto.createDto(quiz1)));
         return UserDto.builder()
                 .id(user.getId())
                 .firstName(user.getFirstName())
@@ -60,21 +60,21 @@ public class UserServiceImpl implements UserService {
                 .email(user.getEmail())
                 .birthDate(user.getBirthDate())
                 .likes(user.getLikes())
-                .savedQuizzes(savedQuizzes)
+                .savedQuizzes(user.getSavedQuizzes().stream().map(QuizDto::createDto).collect(Collectors.toList()))
+                .Quizzes(user.getQuizzes().stream().map(QuizDto::createDto).collect(Collectors.toList()))
                 .build();
 
     }
 
+    @Override
     @SneakyThrows
-    public UserDto removeFromWishlist (Long userId, Long quizId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User with id: " + userId + " not found!"));
-        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new NotFoundException("Quiz with id: " + quizId + " not found!"));
+    public UserDto removeQuizFromSavedList (Long userId, Long quizId) {
+        User user = findById(userId);
+        Quiz quiz = quizService.findById(quizId);
         if (user.getSavedQuizzes().contains(quiz)) {
             user.getSavedQuizzes().remove(quiz);
             userRepository.save(user);
         }
-        List<QuizDto> savedQuizzes = new ArrayList<>();
-        user.getSavedQuizzes().forEach(quiz1 -> savedQuizzes.add(QuizDto.createDto(quiz1)));
         return UserDto.builder()
                 .id(user.getId())
                 .firstName(user.getFirstName())
@@ -82,7 +82,8 @@ public class UserServiceImpl implements UserService {
                 .email(user.getEmail())
                 .birthDate(user.getBirthDate())
                 .likes(user.getLikes())
-                .savedQuizzes(savedQuizzes)
+                .savedQuizzes(user.getSavedQuizzes().stream().map(QuizDto::createDto).collect(Collectors.toList()))
+                .Quizzes(user.getQuizzes().stream().map(QuizDto::createDto).collect(Collectors.toList()))
                 .build();
     }
 

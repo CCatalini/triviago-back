@@ -5,6 +5,7 @@ import com.austral.triviagoservice.persistence.domain.User;
 import com.austral.triviagoservice.presentation.dto.UserDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,15 +21,17 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PutMapping("/{userId}/save-quiz/{quizId}")
-    public ResponseEntity<UserDto> addQuizToWishlist(@PathVariable("userId")Long userId,  @PathVariable("quizId") Long quizId) {
-        UserDto user = userService.addQuizToWishlist(userId, quizId);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+    @PutMapping("/save-quiz/{quizId}")
+    public ResponseEntity<UserDto> addQuizToWishlist(@PathVariable("quizId") Long quizId) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDto updatedUser = userService.addQuizToSavedList(user.getId(), quizId);
+        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
-    @PutMapping("/{userId}/remove-quiz/{quizId}")
-    public ResponseEntity<UserDto> removeQuizFromWishlist(@PathVariable("userId")Long userId,  @PathVariable("quizId") Long quizId) {
-        UserDto user = userService.removeFromWishlist(userId, quizId);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+    @PutMapping("/remove-quiz/{quizId}")
+    public ResponseEntity<UserDto> removeQuizFromWishlist(@PathVariable("quizId") Long quizId) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDto updatedUser = userService.removeQuizFromSavedList(user.getId(), quizId);
+        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 }

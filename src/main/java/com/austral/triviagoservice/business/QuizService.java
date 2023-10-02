@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface QuizService {
 
-    QuizDto findById(Long id) throws InvalidContentException;
+    Quiz findById(Long id) throws InvalidContentException;
 
     Page<QuizDto> findAll(QuizFilter quizFIlter, Pageable pageable) throws InvalidContentException;
 
@@ -20,5 +20,4 @@ public interface QuizService {
 
     QuizDto findByInvitationCode(String invitationCode) throws InvalidContentException;
 
-    QuizDto toDto(Quiz quiz);
 }

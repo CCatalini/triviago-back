@@ -37,11 +37,10 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public QuizDto findById(Long id) throws InvalidContentException {
+    public Quiz findById(Long id) throws InvalidContentException {
         Optional<Quiz> search = quizRepository.findById(id);
         if(search.isPresent()){
-            Quiz quiz = search.get();
-            return QuizDto.createDto(quiz);
+            return search.get();
         }
         throw new InvalidContentException("Invalid quiz Id");
     }
@@ -119,10 +118,5 @@ public class QuizServiceImpl implements QuizService {
             return QuizDto.createDto(quiz);
         }
         throw new InvalidContentException("Invalid invitation Code");
-    }
-
-    @Override
-    public QuizDto toDto(Quiz quiz) {
-        return QuizDto.createDto(quiz);
     }
 }
