@@ -2,7 +2,6 @@ package com.austral.triviagoservice.business.impl;
 
 import com.austral.triviagoservice.business.QuizService;
 import com.austral.triviagoservice.business.exception.InvalidContentException;
-import com.austral.triviagoservice.business.exception.NotFoundException;
 import com.austral.triviagoservice.business.helper.ErrorCheckers;
 import com.austral.triviagoservice.persistence.domain.Label;
 import com.austral.triviagoservice.persistence.domain.Quiz;
@@ -103,13 +102,13 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public Long deleteById(Long id) throws InvalidContentException {
-        if(quizRepository.existsById(id)){
+    public Long deleteById(Long id, Long userId) throws InvalidContentException {
+        Quiz q = quizRepository.findById(id).orElseThrow(() -> new InvalidContentException("Invalid Id, quiz does not exist"));
+        if (q.getUser().getId().equals(userId)) {
             quizRepository.deleteById(id);
             return id;
         }
-        throw new InvalidContentException("Invalid Id, quiz does not exist");
-
+        throw new InvalidContentException("Invalid Id, quiz does not exist or does not belong to the user");
     }
 
     @Override
@@ -122,11 +121,4 @@ public class QuizServiceImpl implements QuizService {
         throw new InvalidContentException("Invalid invitation Code");
     }
 
-    @Override
-    public long deleteMyQuizById(Long quizId, User userId) throws NotFoundException {
-        if (quizRepository.deleteMyQuizById(quizId, userId) == 0){
-            throw new NotFoundException("No quiz record found for the specified ID and user ID");
-        }
-        return quizId;
-    }
 }

@@ -1,7 +1,6 @@
 package com.austral.triviagoservice.presentation.controller;
 
 import com.austral.triviagoservice.business.exception.InvalidContentException;
-import com.austral.triviagoservice.business.exception.NotFoundException;
 import com.austral.triviagoservice.business.impl.CommentServiceImpl;
 import com.austral.triviagoservice.business.impl.QuizServiceImpl;
 import com.austral.triviagoservice.persistence.domain.User;
@@ -88,22 +87,11 @@ public class QuizController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteById(@PathVariable("id") Long quizId){
         try{
-            Long value = quizService.deleteById(quizId);
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            Long value = quizService.deleteById(quizId, user.getId());
             return new ResponseEntity<>(value, HttpStatus.OK);
         }
         catch (InvalidContentException e){
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
-    }
-
-    @DeleteMapping("/quiz/{id}")
-    public ResponseEntity<?> deleteQuizById(@PathVariable("id") Long quizId){
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        try{
-            Long value = quizService.deleteMyQuizById(quizId, user);
-            return new ResponseEntity<>(value, HttpStatus.OK);
-        }
-        catch (NotFoundException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
