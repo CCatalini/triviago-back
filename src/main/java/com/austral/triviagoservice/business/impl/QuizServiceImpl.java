@@ -120,4 +120,9 @@ public class QuizServiceImpl implements QuizService {
         }
         throw new InvalidContentException("Invalid invitation Code");
     }
+
+    @Override
+    public QuizDto toDto(Quiz quiz) {
+        return QuizDto.createDto(quiz);
+    }
 }
