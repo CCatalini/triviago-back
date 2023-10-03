@@ -30,7 +30,7 @@ public class Quiz {
     @Column
     private boolean isPrivate;
 
-    @OneToMany
+    @OneToMany(mappedBy="quiz")
     @JsonIgnore
     private List<QuizRating> rating;
 
