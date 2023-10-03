@@ -42,7 +42,13 @@ public class QuizDto {
         dto.setLabels(quiz.getLabels().stream().map(Label::getValue).collect(Collectors.toList()));
 
         List<QuizRating> ratings = quiz.getRating();
-        dto.setRating((int) (ratings.stream().mapToInt(QuizRating::getRating).sum()) / ratings.size());
+        int size = ratings.size();
+        if (size != 0) {
+            dto.setRating((int) (ratings.stream().mapToInt(QuizRating::getRating).sum()) / ratings.size());
+        }
+        else{
+            dto.setRating(size);
+        }
         return dto;
     }
 
