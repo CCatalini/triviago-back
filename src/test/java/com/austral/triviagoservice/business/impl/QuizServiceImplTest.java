@@ -38,8 +38,8 @@ class QuizServiceImplTest {
 
     @BeforeEach
     void setUp(){
-        user = new User(); user.setId(1L); user.setEmail("hola@hola"); user.setPassword("123");user.setRaiting(new ArrayList<>());
-        quiz = new Quiz(); quiz.setTitle("Quiz"); quiz.setId(23L); quiz.setRating(new ArrayList<>());
+        user = new User(); user.setId(1L); user.setEmail("hola@hola"); user.setPassword("123");user.setRatings(new ArrayList<>());
+        quiz = new Quiz(); quiz.setTitle("Quiz"); quiz.setId(23L); quiz.setRatings(new ArrayList<>());
         quizRating = new QuizRating(); quizRating.setQuiz(quiz); quizRating.setUser(user); quizRating.setId(2L);quizRating.setRating(3);
     }
 
@@ -61,10 +61,10 @@ class QuizServiceImplTest {
                         like.getQuiz().equals(quizRating.getQuiz())
         ))).thenReturn(quizRating);
 
-        assertTrue(quiz.getRating().isEmpty());
+        assertTrue(quiz.getRatings().isEmpty());
         quizService.rateQuiz(quiz.getId(),3);
-        assertFalse(quiz.getRating().isEmpty());
-        assertEquals(quiz.getRating().stream().findFirst().get().getRating(), 3);
+        assertFalse(quiz.getRatings().isEmpty());
+        assertEquals(quiz.getRatings().stream().findFirst().get().getRating(), 3);
     }
 
     @Test
@@ -78,13 +78,13 @@ class QuizServiceImplTest {
         when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
 
-        quiz.getRating().add(quizRating);
-        assertEquals(quiz.getRating().size(), 1);
+        quiz.getRatings().add(quizRating);
+        assertEquals(quiz.getRatings().size(), 1);
         int newRate = 5;
         quizService.rateQuiz(23L, newRate);
-        assertEquals(quiz.getRating().size(),1);
-        assertNotEquals(quiz.getRating().stream().findFirst().get().getRating(), 3);
-        assertEquals(quiz.getRating().stream().findFirst().get().getRating(), newRate);
+        assertEquals(quiz.getRatings().size(),1);
+        assertNotEquals(quiz.getRatings().stream().findFirst().get().getRating(), 3);
+        assertEquals(quiz.getRatings().stream().findFirst().get().getRating(), newRate);
     }
 
     @Test
@@ -94,7 +94,7 @@ class QuizServiceImplTest {
         try{
             quizService.rateQuiz(3L, 2);
         } catch (InvalidContentException e) {
-            assertTrue(quiz.getRating().isEmpty()); //still empty
+            assertTrue(quiz.getRatings().isEmpty()); //still empty
         }
     }
 
@@ -104,7 +104,7 @@ class QuizServiceImplTest {
             quizService.rateQuiz(23L, 0);
         }
         catch (InvalidContentException e){
-            assertTrue(quiz.getRating().isEmpty()); //quiz has no rate
+            assertTrue(quiz.getRatings().isEmpty()); //quiz has no rate
         }
     }
 
@@ -114,7 +114,7 @@ class QuizServiceImplTest {
             quizService.rateQuiz(23L, 6);
         }
         catch (InvalidContentException e){
-            assertTrue(quiz.getRating().isEmpty());
+            assertTrue(quiz.getRatings().isEmpty());
         }
     }
 }
