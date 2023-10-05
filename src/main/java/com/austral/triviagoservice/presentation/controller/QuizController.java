@@ -60,7 +60,7 @@ public class QuizController {
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable("id") Long quizId){
         try{
-            QuizDto dto = quizService.findById(quizId);
+            QuizDto dto = QuizDto.createDto(quizService.findById(quizId));
             return new ResponseEntity<>(dto, HttpStatus.OK);
         }
         catch (InvalidContentException e){
