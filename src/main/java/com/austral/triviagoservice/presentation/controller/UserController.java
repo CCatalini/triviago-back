@@ -1,12 +1,10 @@
 package com.austral.triviagoservice.presentation.controller;
 
 import com.austral.triviagoservice.business.impl.UserServiceImpl;
-import com.austral.triviagoservice.persistence.domain.User;
 import com.austral.triviagoservice.presentation.dto.QuizDto;
 import com.austral.triviagoservice.presentation.dto.UserDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
