@@ -34,7 +34,7 @@ public class UserController {
     }
 
 
-    @GetMapping("/savedQuizzes")
+    @GetMapping("/saved-quizzes")
     public ResponseEntity<List<QuizDto>> getSavedQuizzes(){
         return new ResponseEntity<>(userService.getSavedQuizzes(), HttpStatus.OK);
     }

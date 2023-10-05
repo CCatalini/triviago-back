@@ -12,6 +12,7 @@ import com.austral.triviagoservice.presentation.dto.AuthorDto;
 import com.austral.triviagoservice.presentation.dto.QuizDto;
 import com.austral.triviagoservice.presentation.dto.UserDto;
 import lombok.SneakyThrows;
+import org.hibernate.Hibernate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -88,6 +89,13 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
+//    @Override
+//    @SneakyThrows
+//    public List<QuizDto> getSavedQuizzes() {
+//        User userJson = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        User user = findById(userJson.getId());
+//        return user.getSavedQuizzes().stream().map(QuizDto::createDto).collect(Collectors.toList());
+//    }
     @Override
     public List<QuizDto> getSavedQuizzes() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

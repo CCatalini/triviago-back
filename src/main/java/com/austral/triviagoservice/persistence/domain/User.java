@@ -3,6 +3,8 @@ package com.austral.triviagoservice.persistence.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -38,6 +40,7 @@ public class User{
 
     @ManyToMany
     @JsonIgnore
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<Quiz> savedQuizzes;
 
     @OneToMany(targetEntity = Quiz.class, cascade = CascadeType.ALL, mappedBy = "user")
