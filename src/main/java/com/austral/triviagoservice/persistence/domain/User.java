@@ -36,6 +36,9 @@ public class User{
     @OneToMany(mappedBy="user", fetch = FetchType.EAGER)
     private List<CommentLike> likes;
 
+    @ManyToMany
+    @JsonIgnore
+    private List<Quiz> savedQuizzes;
 
     @OneToMany(targetEntity = Quiz.class, cascade = CascadeType.ALL, mappedBy = "user")
     @JsonIgnore

@@ -40,8 +40,7 @@ public class QuizServiceImpl implements QuizService {
     public Quiz findById(Long id) throws InvalidContentException {
         Optional<Quiz> search = quizRepository.findById(id);
         if(search.isPresent()){
-            Quiz quiz = search.get();
-            return quiz;
+            return search.get();
         }
         throw new InvalidContentException("Invalid quiz Id");
     }
