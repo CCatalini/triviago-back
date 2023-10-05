@@ -25,12 +25,12 @@ public class QuizController {
 
     final QuizServiceImpl quizService;
     final CommentServiceImpl commentService;
-    final UserService userService;
 
-    public QuizController(QuizServiceImpl quizService, CommentServiceImpl commentService, UserService userService) {
+
+    public QuizController(QuizServiceImpl quizService, CommentServiceImpl commentService) {
         this.quizService = quizService;
         this.commentService = commentService;
-        this.userService = userService;
+
     }
 
     @GetMapping
@@ -107,9 +107,5 @@ public class QuizController {
         }
     }
 
-    @GetMapping("/saved")
-    public ResponseEntity<List<QuizDto>> getSavedQuizzes(){
-        return new ResponseEntity<>(userService.getSavedQuizzes(), HttpStatus.OK);
-    }
 
 }
