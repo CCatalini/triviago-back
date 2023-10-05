@@ -88,4 +88,10 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
+    @Override
+    public List<QuizDto> getSavedQuizzes() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return user.getSavedQuizzes().stream().map(QuizDto::createDto).collect(Collectors.toList());
+    }
+
 }
