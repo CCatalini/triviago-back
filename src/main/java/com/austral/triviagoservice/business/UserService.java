@@ -3,6 +3,7 @@ package com.austral.triviagoservice.business;
 import com.austral.triviagoservice.business.exception.NotFoundException;
 import com.austral.triviagoservice.persistence.domain.User;
 import com.austral.triviagoservice.presentation.dto.AuthorDto;
+import com.austral.triviagoservice.presentation.dto.UserDto;
 
 public interface UserService {
 
@@ -10,6 +11,10 @@ public interface UserService {
 
     User findByEmail(String username);
 
-    AuthorDto findById(Long id) throws NotFoundException;
+    User findById(Long id) throws NotFoundException;
+
+    UserDto addQuizToSavedList(Long quizId);
+
+    UserDto removeQuizFromSavedList(Long quizId);
 
 }

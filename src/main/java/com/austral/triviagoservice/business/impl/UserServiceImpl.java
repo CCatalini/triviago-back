@@ -1,19 +1,33 @@
 package com.austral.triviagoservice.business.impl;
 
+import com.austral.triviagoservice.business.QuizService;
 import com.austral.triviagoservice.business.UserService;
 import com.austral.triviagoservice.business.exception.NotFoundException;
+import com.austral.triviagoservice.persistence.domain.Quiz;
 import com.austral.triviagoservice.persistence.domain.User;
+import com.austral.triviagoservice.persistence.repository.QuizRepository;
 import com.austral.triviagoservice.persistence.repository.UserRepository;
 import com.austral.triviagoservice.presentation.dto.AuthorDto;
+
+import com.austral.triviagoservice.presentation.dto.QuizDto;
+import com.austral.triviagoservice.presentation.dto.UserDto;
+import lombok.SneakyThrows;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-
-    public UserServiceImpl(UserRepository userRepository) {
+    private final QuizService quizService;
+    public UserServiceImpl(UserRepository userRepository, QuizService quizService) {
         this.userRepository = userRepository;
+        this.quizService = quizService;
     }
 
     @Override
@@ -27,8 +41,51 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public AuthorDto findById(Long id) throws NotFoundException {
-        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User with id: " + id + " not found!"));
-        return new AuthorDto(user);
+    public User findById(Long id) throws NotFoundException {
+        return userRepository.findById(id).orElseThrow(() -> new NotFoundException("User with id: " + id + " not found!"));
     }
+
+    @Override
+    @SneakyThrows
+    public UserDto addQuizToSavedList (Long quizId) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Quiz quiz = quizService.findById(quizId);
+        if (!user.getSavedQuizzes().contains(quiz)) {
+            user.getSavedQuizzes().add(quiz);
+            userRepository.save(user);
+        }
+        return UserDto.builder()
+                .id(user.getId())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .birthDate(user.getBirthDate())
+                .likes(user.getLikes())
+                .savedQuizzes(user.getSavedQuizzes().stream().map(QuizDto::createDto).collect(Collectors.toList()))
+                .quizzes(user.getQuizzes().stream().map(QuizDto::createDto).collect(Collectors.toList()))
+                .build();
+
+    }
+
+    @Override
+    @SneakyThrows
+    public UserDto removeQuizFromSavedList (Long quizId) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Quiz quiz = quizService.findById(quizId);
+        if (user.getSavedQuizzes().contains(quiz)) {
+            user.getSavedQuizzes().remove(quiz);
+            userRepository.save(user);
+        }
+        return UserDto.builder()
+                .id(user.getId())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .birthDate(user.getBirthDate())
+                .likes(user.getLikes())
+                .savedQuizzes(user.getSavedQuizzes().stream().map(QuizDto::createDto).collect(Collectors.toList()))
+                .quizzes(user.getQuizzes().stream().map(QuizDto::createDto).collect(Collectors.toList()))
+                .build();
+    }
+
 }

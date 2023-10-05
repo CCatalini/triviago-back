@@ -40,6 +40,10 @@ public class User{
     @JsonIgnore
     List<QuizRating> ratings;
 
+    @ManyToMany
+    @JsonIgnore
+    private List<Quiz> savedQuizzes;
+
 
     @OneToMany(targetEntity = Quiz.class, cascade = CascadeType.ALL, mappedBy = "user")
     @JsonIgnore
