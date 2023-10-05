@@ -3,7 +3,6 @@ package com.austral.triviagoservice.presentation.controller;
 import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.business.impl.CommentServiceImpl;
 import com.austral.triviagoservice.business.impl.QuizServiceImpl;
-import com.austral.triviagoservice.persistence.domain.User;
 import com.austral.triviagoservice.presentation.dto.CommentDto;
 import com.austral.triviagoservice.presentation.dto.QuizCreateDto;
 import com.austral.triviagoservice.presentation.dto.QuizDto;
@@ -13,7 +12,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -62,7 +60,7 @@ public class QuizController {
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable("id") Long quizId){
         try{
-            QuizDto dto = quizService.findById(quizId);
+            QuizDto dto = QuizDto.createDto(quizService.findById(quizId));
             return new ResponseEntity<>(dto, HttpStatus.OK);
         }
         catch (InvalidContentException e){
@@ -87,8 +85,7 @@ public class QuizController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteById(@PathVariable("id") Long quizId){
         try{
-            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            Long value = quizService.deleteById(quizId, user.getId());
+            Long value = quizService.deleteById(quizId);
             return new ResponseEntity<>(value, HttpStatus.OK);
         }
         catch (InvalidContentException e){

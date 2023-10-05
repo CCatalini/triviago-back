@@ -37,11 +37,11 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public QuizDto findById(Long id) throws InvalidContentException {
+    public Quiz findById(Long id) throws InvalidContentException {
         Optional<Quiz> search = quizRepository.findById(id);
         if(search.isPresent()){
             Quiz quiz = search.get();
-            return QuizDto.createDto(quiz);
+            return quiz;
         }
         throw new InvalidContentException("Invalid quiz Id");
     }
@@ -102,9 +102,10 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public Long deleteById(Long id, Long userId) throws InvalidContentException {
-        Quiz q = quizRepository.findById(id).orElseThrow(() -> new InvalidContentException("Invalid Id, quiz does not exist"));
-        if (q.getUser().getId().equals(userId)) {
+    public Long deleteById(Long id) throws InvalidContentException {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Quiz quiz = findById(id);
+        if (quiz.getUser().getId().equals(user.getId())) {
             quizRepository.deleteById(id);
             return id;
         }
