@@ -13,8 +13,8 @@ public interface UserService {
 
     User findById(Long id) throws NotFoundException;
 
-    UserDto addQuizToSavedList(Long userId, Long quizId);
+    UserDto addQuizToSavedList(Long quizId);
 
-    UserDto removeQuizFromSavedList(Long userId, Long quizId);
+    UserDto removeQuizFromSavedList(Long quizId);
 
 }

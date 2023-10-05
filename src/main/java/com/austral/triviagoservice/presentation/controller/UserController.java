@@ -22,16 +22,14 @@ public class UserController {
     }
 
     @PutMapping("/save-quiz/{quizId}")
-    public ResponseEntity<UserDto> addQuizToWishlist(@PathVariable("quizId") Long quizId) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        UserDto updatedUser = userService.addQuizToSavedList(user.getId(), quizId);
+    public ResponseEntity<UserDto> addQuizToSavedList(@PathVariable("quizId") Long quizId) {
+        UserDto updatedUser = userService.addQuizToSavedList(quizId);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
     @PutMapping("/remove-quiz/{quizId}")
-    public ResponseEntity<UserDto> removeQuizFromWishlist(@PathVariable("quizId") Long quizId) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        UserDto updatedUser = userService.removeQuizFromSavedList(user.getId(), quizId);
+    public ResponseEntity<UserDto> removeQuizFromSavedList(@PathVariable("quizId") Long quizId) {
+        UserDto updatedUser = userService.removeQuizFromSavedList(quizId);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 }

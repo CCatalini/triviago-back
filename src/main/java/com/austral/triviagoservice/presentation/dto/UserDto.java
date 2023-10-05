@@ -19,6 +19,6 @@ public class UserDto {
     private LocalDate birthDate;
     private List<CommentLike> likes;
     private List<QuizDto> savedQuizzes;
-    private List<QuizDto> Quizzes;
+    private List<QuizDto> quizzes;
 
 }

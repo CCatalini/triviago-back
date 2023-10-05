@@ -12,6 +12,7 @@ import com.austral.triviagoservice.presentation.dto.AuthorDto;
 import com.austral.triviagoservice.presentation.dto.QuizDto;
 import com.austral.triviagoservice.presentation.dto.UserDto;
 import lombok.SneakyThrows;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -46,8 +47,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @SneakyThrows
-    public UserDto addQuizToSavedList (Long userId, Long quizId) {
-        User user = findById(userId);
+    public UserDto addQuizToSavedList (Long quizId) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Quiz quiz = quizService.findById(quizId);
         if (!user.getSavedQuizzes().contains(quiz)) {
             user.getSavedQuizzes().add(quiz);
@@ -61,15 +62,15 @@ public class UserServiceImpl implements UserService {
                 .birthDate(user.getBirthDate())
                 .likes(user.getLikes())
                 .savedQuizzes(user.getSavedQuizzes().stream().map(QuizDto::createDto).collect(Collectors.toList()))
-                .Quizzes(user.getQuizzes().stream().map(QuizDto::createDto).collect(Collectors.toList()))
+                .quizzes(user.getQuizzes().stream().map(QuizDto::createDto).collect(Collectors.toList()))
                 .build();
 
     }
 
     @Override
     @SneakyThrows
-    public UserDto removeQuizFromSavedList (Long userId, Long quizId) {
-        User user = findById(userId);
+    public UserDto removeQuizFromSavedList (Long quizId) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Quiz quiz = quizService.findById(quizId);
         if (user.getSavedQuizzes().contains(quiz)) {
             user.getSavedQuizzes().remove(quiz);
@@ -83,7 +84,7 @@ public class UserServiceImpl implements UserService {
                 .birthDate(user.getBirthDate())
                 .likes(user.getLikes())
                 .savedQuizzes(user.getSavedQuizzes().stream().map(QuizDto::createDto).collect(Collectors.toList()))
-                .Quizzes(user.getQuizzes().stream().map(QuizDto::createDto).collect(Collectors.toList()))
+                .quizzes(user.getQuizzes().stream().map(QuizDto::createDto).collect(Collectors.toList()))
                 .build();
     }
 
