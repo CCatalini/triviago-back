@@ -5,6 +5,7 @@ import com.austral.triviagoservice.persistence.domain.Quiz;
 import com.austral.triviagoservice.presentation.dto.QuizCreateDto;
 import com.austral.triviagoservice.presentation.dto.QuizDto;
 import com.austral.triviagoservice.presentation.dto.QuizFilter;
+import com.austral.triviagoservice.presentation.dto.QuizRatingDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -20,6 +21,6 @@ public interface QuizService {
 
     QuizDto findByInvitationCode(String invitationCode) throws InvalidContentException;
 
-    void rateQuiz(Long quizId, Integer rate) throws InvalidContentException;
+    void rateQuiz(Long quizId, QuizRatingDto rate) throws InvalidContentException;
 }
 

@@ -127,8 +127,8 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public void rateQuiz(Long quizId, Integer rate) throws InvalidContentException {
-        ErrorCheckers.checkRate(rate); //validates rating
+    public void rateQuiz(Long quizId, QuizRatingDto rate) throws InvalidContentException {
+        ErrorCheckers.checkRate(rate.getRating()); //validates rating
         if (quizRepository.existsById(quizId)) {
             User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             Quiz quiz = this.findById(quizId);
@@ -137,7 +137,7 @@ public class QuizServiceImpl implements QuizService {
             QuizRating rating = new QuizRating();
             rating.setUser(user);
             rating.setQuiz(quiz);
-            rating.setRating(rate);
+            rating.setRating(rate.getRating());
 
             quizRatingService.create(rating);
 
