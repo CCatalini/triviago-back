@@ -35,6 +35,6 @@ public class ErrorCheckers {
     }
 
     public static void checkRate(Integer rate) throws InvalidContentException {
-        if(rate < 1 || rate > 5){throw  new InvalidContentException("Invalid rate. Value should be between 1 and 5");}
+        if(rate < 1 || rate > 5)throw  new InvalidContentException("Invalid rate. Value should be between 1 and 5");
     }
 }

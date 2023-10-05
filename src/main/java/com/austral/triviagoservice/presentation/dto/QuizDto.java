@@ -41,14 +41,7 @@ public class QuizDto {
         dto.setQuestions(quiz.getQuestions().stream().map(QuestionDto::new).collect(Collectors.toList()));
         dto.setLabels(quiz.getLabels().stream().map(Label::getValue).collect(Collectors.toList()));
 
-        List<QuizRating> ratings = quiz.getRating();
-        int size = ratings.size();
-        if (size != 0) {
-            dto.setRating((int) (ratings.stream().mapToInt(QuizRating::getRating).sum()) / ratings.size());
-        }
-        else{
-            dto.setRating(size);
-        }
+        dto.setRating(quiz.getRatings().isEmpty() ? 0 : quiz.getRatings().stream().mapToInt(QuizRating::getRating).sum() / quiz.getRatings().size());
         return dto;
     }
 

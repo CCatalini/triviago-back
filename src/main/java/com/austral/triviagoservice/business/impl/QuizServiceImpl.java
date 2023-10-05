@@ -2,6 +2,7 @@ package com.austral.triviagoservice.business.impl;
 
 import com.austral.triviagoservice.business.QuizRatingService;
 import com.austral.triviagoservice.business.QuizService;
+import com.austral.triviagoservice.business.exception.InvalidAction;
 import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.business.helper.ErrorCheckers;
 import com.austral.triviagoservice.persistence.domain.Label;
@@ -41,11 +42,11 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public QuizDto findById(Long id) throws InvalidContentException {
+    public Quiz findById(Long id) throws InvalidContentException {
         Optional<Quiz> search = quizRepository.findById(id);
         if(search.isPresent()){
             Quiz quiz = search.get();
-            return QuizDto.createDto(quiz);
+            return quiz;
         }
         throw new InvalidContentException("Invalid quiz Id");
     }
@@ -130,24 +131,15 @@ public class QuizServiceImpl implements QuizService {
         ErrorCheckers.checkRate(rate); //validates rating
         if (quizRepository.existsById(quizId)) {
             User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            Quiz quiz = quizRepository.findById(quizId).get();
-            quiz.getRating().stream()
-                    .filter(r -> r.getUser().getId().equals(user.getId()))
-                    .findFirst()
-                    .ifPresentOrElse(
-                            r -> { //If exists, set the new rate
-                                r.setRating(rate);
-                            },
-                            () -> { //else create
-                                QuizRating rating = new QuizRating();
-                                rating.setUser(user);
-                                rating.setQuiz(quiz);
-                                rating.setRating(rate);
+            Quiz quiz = this.findById(quizId);
+            if (quiz.getRatings().stream().anyMatch(r -> user.getId().equals(r.getUser().getId()))) throw new InvalidContentException("User already rated the quiz");
 
-                                QuizRating result = quizRatingService.create(rating);
-                                user.getRaiting().add(result);
-                                quiz.getRating().add(result);
-                            });
+            QuizRating rating = new QuizRating();
+            rating.setUser(user);
+            rating.setQuiz(quiz);
+            rating.setRating(rate);
+
+            quizRatingService.create(rating);
 
         } else {
             throw new InvalidContentException("Invalid quiz Id");

@@ -60,7 +60,7 @@ public class QuizController {
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable("id") Long quizId){
         try{
-            QuizDto dto = quizService.findById(quizId);
+            QuizDto dto = QuizDto.createDto(quizService.findById(quizId));
             return new ResponseEntity<>(dto, HttpStatus.OK);
         }
         catch (InvalidContentException e){
@@ -105,13 +105,13 @@ public class QuizController {
         }
     }
 
-    @PutMapping("/{id}/rate")
+    @PostMapping("/{id}/rate")
     public ResponseEntity<?> rate(@PathVariable("id") Long quizId, @RequestParam("rating")  int rate){
         try{
             quizService.rateQuiz(quizId, (Integer) rate);
             return new ResponseEntity<>(HttpStatus.OK);
         }
-        catch (InvalidContentException e){
+        catch (InvalidContentException | RuntimeException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

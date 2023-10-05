@@ -32,7 +32,7 @@ public class Quiz {
 
     @OneToMany(mappedBy="quiz")
     @JsonIgnore
-    private List<QuizRating> rating;
+    private List<QuizRating> ratings;
 
     @OneToMany(targetEntity = Question.class, cascade = CascadeType.ALL, mappedBy = "quiz")
     @JsonIgnore //json loop
@@ -57,7 +57,7 @@ public class Quiz {
         this.labels = labels;
         labels.forEach(label -> label.getQuizzes().add(this));
         this.creationDate = LocalDate.now();
-        this.rating = new ArrayList<>();
+        this.ratings = new ArrayList<>();
         if (quizCreateDto.isPrivate()) this.invitationCode = UUID.randomUUID().toString();
     }
 }

@@ -1,6 +1,7 @@
 package com.austral.triviagoservice.business;
 
 import com.austral.triviagoservice.business.exception.InvalidContentException;
+import com.austral.triviagoservice.persistence.domain.Quiz;
 import com.austral.triviagoservice.presentation.dto.QuizCreateDto;
 import com.austral.triviagoservice.presentation.dto.QuizDto;
 import com.austral.triviagoservice.presentation.dto.QuizFilter;
@@ -9,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface QuizService {
 
-    QuizDto findById(Long id) throws InvalidContentException;
+    Quiz findById(Long id) throws InvalidContentException;
 
     Page<QuizDto> findAll(QuizFilter quizFIlter, Pageable pageable) throws InvalidContentException;
 

@@ -38,7 +38,7 @@ public class User{
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @JsonIgnore
-    List<QuizRating> raiting;
+    List<QuizRating> ratings;
 
 
     @OneToMany(targetEntity = Quiz.class, cascade = CascadeType.ALL, mappedBy = "user")
