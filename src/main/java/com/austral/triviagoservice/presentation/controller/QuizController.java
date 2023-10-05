@@ -111,7 +111,7 @@ public class QuizController {
             quizService.rateQuiz(quizId, (Integer) rate);
             return new ResponseEntity<>(HttpStatus.OK);
         }
-        catch (InvalidContentException | RuntimeException e){
+        catch (InvalidContentException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
