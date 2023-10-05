@@ -102,12 +102,13 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     public Long deleteById(Long id) throws InvalidContentException {
-        if(quizRepository.existsById(id)){
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Quiz quiz = findById(id);
+        if (quiz.getUser().getId().equals(user.getId())) {
             quizRepository.deleteById(id);
             return id;
         }
-        throw new InvalidContentException("Invalid Id, quiz does not exist");
-
+        throw new InvalidContentException("Invalid Id, quiz does not exist or does not belong to the user");
     }
 
     @Override
@@ -119,4 +120,5 @@ public class QuizServiceImpl implements QuizService {
         }
         throw new InvalidContentException("Invalid invitation Code");
     }
+
 }
