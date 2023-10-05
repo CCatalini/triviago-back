@@ -2,7 +2,6 @@ package com.austral.triviagoservice.business.impl;
 
 import com.austral.triviagoservice.business.QuizRatingService;
 import com.austral.triviagoservice.business.QuizService;
-import com.austral.triviagoservice.business.exception.InvalidAction;
 import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.business.helper.ErrorCheckers;
 import com.austral.triviagoservice.persistence.domain.Label;
@@ -129,21 +128,13 @@ public class QuizServiceImpl implements QuizService {
     @Override
     public void rateQuiz(Long quizId, QuizRatingDto rate) throws InvalidContentException {
         ErrorCheckers.checkRate(rate.getRating()); //validates rating
-        if (quizRepository.existsById(quizId)) {
-            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            Quiz quiz = this.findById(quizId);
-            if (quiz.getRatings().stream().anyMatch(r -> user.getId().equals(r.getUser().getId()))) throw new InvalidContentException("User already rated the quiz");
-
-            QuizRating rating = new QuizRating();
-            rating.setUser(user);
-            rating.setQuiz(quiz);
-            rating.setRating(rate.getRating());
-
-            quizRatingService.create(rating);
-
-        } else {
-            throw new InvalidContentException("Invalid quiz Id");
-
-        }
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Quiz quiz = this.findById(quizId);
+        if (quiz.getRatings().stream().anyMatch(r -> user.getId().equals(r.getUser().getId()))) throw new InvalidContentException("User already rated the quiz");
+        QuizRating rating = new QuizRating();
+        rating.setUser(user);
+        rating.setQuiz(quiz);
+        rating.setRating(rate.getRating());
+        quizRatingService.create(rating);
     }
 }
