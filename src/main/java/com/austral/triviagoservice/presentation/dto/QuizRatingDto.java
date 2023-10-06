@@ -10,8 +10,4 @@ public class QuizRatingDto {
 
     private Integer rating;
 
-    public QuizRatingDto(Integer rating){
-        this.rating = rating;
-    }
-
 }
