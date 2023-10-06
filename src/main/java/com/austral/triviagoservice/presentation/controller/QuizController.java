@@ -1,5 +1,6 @@
 package com.austral.triviagoservice.presentation.controller;
 
+import com.austral.triviagoservice.business.UserService;
 import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.business.impl.CommentServiceImpl;
 import com.austral.triviagoservice.business.impl.QuizServiceImpl;
@@ -22,13 +23,14 @@ import java.util.Map;
 @RequestMapping("/quiz")
 public class QuizController {
 
-    final
-    QuizServiceImpl quizService;
+    final QuizServiceImpl quizService;
     final CommentServiceImpl commentService;
 
-    public QuizController(QuizServiceImpl quizService, CommentServiceImpl commentService){
+
+    public QuizController(QuizServiceImpl quizService, CommentServiceImpl commentService) {
         this.quizService = quizService;
         this.commentService = commentService;
+
     }
 
     @GetMapping
@@ -104,5 +106,6 @@ public class QuizController {
             return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
         }
     }
+
 
 }
