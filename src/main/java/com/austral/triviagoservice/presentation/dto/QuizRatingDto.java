@@ -4,9 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
 public class QuizRatingDto {
 
     private Integer rating;
+
+    public QuizRatingDto(Integer rating){
+        this.rating = rating;
+    }
 
 }
