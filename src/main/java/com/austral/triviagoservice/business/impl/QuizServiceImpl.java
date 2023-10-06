@@ -1,10 +1,12 @@
 package com.austral.triviagoservice.business.impl;
 
+import com.austral.triviagoservice.business.QuizRatingService;
 import com.austral.triviagoservice.business.QuizService;
 import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.business.helper.ErrorCheckers;
 import com.austral.triviagoservice.persistence.domain.Label;
 import com.austral.triviagoservice.persistence.domain.Quiz;
+import com.austral.triviagoservice.persistence.domain.QuizRating;
 import com.austral.triviagoservice.persistence.domain.User;
 import com.austral.triviagoservice.persistence.repository.LabelRepository;
 import com.austral.triviagoservice.persistence.repository.QuizRepository;
@@ -27,13 +29,15 @@ public class QuizServiceImpl implements QuizService {
 
     final private QuizRepository quizRepository;
     private final LabelRepository labelRepository;
-
+    private final QuizRatingService quizRatingService;
 
     public QuizServiceImpl(QuizRepository quizRepository,
-                           LabelRepository labelRepository) {
+                           LabelRepository labelRepository,
+                           QuizRatingService quizRatingService) {
         this.quizRepository = quizRepository;
         this.labelRepository = labelRepository;
 
+        this.quizRatingService = quizRatingService;
     }
 
     @Override
@@ -119,6 +123,20 @@ public class QuizServiceImpl implements QuizService {
             return QuizDto.createDto(quiz);
         }
         throw new InvalidContentException("Invalid invitation Code");
+    }
+
+
+    @Override
+    public void rateQuiz(Long quizId, QuizRatingDto rate) throws InvalidContentException {
+        ErrorCheckers.checkRate(rate.getRating()); //validates rating
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Quiz quiz = this.findById(quizId);
+        if (quiz.getRatings().stream().anyMatch(r -> user.getId().equals(r.getUser().getId()))) throw new InvalidContentException("User already rated the quiz");
+        QuizRating rating = new QuizRating();
+        rating.setUser(user);
+        rating.setQuiz(quiz);
+        rating.setRating(rate.getRating());
+        quizRatingService.create(rating);
     }
 
 }

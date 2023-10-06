@@ -4,10 +4,7 @@ import com.austral.triviagoservice.business.UserService;
 import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.business.impl.CommentServiceImpl;
 import com.austral.triviagoservice.business.impl.QuizServiceImpl;
-import com.austral.triviagoservice.presentation.dto.CommentDto;
-import com.austral.triviagoservice.presentation.dto.QuizCreateDto;
-import com.austral.triviagoservice.presentation.dto.QuizDto;
-import com.austral.triviagoservice.presentation.dto.QuizFilter;
+import com.austral.triviagoservice.presentation.dto.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -107,5 +104,15 @@ public class QuizController {
         }
     }
 
+    @PostMapping("/{id}/rate")
+    public ResponseEntity<?> rate(@PathVariable("id") Long quizId, @RequestBody QuizRatingDto rate){
+        try{
+            quizService.rateQuiz(quizId, rate);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        catch (InvalidContentException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 }

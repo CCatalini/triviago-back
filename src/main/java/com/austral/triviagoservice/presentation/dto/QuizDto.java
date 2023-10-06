@@ -2,6 +2,7 @@ package com.austral.triviagoservice.presentation.dto;
 
 import com.austral.triviagoservice.persistence.domain.Label;
 import com.austral.triviagoservice.persistence.domain.Quiz;
+import com.austral.triviagoservice.persistence.domain.QuizRating;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,7 +19,7 @@ public class QuizDto {
     private String title;
     private String description;
     private LocalDate creationDate;
-    private Double rating;
+    private int rating;
     private String invitationCode;
     private boolean isPrivate;
     private List<QuestionDto> questions;
@@ -33,13 +34,14 @@ public class QuizDto {
         dto.setTitle(quiz.getTitle());
         dto.setDescription(quiz.getDescription());
         dto.setCreationDate(quiz.getCreationDate());
-        dto.setRating(quiz.getRating());
         dto.setAuthor(new AuthorDto(quiz.getUser()));
         dto.setInvitationCode(quiz.getInvitationCode());
         dto.setId(quiz.getId());
         dto.setPrivate(quiz.isPrivate());
         dto.setQuestions(quiz.getQuestions().stream().map(QuestionDto::new).collect(Collectors.toList()));
         dto.setLabels(quiz.getLabels().stream().map(Label::getValue).collect(Collectors.toList()));
+
+        dto.setRating(quiz.getRatings().isEmpty() ? 0 : quiz.getRatings().stream().mapToInt(QuizRating::getRating).sum() / quiz.getRatings().size());
         return dto;
     }
 

@@ -33,4 +33,8 @@ public class ErrorCheckers {
 
         if(this.isFirstGreater(filter.getMinRating(), filter.getMaxRating())){throw new InvalidContentException("MinRating shouldn´t be greater than MaxRating");}
     }
+
+    public static void checkRate(Integer rate) throws InvalidContentException {
+        if(rate < 1 || rate > 5)throw  new InvalidContentException("Invalid rate. Value should be between 1 and 5");
+    }
 }
