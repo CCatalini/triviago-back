@@ -5,9 +5,7 @@ import com.austral.triviagoservice.business.UserService;
 import com.austral.triviagoservice.business.exception.NotFoundException;
 import com.austral.triviagoservice.persistence.domain.Quiz;
 import com.austral.triviagoservice.persistence.domain.User;
-import com.austral.triviagoservice.persistence.repository.QuizRepository;
 import com.austral.triviagoservice.persistence.repository.UserRepository;
-import com.austral.triviagoservice.presentation.dto.AuthorDto;
 
 import com.austral.triviagoservice.presentation.dto.QuizDto;
 import com.austral.triviagoservice.presentation.dto.UserDto;
@@ -15,7 +13,6 @@ import lombok.SneakyThrows;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -86,6 +83,12 @@ public class UserServiceImpl implements UserService {
                 .savedQuizzes(user.getSavedQuizzes().stream().map(QuizDto::createDto).collect(Collectors.toList()))
                 .quizzes(user.getQuizzes().stream().map(QuizDto::createDto).collect(Collectors.toList()))
                 .build();
+    }
+
+    @Override
+    public List<QuizDto> getSavedQuizzes() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return user.getSavedQuizzes().stream().map(QuizDto::createDto).collect(Collectors.toList());
     }
 
 }

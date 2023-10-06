@@ -4,6 +4,8 @@ import com.austral.triviagoservice.presentation.dto.QuizCreateDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -36,6 +38,7 @@ public class Quiz {
 
     @OneToMany(targetEntity = Question.class, cascade = CascadeType.ALL, mappedBy = "quiz")
     @JsonIgnore //json loop
+    @LazyCollection(LazyCollectionOption.FALSE)
     List<Question> questions;
 
     @ManyToOne(targetEntity = User.class)
@@ -43,6 +46,7 @@ public class Quiz {
 
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "quizzes")
     @JsonIgnore
+    @LazyCollection(LazyCollectionOption.FALSE)
     List<Label> labels = new ArrayList<>();
 
     public Quiz() {
