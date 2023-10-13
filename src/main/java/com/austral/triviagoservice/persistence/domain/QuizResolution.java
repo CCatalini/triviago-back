@@ -27,6 +27,14 @@ public class QuizResolution {
 
     public QuizResolution(){}
 
+    public QuizResolution(Long userId, Long quizId, int correctAnswers){
+        this.userId = userId;
+        this.quizId = quizId;
+        this.correctAnswers = correctAnswers;
+        this.resolutionDateTime = LocalDateTime.now();
+
+    }
+
 
 
 }
