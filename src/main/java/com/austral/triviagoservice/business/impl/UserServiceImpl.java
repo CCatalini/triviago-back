@@ -9,6 +9,7 @@ import com.austral.triviagoservice.persistence.repository.UserRepository;
 
 import com.austral.triviagoservice.presentation.dto.QuizDto;
 import com.austral.triviagoservice.presentation.dto.UserDto;
+import com.austral.triviagoservice.presentation.dto.UserInfoDto;
 import lombok.SneakyThrows;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -93,4 +94,9 @@ public class UserServiceImpl implements UserService {
         return user.getSavedQuizzes().stream().map(QuizDto::createDto).collect(Collectors.toList());
     }
 
+    @Override
+    public UserInfoDto getUserInfo(Long user_id) throws NotFoundException {
+        User user = this.findById(user_id);
+        return UserInfoDto.dto(user);
+    }
 }
