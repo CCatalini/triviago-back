@@ -2,6 +2,7 @@ package com.austral.triviagoservice.business.impl;
 
 import com.austral.triviagoservice.business.QuizService;
 import com.austral.triviagoservice.business.UserService;
+import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.business.exception.NotFoundException;
 import com.austral.triviagoservice.persistence.domain.Quiz;
 import com.austral.triviagoservice.persistence.domain.User;
@@ -9,6 +10,7 @@ import com.austral.triviagoservice.persistence.repository.UserRepository;
 
 import com.austral.triviagoservice.presentation.dto.QuizDto;
 import com.austral.triviagoservice.presentation.dto.UserDto;
+import com.austral.triviagoservice.presentation.dto.UserFieldControllerDto;
 import com.austral.triviagoservice.presentation.dto.UserInfoDto;
 import lombok.SneakyThrows;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -98,5 +101,24 @@ public class UserServiceImpl implements UserService {
     public UserInfoDto getUserInfo(Long user_id) throws NotFoundException {
         User user = this.findById(user_id);
         return UserInfoDto.dto(user);
+    }
+
+    @Override
+    public UserInfoDto ModifyUserInfo(Long user_id, UserFieldControllerDto requested) throws InvalidContentException, NotFoundException {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(Objects.equals(user.getId(), user_id)){
+            if(requested.getBirthDate() != null){
+                user.setBirthDate(requested.getBirthDate());
+            }
+            if(requested.getLastName() != null){
+                user.setLastName(requested.getLastName());
+            }
+            if(requested.getFirstName() != null){
+                user.setFirstName(requested.getFirstName());
+            }
+            userRepository.save(user);
+            return UserInfoDto.dto(user);
+        }
+        throw new InvalidContentException("Invalid user Id");
     }
 }

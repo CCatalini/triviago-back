@@ -1,9 +1,11 @@
 package com.austral.triviagoservice.presentation.controller;
 
+import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.business.exception.NotFoundException;
 import com.austral.triviagoservice.business.impl.UserServiceImpl;
 import com.austral.triviagoservice.presentation.dto.QuizDto;
 import com.austral.triviagoservice.presentation.dto.UserDto;
+import com.austral.triviagoservice.presentation.dto.UserFieldControllerDto;
 import com.austral.triviagoservice.presentation.dto.UserInfoDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,6 +48,17 @@ public class UserController {
             return new ResponseEntity<>(dto,HttpStatus.OK);
         } catch (NotFoundException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> modifyUserInfo(@PathVariable("id") Long user_id, UserFieldControllerDto requested){
+        try{
+            UserInfoDto dto = userService.ModifyUserInfo(user_id, requested);
+            return new ResponseEntity<>(dto, HttpStatus.OK);
+        }
+        catch (InvalidContentException | NotFoundException e){
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
