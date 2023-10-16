@@ -29,6 +29,9 @@ public class User{
     @Column(name = "birthDate")
     private LocalDate birthDate;
 
+    @Column
+    private LocalDate creationDate;
+
     @Column(name = "email", length = 50, unique = true)
     private String email;
 
@@ -46,6 +49,7 @@ public class User{
     @JsonIgnore
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<Quiz> savedQuizzes;
+
 
 
     @OneToMany(targetEntity = Quiz.class, cascade = CascadeType.ALL, mappedBy = "user")
