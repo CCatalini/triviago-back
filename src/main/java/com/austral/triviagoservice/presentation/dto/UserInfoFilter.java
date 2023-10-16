@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Getter
-public class UserInfoRequest {
+public class UserInfoFilter {
 
     private String firstName;
     private String lastName;
