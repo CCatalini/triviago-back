@@ -10,6 +10,14 @@ import java.util.List;
 @Setter
 @Builder
 public class QuizResolutionDto {
-    private long QuizId;
+    private long quizId;
     private List<AnswerDto> selectedAnswers;
+
+    public QuizResolutionDto() {
+    }
+
+    public QuizResolutionDto(long quizId, List<AnswerDto> selectedAnswers) {
+        this.quizId = quizId;
+        this.selectedAnswers = selectedAnswers;
+    }
 }
