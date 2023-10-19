@@ -38,7 +38,7 @@ public class UserController {
         return new ResponseEntity<>(userService.getSavedQuizzes(), HttpStatus.OK);
     }
 
-    @DeleteMapping("/user/{userId}")
+    @DeleteMapping("/{userId}")
     public ResponseEntity<Void> deleteUser(@PathVariable("userId") Long userId) throws InvalidContentException{
         userService.deleteUser(userId);
         return new ResponseEntity<>(HttpStatus.OK);
