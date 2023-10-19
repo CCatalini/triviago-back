@@ -115,4 +115,15 @@ public class QuizController {
         }
     }
 
+    @GetMapping("/leaderboard/{id}")
+    public ResponseEntity<?> getLeaderboard(@PathVariable("id") Long quizId){
+        try{
+            List<QuizResolutionDto> leaderboard = quizService.getLeaderboard(quizId);
+            return new ResponseEntity<>(leaderboard, HttpStatus.OK);
+        }
+        catch (InvalidContentException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }
