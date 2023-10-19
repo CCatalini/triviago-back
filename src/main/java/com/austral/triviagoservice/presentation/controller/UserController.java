@@ -1,5 +1,6 @@
 package com.austral.triviagoservice.presentation.controller;
 
+import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.business.impl.UserServiceImpl;
 import com.austral.triviagoservice.presentation.dto.QuizDto;
 import com.austral.triviagoservice.presentation.dto.UserDto;
@@ -35,5 +36,11 @@ public class UserController {
     @GetMapping("/saved-quizzes")
     public ResponseEntity<List<QuizDto>> getSavedQuizzes(){
         return new ResponseEntity<>(userService.getSavedQuizzes(), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/user/{userId}")
+    public ResponseEntity<Void> deleteUser(@PathVariable("userId") Long userId) throws InvalidContentException{
+        userService.deleteUser(userId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
