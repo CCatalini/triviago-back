@@ -45,6 +45,9 @@ public class UserController {
             UserInfoDto dto = userService.getUserInfo(user_id);
             return new ResponseEntity<>(dto,HttpStatus.OK);
         } catch (NotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        catch (Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
