@@ -7,12 +7,19 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AnswerDto {
-    private final Long id;
-
-    private final String content;
+    private Long id;
+    private String content;
 
     public AnswerDto(Answer answer) {
         this.id = answer.getId();
         this.content = answer.getContent();
     }
+
+    public AnswerDto(Long id, String content) {
+        this.id = id;
+        this.content = content;
+    }
+    public AnswerDto() {
+    }
+
 }
