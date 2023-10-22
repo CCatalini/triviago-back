@@ -1,7 +1,7 @@
 package com.austral.triviagoservice.business;
 
-import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.business.exception.NotFoundException;
+import com.austral.triviagoservice.business.exception.UnauthorizedException;
 import com.austral.triviagoservice.persistence.domain.User;
 import com.austral.triviagoservice.presentation.dto.QuizDto;
 import com.austral.triviagoservice.presentation.dto.UserDto;
@@ -22,5 +22,5 @@ public interface UserService {
 
     List<QuizDto> getSavedQuizzes();
 
-    void deleteUser(Long userId) throws InvalidContentException;
+    void deleteUser(Long userId) throws UnauthorizedException;
 }

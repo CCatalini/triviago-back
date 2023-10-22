@@ -1,6 +1,6 @@
 package com.austral.triviagoservice.presentation.controller;
 
-import com.austral.triviagoservice.business.exception.InvalidContentException;
+import com.austral.triviagoservice.business.exception.UnauthorizedException;
 import com.austral.triviagoservice.business.impl.UserServiceImpl;
 import com.austral.triviagoservice.presentation.dto.QuizDto;
 import com.austral.triviagoservice.presentation.dto.UserDto;
@@ -39,8 +39,12 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity<Void> deleteUser(@PathVariable("userId") Long userId) throws InvalidContentException{
+    public ResponseEntity<?> deleteUser(@PathVariable("userId") Long userId) {
+    try {
         userService.deleteUser(userId);
         return new ResponseEntity<>(HttpStatus.OK);
+    } catch (UnauthorizedException e) {
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
+}
 }
