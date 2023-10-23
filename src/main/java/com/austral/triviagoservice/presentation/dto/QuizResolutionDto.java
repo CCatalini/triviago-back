@@ -1,5 +1,4 @@
 package com.austral.triviagoservice.presentation.dto;
-
 import com.austral.triviagoservice.persistence.domain.QuizResolution;
 
 import java.time.LocalDateTime;

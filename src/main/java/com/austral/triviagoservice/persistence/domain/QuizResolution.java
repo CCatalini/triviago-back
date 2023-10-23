@@ -1,5 +1,6 @@
 package com.austral.triviagoservice.persistence.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,16 +24,14 @@ public class QuizResolution {
     private int correctAnswers;
     private LocalDateTime resolutionDateTime;
 
-    public QuizResolution(){}
-
     public QuizResolution(Long userId, Quiz quiz, int correctAnswers){
         this.userId = userId;
         this.quiz = quiz;
         this.correctAnswers = correctAnswers;
         this.resolutionDateTime = LocalDateTime.now();
 
+    public QuizResolution() {
+
+
     }
-
-
-
 }
