@@ -50,6 +50,7 @@ public class User{
 
     @OneToMany(targetEntity = Quiz.class, cascade = CascadeType.ALL, mappedBy = "user")
     @JsonIgnore
+    @LazyCollection(LazyCollectionOption.FALSE)
     List<Quiz> quizzes = new ArrayList<>();
 
     public User() {

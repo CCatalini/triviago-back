@@ -34,6 +34,7 @@ public class Quiz {
 
     @OneToMany(mappedBy="quiz")
     @JsonIgnore
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<QuizRating> ratings;
 
     @OneToMany(targetEntity = Question.class, cascade = CascadeType.ALL, mappedBy = "quiz")
