@@ -20,5 +20,5 @@ public interface UserService {
 
     List<QuizDto> getSavedQuizzes();
 
-    UserInfoDto getUserInfo(Long user_id) throws NotFoundException;
+    UserInfoDto getUserInfo(Long userId) throws NotFoundException;
 }

@@ -39,10 +39,10 @@ public class UserController {
         return new ResponseEntity<>(userService.getSavedQuizzes(), HttpStatus.OK);
     }
 
-    @GetMapping("/{user_id}")
-    public ResponseEntity<?> getUserInfo(@PathVariable("user_id") Long user_id){
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getUserInfo(@PathVariable("id") Long userId){
         try{
-            UserInfoDto dto = userService.getUserInfo(user_id);
+            UserInfoDto dto = userService.getUserInfo(userId);
             return new ResponseEntity<>(dto,HttpStatus.OK);
         } catch (NotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

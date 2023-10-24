@@ -95,8 +95,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserInfoDto getUserInfo(Long user_id) throws NotFoundException {
-        User user = this.findById(user_id);
-        return UserInfoDto.dto(user);
+    public UserInfoDto getUserInfo(Long userId) throws NotFoundException {
+        User user = this.findById(userId);
+        return new UserInfoDto(user);
     }
 }
