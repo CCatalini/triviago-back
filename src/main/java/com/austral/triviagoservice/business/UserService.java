@@ -23,5 +23,5 @@ public interface UserService {
 
     UserInfoDto getUserInfo(Long userId) throws NotFoundException;
 
-    UserInfoDto ModifyUserInfo(Long user_id, UserFieldControllerDto requested) throws InvalidContentException, NotFoundException;
+    UserInfoDto modifyUserInfo(Long userId, ModifyUserInfoDto modifyUsertInfoDto) throws InvalidContentException, NotFoundException;
 }

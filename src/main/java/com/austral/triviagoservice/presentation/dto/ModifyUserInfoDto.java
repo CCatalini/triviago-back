@@ -4,7 +4,7 @@ import lombok.Getter;
 
 import java.time.LocalDate;
 @Getter
-public class UserFieldControllerDto {
+public class ModifyUserInfoDto {
 
     private String firstName;
     private String lastName;

@@ -10,7 +10,7 @@ import com.austral.triviagoservice.persistence.repository.UserRepository;
 
 import com.austral.triviagoservice.presentation.dto.QuizDto;
 import com.austral.triviagoservice.presentation.dto.UserDto;
-import com.austral.triviagoservice.presentation.dto.UserFieldControllerDto;
+import com.austral.triviagoservice.presentation.dto.ModifyUserInfoDto;
 import com.austral.triviagoservice.presentation.dto.UserInfoDto;
 import lombok.SneakyThrows;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -104,20 +104,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserInfoDto ModifyUserInfo(Long user_id, UserFieldControllerDto requested) throws InvalidContentException, NotFoundException {
+    public UserInfoDto modifyUserInfo(Long userId, ModifyUserInfoDto modifyUserInfoDto) throws InvalidContentException, NotFoundException {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(Objects.equals(user.getId(), user_id)){
-            if(requested.getBirthDate() != null){
-                user.setBirthDate(requested.getBirthDate());
+        if(Objects.equals(user.getId(), userId)){
+            if(modifyUserInfoDto.getBirthDate() != null){
+                user.setBirthDate(modifyUserInfoDto.getBirthDate());
             }
-            if(requested.getLastName() != null){
-                user.setLastName(requested.getLastName());
+            if(modifyUserInfoDto.getLastName() != null){
+                user.setLastName(modifyUserInfoDto.getLastName());
             }
-            if(requested.getFirstName() != null){
-                user.setFirstName(requested.getFirstName());
+            if(modifyUserInfoDto.getFirstName() != null){
+                user.setFirstName(modifyUserInfoDto.getFirstName());
             }
-            userRepository.save(user);
-            return UserInfoDto.dto(user);
+            return new UserInfoDto(user);
         }
         throw new InvalidContentException("Invalid user Id");
     }
