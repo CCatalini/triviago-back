@@ -18,8 +18,8 @@ public class QuizResolutionDto {
     @JsonProperty("resolutionDateTime")
     private LocalDateTime resolutionDateTime;
 
-    public QuizResolutionDto(QuizResolution quizResolution, String email) {
-        this.email = email;
+    public QuizResolutionDto(QuizResolution quizResolution) {
+        this.email = quizResolution.getUser().getEmail();
         this.quizId = quizResolution.getQuiz().getId();
         this.correctAnswers = quizResolution.getCorrectAnswers();
         this.resolutionDateTime = quizResolution.getResolutionDateTime();

@@ -122,12 +122,8 @@ public class QuizController {
             List<QuizResolutionDto> leaderboard = quizService.getLeaderboard(quizId);
             return new ResponseEntity<>(leaderboard, HttpStatus.OK);
         }
-        catch (InvalidContentException e){
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
         catch (NotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
-
 }

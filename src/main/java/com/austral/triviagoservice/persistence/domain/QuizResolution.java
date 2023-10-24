@@ -15,7 +15,9 @@ public class QuizResolution {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long userId;
+
+    @ManyToOne(targetEntity = User.class)
+    private User user;
 
     @ManyToOne(targetEntity = Quiz.class)
     private Quiz quiz;

@@ -146,18 +146,16 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public List<QuizResolutionDto> getLeaderboard(Long quizId) throws InvalidContentException, NotFoundException {
+    public List<QuizResolutionDto> getLeaderboard(Long quizId) throws NotFoundException {
         if (!quizRepository.existsById(quizId)) throw new NotFoundException("Quiz not found");
         List<QuizResolution> resolutions = quizResolutionRepository.findAllByQuizId(quizId);
-        if (!resolutions.isEmpty()) {
-            List<QuizResolution> sortedResolution = resolutions.stream().sorted((r1, r2) -> {
-                if (r1.getCorrectAnswers() == r2.getCorrectAnswers()) {
-                    return r1.getResolutionDateTime().compareTo(r2.getResolutionDateTime());
-                }
+        List<QuizResolution> sortedResolution = resolutions.stream().sorted((r1, r2) -> {
+            if (r1.getCorrectAnswers() == r2.getCorrectAnswers()) {
+                return r1.getResolutionDateTime().compareTo(r2.getResolutionDateTime());
+            }
                 return r2.getCorrectAnswers() - r1.getCorrectAnswers();
             }).collect(Collectors.toList());
-            return sortedResolution.stream().map(quizResolution -> new QuizResolutionDto(quizResolution, userRepository.findById(quizResolution.getUserId()).get().getEmail())).collect(Collectors.toList());
-        }
-        throw new InvalidContentException("There are no resolutions for this quiz");
+        return sortedResolution.stream().map(QuizResolutionDto::new).collect(Collectors.toList());
+
     }
 }

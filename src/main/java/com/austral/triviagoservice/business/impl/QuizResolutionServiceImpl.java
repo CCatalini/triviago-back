@@ -54,13 +54,13 @@ public class QuizResolutionServiceImpl implements QuizResolutionService {
             throw new InvalidContentException("Two or more answers are related to the same question");
 
         QuizResolution quizResolution = new QuizResolution();
-        quizResolution.setUserId(user.getId());
+        quizResolution.setUser(user);
         quizResolution.setQuiz(quiz);
         quizResolution.setResolutionDateTime(LocalDateTime.now());
         quizResolution.setCorrectAnswers((int) answers.stream().filter(Answer::isCorrect).count());
 
         quizResolutionRepository.save(quizResolution);
-        return new QuizResolutionDto(quizResolution, user.getEmail());
+        return new QuizResolutionDto(quizResolution);
     }
 
 }
