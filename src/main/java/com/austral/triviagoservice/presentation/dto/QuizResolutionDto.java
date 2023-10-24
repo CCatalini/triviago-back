@@ -6,8 +6,8 @@ import java.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class QuizResolutionDto {
-    @JsonProperty("userId")
-    private Long userId;
+    @JsonProperty("userMail")
+    private String email;
 
     @JsonProperty("quizId")
     private Long quizId;
@@ -18,8 +18,8 @@ public class QuizResolutionDto {
     @JsonProperty("resolutionDateTime")
     private LocalDateTime resolutionDateTime;
 
-    public QuizResolutionDto(QuizResolution quizResolution) {
-        this.userId = quizResolution.getUserId();
+    public QuizResolutionDto(QuizResolution quizResolution, String email) {
+        this.email = email;
         this.quizId = quizResolution.getQuiz().getId();
         this.correctAnswers = quizResolution.getCorrectAnswers();
         this.resolutionDateTime = quizResolution.getResolutionDateTime();
