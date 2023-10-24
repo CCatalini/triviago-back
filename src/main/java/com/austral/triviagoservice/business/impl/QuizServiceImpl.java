@@ -146,7 +146,8 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public List<QuizResolutionDto> getLeaderboard(Long quizId) throws InvalidContentException {
+    public List<QuizResolutionDto> getLeaderboard(Long quizId) throws InvalidContentException, NotFoundException {
+        if (!quizRepository.existsById(quizId)) throw new NotFoundException("Quiz not found");
         List<QuizResolution> resolutions = quizResolutionRepository.findAllByQuizId(quizId);
         if (!resolutions.isEmpty()) {
             List<QuizResolution> sortedResolution = resolutions.stream().sorted((r1, r2) -> {

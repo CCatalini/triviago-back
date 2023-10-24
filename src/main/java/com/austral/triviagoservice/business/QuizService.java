@@ -1,6 +1,7 @@
 package com.austral.triviagoservice.business;
 
 import com.austral.triviagoservice.business.exception.InvalidContentException;
+import com.austral.triviagoservice.business.exception.NotFoundException;
 import com.austral.triviagoservice.persistence.domain.Quiz;
 import com.austral.triviagoservice.presentation.dto.*;
 import org.springframework.data.domain.Page;
@@ -22,6 +23,6 @@ public interface QuizService {
   
     void rateQuiz(Long quizId, QuizRatingDto rate) throws InvalidContentException;
 
-    List<QuizResolutionDto> getLeaderboard(Long quizId) throws InvalidContentException;
+    List<QuizResolutionDto> getLeaderboard(Long quizId) throws InvalidContentException, NotFoundException;
 }
 

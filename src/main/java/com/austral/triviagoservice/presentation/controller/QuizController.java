@@ -2,6 +2,7 @@ package com.austral.triviagoservice.presentation.controller;
 
 import com.austral.triviagoservice.business.UserService;
 import com.austral.triviagoservice.business.exception.InvalidContentException;
+import com.austral.triviagoservice.business.exception.NotFoundException;
 import com.austral.triviagoservice.business.impl.CommentServiceImpl;
 import com.austral.triviagoservice.business.impl.QuizServiceImpl;
 import com.austral.triviagoservice.presentation.dto.*;
@@ -123,6 +124,9 @@ public class QuizController {
         }
         catch (InvalidContentException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        catch (NotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
