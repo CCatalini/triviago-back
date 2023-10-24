@@ -19,27 +19,25 @@ public class UserInfoDto {
     private LocalDate birthDate;
     private String email;
     List<QuizDto> createdQuizzes;
-    List<QuizDto> savedQuizes;
+    List<QuizDto> savedQuizzes;
     List<QuizDto> following;
     private LocalDate createdDate;
 
-    public static UserInfoDto dto(User user){
-        UserInfoDto dto = new UserInfoDto();
-        dto.setFirstName(user.getFirstName());
-        dto.setLastName(user.getLastName());
-        dto.setBirthDate(user.getBirthDate());
-        dto.setEmail(user.getEmail());
+    public UserInfoDto(User user){
+        this.setFirstName(user.getFirstName());
+        this.setLastName(user.getLastName());
+        this.setBirthDate(user.getBirthDate());
+        this.setEmail(user.getEmail());
 
         List<QuizDto> savedQuizesDto = new ArrayList<>();
         user.getSavedQuizzes().stream().map(QuizDto::createDto).forEach(savedQuizesDto::add);
-        dto.setSavedQuizes(savedQuizesDto);
+        this.setSavedQuizzes(savedQuizesDto);
 
         List<QuizDto> createdQuiz = new ArrayList<>();
         user.getQuizzes().stream().map(QuizDto::createDto).forEach(createdQuiz::add);
-        dto.setCreatedQuizzes(createdQuiz);
+        this.setCreatedQuizzes(createdQuiz);
 
-        dto.setCreatedDate(user.getCreationDate());
-        return dto;
+        this.setCreatedDate(user.getCreationDate());
     }
 
 
