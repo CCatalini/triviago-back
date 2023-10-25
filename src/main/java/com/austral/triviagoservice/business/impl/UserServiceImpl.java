@@ -68,9 +68,8 @@ public class UserServiceImpl implements UserService {
     @SneakyThrows
     public UserDto removeQuizFromSavedList (Long quizId) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Quiz quiz = quizService.findById(quizId);
-        if (user.getSavedQuizzes().contains(quiz)) {
-            user.getSavedQuizzes().remove(quiz);
+        if (user.getSavedQuizzes().stream().anyMatch(savedQuiz -> savedQuiz.getId() == quizId)) {
+            user.getSavedQuizzes().removeIf(savedQuiz -> savedQuiz.getId() == quizId);
             userRepository.save(user);
         }
         return UserDto.builder()
