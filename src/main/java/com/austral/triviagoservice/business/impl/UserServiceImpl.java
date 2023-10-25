@@ -116,6 +116,7 @@ public class UserServiceImpl implements UserService {
             if(modifyUserInfoDto.getFirstName() != null){
                 user.setFirstName(modifyUserInfoDto.getFirstName());
             }
+            userRepository.save(user);
             return new UserInfoDto(user);
         }
         throw new InvalidContentException("Invalid user Id");
