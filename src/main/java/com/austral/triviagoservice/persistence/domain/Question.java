@@ -4,6 +4,8 @@ import com.austral.triviagoservice.presentation.dto.QuestionCreateDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.util.List;
@@ -28,6 +30,7 @@ public class Question {
 
     @OneToMany(cascade = CascadeType.ALL, targetEntity = Answer.class, mappedBy = "question")
     @JsonIgnore
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<Answer> answers;
 
     public Question() {
