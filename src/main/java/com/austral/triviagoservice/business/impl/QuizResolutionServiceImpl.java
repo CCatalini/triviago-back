@@ -11,6 +11,7 @@ import com.austral.triviagoservice.persistence.domain.QuizResolution;
 import com.austral.triviagoservice.persistence.domain.User;
 import com.austral.triviagoservice.persistence.repository.QuizResolutionRepository;
 import com.austral.triviagoservice.presentation.dto.AnswerDto;
+import com.austral.triviagoservice.presentation.dto.QuizResolutionCreateDto;
 import com.austral.triviagoservice.presentation.dto.QuizResolutionDto;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -31,7 +32,7 @@ public class QuizResolutionServiceImpl implements QuizResolutionService {
     }
 
     @Override
-    public QuizResolution createQuizResolution(QuizResolutionDto quizResolutionDto) throws InvalidContentException, NotFoundException {
+    public QuizResolutionDto createQuizResolution(QuizResolutionCreateDto quizResolutionDto) throws InvalidContentException, NotFoundException {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Quiz quiz = quizService.findById(quizResolutionDto.getQuizId());
 
@@ -53,13 +54,13 @@ public class QuizResolutionServiceImpl implements QuizResolutionService {
             throw new InvalidContentException("Two or more answers are related to the same question");
 
         QuizResolution quizResolution = new QuizResolution();
-        quizResolution.setUserId(user.getId());
-        quizResolution.setQuizId(quiz.getId());
+        quizResolution.setUser(user);
+        quizResolution.setQuiz(quiz);
         quizResolution.setResolutionDateTime(LocalDateTime.now());
         quizResolution.setCorrectAnswers((int) answers.stream().filter(Answer::isCorrect).count());
 
         quizResolutionRepository.save(quizResolution);
-        return quizResolution;
+        return new QuizResolutionDto(quizResolution);
     }
 
 }

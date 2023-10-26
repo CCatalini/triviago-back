@@ -2,6 +2,7 @@ package com.austral.triviagoservice.presentation.controller;
 
 import com.austral.triviagoservice.business.UserService;
 import com.austral.triviagoservice.business.exception.InvalidContentException;
+import com.austral.triviagoservice.business.exception.NotFoundException;
 import com.austral.triviagoservice.business.impl.CommentServiceImpl;
 import com.austral.triviagoservice.business.impl.QuizServiceImpl;
 import com.austral.triviagoservice.presentation.dto.*;
@@ -115,4 +116,14 @@ public class QuizController {
         }
     }
 
+    @GetMapping("/leaderboard/{id}")
+    public ResponseEntity<?> getLeaderboard(@PathVariable("id") Long quizId){
+        try{
+            List<QuizResolutionDto> leaderboard = quizService.getLeaderboard(quizId);
+            return new ResponseEntity<>(leaderboard, HttpStatus.OK);
+        }
+        catch (NotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
 }

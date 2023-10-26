@@ -1,23 +1,28 @@
 package com.austral.triviagoservice.presentation.dto;
+import com.austral.triviagoservice.persistence.domain.QuizResolution;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import java.time.LocalDateTime;
 
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-@Getter
-@Setter
-@Builder
 public class QuizResolutionDto {
-    private long quizId;
-    private List<AnswerDto> selectedAnswers;
+    @JsonProperty("userMail")
+    private String email;
 
-    public QuizResolutionDto() {
-    }
+    @JsonProperty("quizId")
+    private Long quizId;
 
-    public QuizResolutionDto(long quizId, List<AnswerDto> selectedAnswers) {
-        this.quizId = quizId;
-        this.selectedAnswers = selectedAnswers;
+    @JsonProperty("correctAnswers")
+    private int correctAnswers;
+
+    @JsonProperty("resolutionDateTime")
+    private LocalDateTime resolutionDateTime;
+
+    public QuizResolutionDto(QuizResolution quizResolution) {
+        this.email = quizResolution.getUser().getEmail();
+        this.quizId = quizResolution.getQuiz().getId();
+        this.correctAnswers = quizResolution.getCorrectAnswers();
+        this.resolutionDateTime = quizResolution.getResolutionDateTime();
     }
 }
+
