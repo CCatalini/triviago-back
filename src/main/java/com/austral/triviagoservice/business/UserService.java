@@ -1,10 +1,9 @@
 package com.austral.triviagoservice.business;
 
+import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.business.exception.NotFoundException;
 import com.austral.triviagoservice.persistence.domain.User;
-import com.austral.triviagoservice.presentation.dto.AuthorDto;
-import com.austral.triviagoservice.presentation.dto.QuizDto;
-import com.austral.triviagoservice.presentation.dto.UserDto;
+import com.austral.triviagoservice.presentation.dto.*;
 
 import java.util.List;
 
@@ -21,4 +20,8 @@ public interface UserService {
     UserDto removeQuizFromSavedList(Long quizId);
 
     List<QuizDto> getSavedQuizzes();
+
+    UserInfoDto getUserInfo(Long userId) throws NotFoundException;
+
+    UserInfoDto modifyUserInfo(Long userId, ModifyUserInfoDto modifyUsertInfoDto) throws InvalidContentException, NotFoundException;
 }

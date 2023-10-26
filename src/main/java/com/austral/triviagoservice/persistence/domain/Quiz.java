@@ -50,6 +50,10 @@ public class Quiz {
     @LazyCollection(LazyCollectionOption.FALSE)
     List<Label> labels = new ArrayList<>();
 
+    @OneToMany(targetEntity = QuizResolution.class, cascade = CascadeType.ALL, mappedBy = "quiz")
+    @JsonIgnore
+    List<QuizResolution> quizResolutions;
+
     public Quiz() {
     }
 
@@ -63,6 +67,7 @@ public class Quiz {
         labels.forEach(label -> label.getQuizzes().add(this));
         this.creationDate = LocalDate.now();
         this.ratings = new ArrayList<>();
+        this.quizResolutions = new ArrayList<>();
         if (quizCreateDto.isPrivate()) this.invitationCode = UUID.randomUUID().toString();
     }
 }

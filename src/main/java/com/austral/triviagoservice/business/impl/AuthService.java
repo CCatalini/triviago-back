@@ -34,7 +34,7 @@ public class AuthService {
         user.setFirstName(signUpForm.getFirstName());
         user.setLastName(signUpForm.getLastName());
         AuthenticationResponse response = AuthenticationResponse.builder().token(jwtService.generateToken(user)).build();
-
+        user.setCreationDate(LocalDate.now());
         userRepository.save(user);
         return response;
     }
