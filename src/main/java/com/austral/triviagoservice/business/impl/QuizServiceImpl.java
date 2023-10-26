@@ -138,7 +138,7 @@ public class QuizServiceImpl implements QuizService {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Quiz quiz = this.findById(quizId);
         if (quiz.getRatings().stream().anyMatch(r -> user.getId().equals(r.getUser().getId()))) {
-            QuizRating quizRatedByUser = quizRatingRepository.findByUserId(user.getId());
+            QuizRating quizRatedByUser = quizRatingRepository.findByUserIdAndQuizId(user.getId(), quizId);
             quizRatingService.updateRating(quizRatedByUser, rate);
         }
         QuizRating rating = new QuizRating();
