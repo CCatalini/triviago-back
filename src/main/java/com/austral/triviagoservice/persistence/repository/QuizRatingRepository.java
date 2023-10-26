@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface QuizRatingRepository extends JpaRepository<QuizRating, Long> {
+    QuizRating findByUserId(Long quizId);
 }

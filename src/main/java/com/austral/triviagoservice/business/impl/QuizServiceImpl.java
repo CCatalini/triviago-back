@@ -6,10 +6,7 @@ import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.business.exception.NotFoundException;
 import com.austral.triviagoservice.business.helper.ErrorCheckers;
 import com.austral.triviagoservice.persistence.domain.*;
-import com.austral.triviagoservice.persistence.repository.LabelRepository;
-import com.austral.triviagoservice.persistence.repository.QuizRepository;
-import com.austral.triviagoservice.persistence.repository.QuizResolutionRepository;
-import com.austral.triviagoservice.persistence.repository.UserRepository;
+import com.austral.triviagoservice.persistence.repository.*;
 import com.austral.triviagoservice.persistence.specification.QuizSpecification;
 import com.austral.triviagoservice.presentation.dto.*;
 import org.springframework.data.domain.Page;
@@ -32,18 +29,21 @@ public class QuizServiceImpl implements QuizService {
     private final QuizRatingService quizRatingService;
     private final QuizResolutionRepository quizResolutionRepository;
     private final UserRepository userRepository;
+    private final QuizRatingRepository quizRatingRepository;
 
     public QuizServiceImpl(QuizRepository quizRepository,
                            LabelRepository labelRepository,
                            QuizRatingService quizRatingService,
                            QuizResolutionRepository quizResolutionRepository,
-                           UserRepository userRepository) {
+                           UserRepository userRepository,
+                           QuizRatingRepository quizRatingRepository) {
         this.quizRepository = quizRepository;
         this.labelRepository = labelRepository;
 
         this.quizRatingService = quizRatingService;
         this.quizResolutionRepository = quizResolutionRepository;
         this.userRepository = userRepository;
+        this.quizRatingRepository = quizRatingRepository;
     }
 
     @Override
@@ -137,7 +137,10 @@ public class QuizServiceImpl implements QuizService {
         ErrorCheckers.checkRate(rate.getRating()); //validates rating
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Quiz quiz = this.findById(quizId);
-        if (quiz.getRatings().stream().anyMatch(r -> user.getId().equals(r.getUser().getId()))) throw new InvalidContentException("User already rated the quiz");
+        if (quiz.getRatings().stream().anyMatch(r -> user.getId().equals(r.getUser().getId()))) {
+            QuizRating quizRatedByUser = quizRatingRepository.findByUserId(user.getId());
+            quizRatingService.updateRating(quizRatedByUser, rate);
+        }
         QuizRating rating = new QuizRating();
         rating.setUser(user);
         rating.setQuiz(quiz);
