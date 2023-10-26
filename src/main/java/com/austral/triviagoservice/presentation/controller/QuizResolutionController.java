@@ -4,6 +4,7 @@ import com.austral.triviagoservice.business.QuizResolutionService;
 import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.business.exception.NotFoundException;
 import com.austral.triviagoservice.persistence.domain.QuizResolution;
+import com.austral.triviagoservice.presentation.dto.QuizResolutionCreateDto;
 import com.austral.triviagoservice.presentation.dto.QuizResolutionDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +24,9 @@ public class QuizResolutionController {
 
 
     @PostMapping
-    public ResponseEntity<?> createQuizResolution(@RequestBody QuizResolutionDto quizResolutionDto) {
+    public ResponseEntity<?> createQuizResolution(@RequestBody QuizResolutionCreateDto quizResolutionDto) {
         try {
-            QuizResolution quizResolution = quizResolutionService.createQuizResolution(quizResolutionDto);
+            QuizResolutionDto quizResolution = quizResolutionService.createQuizResolution(quizResolutionDto);
             return ResponseEntity.ok(quizResolution);
         } catch(InvalidContentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

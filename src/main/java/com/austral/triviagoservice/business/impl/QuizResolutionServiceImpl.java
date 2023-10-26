@@ -9,9 +9,10 @@ import com.austral.triviagoservice.persistence.domain.Answer;
 import com.austral.triviagoservice.persistence.domain.Quiz;
 import com.austral.triviagoservice.persistence.domain.QuizResolution;
 import com.austral.triviagoservice.persistence.domain.User;
+import com.austral.triviagoservice.persistence.repository.AnswerRepository;
+import com.austral.triviagoservice.persistence.repository.QuestionRepository;
 import com.austral.triviagoservice.persistence.repository.QuizResolutionRepository;
-import com.austral.triviagoservice.presentation.dto.AnswerDto;
-import com.austral.triviagoservice.presentation.dto.QuizResolutionDto;
+import com.austral.triviagoservice.presentation.dto.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -24,42 +25,48 @@ public class QuizResolutionServiceImpl implements QuizResolutionService {
     private final AnswerService answerService;
     private final QuizResolutionRepository quizResolutionRepository;
     private final QuizService quizService;
-    public QuizResolutionServiceImpl(AnswerService answerService, QuizResolutionRepository quizResolutionRepository, QuizService quizService) {
+    private final QuestionRepository questionRepository;
+    private final AnswerRepository answerRepository;
+
+    public QuizResolutionServiceImpl(AnswerService answerService, QuizResolutionRepository quizResolutionRepository, QuizService quizService,
+                                     QuestionRepository questionRepository,
+                                     AnswerRepository answerRepository) {
         this.answerService = answerService;
         this.quizResolutionRepository = quizResolutionRepository;
         this.quizService = quizService;
+        this.questionRepository = questionRepository;
+        this.answerRepository = answerRepository;
     }
 
     @Override
-    public QuizResolution createQuizResolution(QuizResolutionDto quizResolutionDto) throws InvalidContentException, NotFoundException {
+    public QuizResolutionDto createQuizResolution(QuizResolutionCreateDto quizResolutionDto) throws InvalidContentException, NotFoundException {
+        int correctAnswers = 0;
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Quiz quiz = quizService.findById(quizResolutionDto.getQuizId());
 
-        // Check the number of answers is correct
-        if (quiz.getQuestions().size() != quizResolutionDto.getSelectedAnswers().size())
-            throw new InvalidContentException("Incorrect number of answers");
-
-        List<Answer> answers = new ArrayList<>();
-        for (AnswerDto selectedAnswer : quizResolutionDto.getSelectedAnswers()) {
-            answers.add(answerService.findById(selectedAnswer.getId()));
-        }
-
-        // Check that all the answers are related to the quiz
-        if(!answers.stream().allMatch(a -> a.getQuestion().getQuiz().getId().equals(quiz.getId())))
-            throw new InvalidContentException("An answer is not related to the quiz");
-
-        // Check that there are no answers related to the same question
-        if (answers.stream().map(a -> a.getQuestion().getId()).distinct().count() < answers.size())
-            throw new InvalidContentException("Two or more answers are related to the same question");
-
         QuizResolution quizResolution = new QuizResolution();
-        quizResolution.setUserId(user.getId());
-        quizResolution.setQuizId(quiz.getId());
+        quizResolution.setUser(user);
+        quizResolution.setQuiz(quiz);
         quizResolution.setResolutionDateTime(LocalDateTime.now());
-        quizResolution.setCorrectAnswers((int) answers.stream().filter(Answer::isCorrect).count());
 
+
+        // Check the number of answers is correct
+        if (quiz.getQuestions().size() != quizResolutionDto.getResolvedQuestions().size())
+            throw new InvalidContentException("Some questions were not answered");
+
+        for (ResolvedQuestionDto resolvedQuestionDto : quizResolutionDto.getResolvedQuestions()) {
+            if (resolvedQuestionDto.getSelectedAnswersIds().size() == questionRepository.findById(resolvedQuestionDto.getQuestionId()).get().getAnswers().stream().filter(Answer::isCorrect).count()) {
+                if (!resolvedQuestionDto.getSelectedAnswersIds().stream().allMatch(answerId -> questionRepository.findById(resolvedQuestionDto.getQuestionId()).get().getAnswers().stream().anyMatch(answer -> answer.getId().equals(answerId)))){
+                    throw new InvalidContentException("An answer is not related to the question");
+                }
+                if (resolvedQuestionDto.getSelectedAnswersIds().stream().allMatch(answerId -> answerRepository.findById(answerId).get().isCorrect())) {
+                    correctAnswers++;
+                }
+            }
+        }
+        quizResolution.setCorrectAnswers(correctAnswers);
         quizResolutionRepository.save(quizResolution);
-        return quizResolution;
+        return new QuizResolutionDto(quizResolution);
     }
 
 }
