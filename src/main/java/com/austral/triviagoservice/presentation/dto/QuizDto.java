@@ -1,5 +1,6 @@
 package com.austral.triviagoservice.presentation.dto;
 
+import com.austral.triviagoservice.persistence.domain.Answer;
 import com.austral.triviagoservice.persistence.domain.Label;
 import com.austral.triviagoservice.persistence.domain.Quiz;
 import com.austral.triviagoservice.persistence.domain.QuizRating;
@@ -24,6 +25,7 @@ public class QuizDto {
     private boolean isPrivate;
     private List<QuestionDto> questions;
     private List<String> labels;
+    private boolean multipleCorrectAnswers;
 
     public QuizDto() {
 
@@ -40,8 +42,8 @@ public class QuizDto {
         dto.setPrivate(quiz.isPrivate());
         dto.setQuestions(quiz.getQuestions().stream().map(QuestionDto::new).collect(Collectors.toList()));
         dto.setLabels(quiz.getLabels().stream().map(Label::getValue).collect(Collectors.toList()));
-
         dto.setRating(quiz.getRatings().isEmpty() ? 0 : quiz.getRatings().stream().mapToInt(QuizRating::getRating).sum() / quiz.getRatings().size());
+        dto.setMultipleCorrectAnswers(quiz.getQuestions().stream().map(question -> question.getAnswers().stream().filter(Answer::isCorrect).count()).anyMatch(count -> count > 1));
         return dto;
     }
 
