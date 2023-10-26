@@ -25,7 +25,6 @@ public class QuizDto {
     private boolean isPrivate;
     private List<QuestionDto> questions;
     private List<String> labels;
-    private boolean multipleCorrectAnswers;
 
     public QuizDto() {
 
@@ -43,7 +42,6 @@ public class QuizDto {
         dto.setQuestions(quiz.getQuestions().stream().map(QuestionDto::new).collect(Collectors.toList()));
         dto.setLabels(quiz.getLabels().stream().map(Label::getValue).collect(Collectors.toList()));
         dto.setRating(quiz.getRatings().isEmpty() ? 0 : quiz.getRatings().stream().mapToInt(QuizRating::getRating).sum() / quiz.getRatings().size());
-        dto.setMultipleCorrectAnswers(quiz.getQuestions().stream().map(question -> question.getAnswers().stream().filter(Answer::isCorrect).count()).anyMatch(count -> count > 1));
         return dto;
     }
 

@@ -1,5 +1,6 @@
 package com.austral.triviagoservice.presentation.dto;
 
+import com.austral.triviagoservice.persistence.domain.Answer;
 import com.austral.triviagoservice.persistence.domain.Question;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,9 +15,12 @@ public class QuestionDto {
     private final String content;
     private final List<AnswerDto> answers;
 
+    private final boolean multipleCorrectAnswers;
+
     public QuestionDto(Question question) {
         this.id = question.getId();
         this.content = question.getContent();
         this.answers = question.getAnswers().stream().map(AnswerDto::new).collect(Collectors.toList());
+        this.multipleCorrectAnswers = question.getAnswers().stream().filter(Answer::isCorrect).count() > 1;
     }
 }
