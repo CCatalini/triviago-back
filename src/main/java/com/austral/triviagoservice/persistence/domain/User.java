@@ -57,6 +57,11 @@ public class User{
     @LazyCollection(LazyCollectionOption.FALSE)
     List<Quiz> quizzes = new ArrayList<>();
 
+    @ManyToMany
+    @JsonIgnore
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<User> following = new ArrayList<>();
+
     public User() {
     }
 
@@ -68,5 +73,4 @@ public class User{
     public void quitLike(CommentLike like){
         likes.remove(like);
     }
-
 }

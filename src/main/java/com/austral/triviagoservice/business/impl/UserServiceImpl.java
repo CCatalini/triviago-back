@@ -15,6 +15,8 @@ import com.austral.triviagoservice.presentation.dto.UserInfoDto;
 import lombok.SneakyThrows;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -119,5 +121,20 @@ public class UserServiceImpl implements UserService {
             return new UserInfoDto(user);
         }
         throw new InvalidContentException("Invalid user Id");
+    }
+    
+    @Override
+    public UserInfoDto followUser(Long followingId) throws NotFoundException, InvalidContentException {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User foundUser = userRepository.findById(user.getId()).orElseThrow(() -> new NotFoundException("User with id: " + user.getId() + " not found!"));
+        if (foundUser.getId() == followingId) throw new InvalidContentException("You can't follow yourself");
+        User userToFollow = userRepository.findById(followingId).orElseThrow(() -> new NotFoundException("User with id: " + followingId + " not found!"));
+        if(!foundUser.getFollowing().contains(userToFollow)){
+            foundUser.getFollowing().add(userToFollow);
+        }else
+        {
+            throw new InvalidContentException("You are already following this user");
+        }
+        return new UserInfoDto(userToFollow);
     }
 }
