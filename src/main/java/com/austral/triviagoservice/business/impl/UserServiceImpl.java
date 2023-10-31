@@ -15,7 +15,6 @@ import com.austral.triviagoservice.presentation.dto.UserInfoDto;
 import lombok.SneakyThrows;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -122,7 +121,8 @@ public class UserServiceImpl implements UserService {
         }
         throw new InvalidContentException("Invalid user Id");
     }
-    
+
+    @Transactional
     @Override
     public UserInfoDto followUser(Long followingId) throws NotFoundException, InvalidContentException {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -136,5 +136,21 @@ public class UserServiceImpl implements UserService {
             throw new InvalidContentException("You are already following this user");
         }
         return new UserInfoDto(userToFollow);
+    }
+
+    @Transactional
+    @Override
+    public UserInfoDto unfollowUser(Long followingId) throws NotFoundException, InvalidContentException {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User foundUser = userRepository.findById(user.getId()).orElseThrow(() -> new NotFoundException("User with id: " + user.getId() + " not found!"));
+        if (foundUser.getId() == followingId) throw new InvalidContentException("You can't unfollow yourself");
+        User userToUnfollow = userRepository.findById(followingId).orElseThrow(() -> new NotFoundException("User with id: " + followingId + " not found!"));
+        if (foundUser.getFollowing().contains(userToUnfollow)){
+            foundUser.getFollowing().remove(userToUnfollow);
+        }else
+        {
+            throw new InvalidContentException("You are not following this user");
+        }
+        return new UserInfoDto(userToUnfollow);
     }
 }
