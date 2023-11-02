@@ -67,4 +67,32 @@ public class UserController {
             return new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PostMapping("/follow/{following_id}")
+    public ResponseEntity<?> followUser(@PathVariable("following_id") Long followingId){
+        try{
+            UserInfoDto dto = userService.followUser(followingId);
+            return new ResponseEntity<>(dto, HttpStatus.OK);
+        }
+        catch (NotFoundException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+        catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping("/unfollow/{following_id}")
+    public ResponseEntity<?> unfollowUser(@PathVariable("following_id") Long followingId){
+        try{
+            UserInfoDto dto = userService.unfollowUser(followingId);
+            return new ResponseEntity<>(dto, HttpStatus.OK);
+        }
+        catch (NotFoundException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+        catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

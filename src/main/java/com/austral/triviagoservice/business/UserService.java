@@ -24,4 +24,8 @@ public interface UserService {
     UserInfoDto getUserInfo(Long userId) throws NotFoundException;
 
     UserInfoDto modifyUserInfo(Long userId, ModifyUserInfoDto modifyUsertInfoDto) throws InvalidContentException, NotFoundException;
+
+    UserInfoDto followUser(Long followingId) throws NotFoundException, InvalidContentException;
+
+    UserInfoDto unfollowUser(Long followingId) throws NotFoundException, InvalidContentException;
 }
