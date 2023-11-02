@@ -32,7 +32,7 @@ public class Quiz {
     @Column
     private boolean isPrivate;
 
-    @OneToMany(mappedBy="quiz")
+    @OneToMany(mappedBy="quiz", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<QuizRating> ratings;
 
