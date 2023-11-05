@@ -1,5 +1,6 @@
 package com.austral.triviagoservice.presentation.dto;
 
+import com.austral.triviagoservice.persistence.domain.Answer;
 import com.austral.triviagoservice.persistence.domain.Label;
 import com.austral.triviagoservice.persistence.domain.Quiz;
 import com.austral.triviagoservice.persistence.domain.QuizRating;
@@ -40,7 +41,6 @@ public class QuizDto {
         dto.setPrivate(quiz.isPrivate());
         dto.setQuestions(quiz.getQuestions().stream().map(QuestionDto::new).collect(Collectors.toList()));
         dto.setLabels(quiz.getLabels().stream().map(Label::getValue).collect(Collectors.toList()));
-
         dto.setRating(quiz.getRatings().isEmpty() ? 0 : quiz.getRatings().stream().mapToInt(QuizRating::getRating).sum() / quiz.getRatings().size());
         return dto;
     }

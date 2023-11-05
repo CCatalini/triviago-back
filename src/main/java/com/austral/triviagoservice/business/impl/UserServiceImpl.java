@@ -2,6 +2,7 @@ package com.austral.triviagoservice.business.impl;
 
 import com.austral.triviagoservice.business.QuizService;
 import com.austral.triviagoservice.business.UserService;
+import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.business.exception.NotFoundException;
 import com.austral.triviagoservice.business.exception.UnauthorizedException;
 import com.austral.triviagoservice.persistence.domain.Quiz;
@@ -10,11 +11,16 @@ import com.austral.triviagoservice.persistence.repository.UserRepository;
 
 import com.austral.triviagoservice.presentation.dto.QuizDto;
 import com.austral.triviagoservice.presentation.dto.UserDto;
+import com.austral.triviagoservice.presentation.dto.ModifyUserInfoDto;
+import com.austral.triviagoservice.presentation.dto.UserInfoDto;
 import lombok.SneakyThrows;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -30,6 +36,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void saveUser(User user) {
+        user.setCreationDate(LocalDate.now());
         userRepository.save(user);
     }
 
@@ -69,9 +76,8 @@ public class UserServiceImpl implements UserService {
     @SneakyThrows
     public UserDto removeQuizFromSavedList (Long quizId) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Quiz quiz = quizService.findById(quizId);
-        if (user.getSavedQuizzes().contains(quiz)) {
-            user.getSavedQuizzes().remove(quiz);
+        if (user.getSavedQuizzes().stream().anyMatch(savedQuiz -> savedQuiz.getId() == quizId)) {
+            user.getSavedQuizzes().removeIf(savedQuiz -> savedQuiz.getId() == quizId);
             userRepository.save(user);
         }
         return UserDto.builder()
@@ -101,4 +107,60 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public UserInfoDto getUserInfo(Long userId) throws NotFoundException {
+        User user = this.findById(userId);
+        return new UserInfoDto(user);
+    }
+
+    @Override
+    public UserInfoDto modifyUserInfo(Long userId, ModifyUserInfoDto modifyUserInfoDto) throws InvalidContentException, NotFoundException {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(Objects.equals(user.getId(), userId)){
+            if(modifyUserInfoDto.getBirthDate() != null){
+                user.setBirthDate(modifyUserInfoDto.getBirthDate());
+            }
+            if(modifyUserInfoDto.getLastName() != null){
+                user.setLastName(modifyUserInfoDto.getLastName());
+            }
+            if(modifyUserInfoDto.getFirstName() != null){
+                user.setFirstName(modifyUserInfoDto.getFirstName());
+            }
+            userRepository.save(user);
+            return new UserInfoDto(user);
+        }
+        throw new InvalidContentException("Invalid user Id");
+    }
+
+    @Transactional
+    @Override
+    public UserInfoDto followUser(Long followingId) throws NotFoundException, InvalidContentException {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User foundUser = userRepository.findById(user.getId()).orElseThrow(() -> new NotFoundException("User with id: " + user.getId() + " not found!"));
+        if (foundUser.getId() == followingId) throw new InvalidContentException("You can't follow yourself");
+        User userToFollow = userRepository.findById(followingId).orElseThrow(() -> new NotFoundException("User with id: " + followingId + " not found!"));
+        if(!foundUser.getFollowing().contains(userToFollow)){
+            foundUser.getFollowing().add(userToFollow);
+        }else
+        {
+            throw new InvalidContentException("You are already following this user");
+        }
+        return new UserInfoDto(userToFollow);
+    }
+
+    @Transactional
+    @Override
+    public UserInfoDto unfollowUser(Long followingId) throws NotFoundException, InvalidContentException {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User foundUser = userRepository.findById(user.getId()).orElseThrow(() -> new NotFoundException("User with id: " + user.getId() + " not found!"));
+        if (foundUser.getId() == followingId) throw new InvalidContentException("You can't unfollow yourself");
+        User userToUnfollow = userRepository.findById(followingId).orElseThrow(() -> new NotFoundException("User with id: " + followingId + " not found!"));
+        if (foundUser.getFollowing().contains(userToUnfollow)){
+            foundUser.getFollowing().remove(userToUnfollow);
+        }else
+        {
+            throw new InvalidContentException("You are not following this user");
+        }
+        return new UserInfoDto(userToUnfollow);
+    }
 }

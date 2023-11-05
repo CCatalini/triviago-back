@@ -3,13 +3,10 @@ package com.austral.triviagoservice.business.impl;
 import com.austral.triviagoservice.business.QuizRatingService;
 import com.austral.triviagoservice.business.QuizService;
 import com.austral.triviagoservice.business.exception.InvalidContentException;
+import com.austral.triviagoservice.business.exception.NotFoundException;
 import com.austral.triviagoservice.business.helper.ErrorCheckers;
-import com.austral.triviagoservice.persistence.domain.Label;
-import com.austral.triviagoservice.persistence.domain.Quiz;
-import com.austral.triviagoservice.persistence.domain.QuizRating;
-import com.austral.triviagoservice.persistence.domain.User;
-import com.austral.triviagoservice.persistence.repository.LabelRepository;
-import com.austral.triviagoservice.persistence.repository.QuizRepository;
+import com.austral.triviagoservice.persistence.domain.*;
+import com.austral.triviagoservice.persistence.repository.*;
 import com.austral.triviagoservice.persistence.specification.QuizSpecification;
 import com.austral.triviagoservice.presentation.dto.*;
 import org.springframework.data.domain.Page;
@@ -30,14 +27,23 @@ public class QuizServiceImpl implements QuizService {
     final private QuizRepository quizRepository;
     private final LabelRepository labelRepository;
     private final QuizRatingService quizRatingService;
+    private final QuizResolutionRepository quizResolutionRepository;
+    private final UserRepository userRepository;
+    private final QuizRatingRepository quizRatingRepository;
 
     public QuizServiceImpl(QuizRepository quizRepository,
                            LabelRepository labelRepository,
-                           QuizRatingService quizRatingService) {
+                           QuizRatingService quizRatingService,
+                           QuizResolutionRepository quizResolutionRepository,
+                           UserRepository userRepository,
+                           QuizRatingRepository quizRatingRepository) {
         this.quizRepository = quizRepository;
         this.labelRepository = labelRepository;
 
         this.quizRatingService = quizRatingService;
+        this.quizResolutionRepository = quizResolutionRepository;
+        this.userRepository = userRepository;
+        this.quizRatingRepository = quizRatingRepository;
     }
 
     @Override
@@ -131,7 +137,10 @@ public class QuizServiceImpl implements QuizService {
         ErrorCheckers.checkRate(rate.getRating()); //validates rating
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Quiz quiz = this.findById(quizId);
-        if (quiz.getRatings().stream().anyMatch(r -> user.getId().equals(r.getUser().getId()))) throw new InvalidContentException("User already rated the quiz");
+        if (quiz.getRatings().stream().anyMatch(r -> user.getId().equals(r.getUser().getId()))) {
+            QuizRating quizRatedByUser = quizRatingRepository.findByUserIdAndQuizId(user.getId(), quizId);
+            quizRatingService.updateRating(quizRatedByUser, rate);
+        }
         QuizRating rating = new QuizRating();
         rating.setUser(user);
         rating.setQuiz(quiz);
@@ -139,4 +148,17 @@ public class QuizServiceImpl implements QuizService {
         quizRatingService.create(rating);
     }
 
+    @Override
+    public List<QuizResolutionDto> getLeaderboard(Long quizId) throws NotFoundException {
+        if (!quizRepository.existsById(quizId)) throw new NotFoundException("Quiz not found");
+        List<QuizResolution> resolutions = quizResolutionRepository.findAllByQuizId(quizId);
+        List<QuizResolution> sortedResolution = resolutions.stream().sorted((r1, r2) -> {
+            if (r1.getCorrectAnswers() == r2.getCorrectAnswers()) {
+                return r1.getResolutionDateTime().compareTo(r2.getResolutionDateTime());
+            }
+                return r2.getCorrectAnswers() - r1.getCorrectAnswers();
+            }).collect(Collectors.toList());
+        return sortedResolution.stream().map(QuizResolutionDto::new).collect(Collectors.toList());
+
+    }
 }
