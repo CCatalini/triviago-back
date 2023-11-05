@@ -4,6 +4,7 @@ import com.austral.triviagoservice.business.QuizService;
 import com.austral.triviagoservice.business.UserService;
 import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.business.exception.NotFoundException;
+import com.austral.triviagoservice.business.exception.UnauthorizedException;
 import com.austral.triviagoservice.persistence.domain.Quiz;
 import com.austral.triviagoservice.persistence.domain.User;
 import com.austral.triviagoservice.persistence.repository.UserRepository;
@@ -95,6 +96,15 @@ public class UserServiceImpl implements UserService {
     public List<QuizDto> getSavedQuizzes() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return user.getSavedQuizzes().stream().map(QuizDto::createDto).collect(Collectors.toList());
+    }
+
+    public void deleteUser(Long userId) throws UnauthorizedException{
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (user.getId().equals(userId)) {
+            userRepository.deleteById(userId);
+        } else{
+            throw new UnauthorizedException("You can only delete your own account");
+        }
     }
 
     @Override

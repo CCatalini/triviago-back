@@ -41,7 +41,7 @@ public class User{
     @OneToMany(mappedBy="user", fetch = FetchType.EAGER)
     private List<CommentLike> likes;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     List<QuizRating> ratings;
 

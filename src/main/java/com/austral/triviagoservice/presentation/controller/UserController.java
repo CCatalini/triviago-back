@@ -1,5 +1,6 @@
 package com.austral.triviagoservice.presentation.controller;
 
+import com.austral.triviagoservice.business.exception.UnauthorizedException;
 import com.austral.triviagoservice.business.exception.InvalidContentException;
 import com.austral.triviagoservice.business.exception.NotFoundException;
 import com.austral.triviagoservice.business.impl.UserServiceImpl;
@@ -39,6 +40,16 @@ public class UserController {
     @GetMapping("/saved-quizzes")
     public ResponseEntity<List<QuizDto>> getSavedQuizzes(){
         return new ResponseEntity<>(userService.getSavedQuizzes(), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<?> deleteUser(@PathVariable("userId") Long userId) {
+        try {
+            userService.deleteUser(userId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (UnauthorizedException e) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
     }
 
     @GetMapping("/{id}")
@@ -95,4 +106,5 @@ public class UserController {
             return new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 }
