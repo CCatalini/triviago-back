@@ -33,9 +33,11 @@ public class AuthService {
         user.setBirthDate(LocalDate.parse(signUpForm.getBirthDate()));
         user.setFirstName(signUpForm.getFirstName());
         user.setLastName(signUpForm.getLastName());
-        AuthenticationResponse response = AuthenticationResponse.builder().token(jwtService.generateToken(user)).build();
         user.setCreationDate(LocalDate.now());
-        userRepository.save(user);
+        // Primero guardar el usuario para que tenga ID generado
+        User savedUser = userRepository.save(user);
+        // Luego generar el token con el ID correcto
+        AuthenticationResponse response = AuthenticationResponse.builder().token(jwtService.generateToken(savedUser)).build();
         return response;
     }
 
