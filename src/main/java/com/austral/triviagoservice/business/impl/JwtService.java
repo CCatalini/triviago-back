@@ -40,8 +40,8 @@ public class JwtService {
         claims.put("birthDate", user.getBirthDate().toString());
 
         return Jwts.builder()
-                .setClaims(claims)
-                .setSubject( user.getEmail() )
+                .setSubject( user.getEmail() )  // setSubject ANTES de setClaims
+                .addClaims(claims)              // usar addClaims en lugar de setClaims
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
                 .signWith(SignatureAlgorithm.HS512, secret)

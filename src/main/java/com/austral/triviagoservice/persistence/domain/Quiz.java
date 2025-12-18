@@ -11,7 +11,7 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Getter
@@ -68,6 +68,10 @@ public class Quiz {
         this.creationDate = LocalDate.now();
         this.ratings = new ArrayList<>();
         this.quizResolutions = new ArrayList<>();
-        if (quizCreateDto.isPrivate()) this.invitationCode = UUID.randomUUID().toString();
+        if (quizCreateDto.isPrivate()) {
+            // Generar código de 6 dígitos
+            Random random = new Random();
+            this.invitationCode = String.format("%06d", random.nextInt(1000000));
+        }
     }
 }

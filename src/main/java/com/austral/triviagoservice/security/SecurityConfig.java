@@ -34,6 +34,7 @@ public class SecurityConfig {
                 .csrf().disable()
                 .authorizeHttpRequests()
                 .antMatchers("/auth/**").permitAll()
+                .antMatchers("/quiz/private/**").permitAll()  // Permitir acceso sin auth a quizzes privados por código
                     .anyRequest().authenticated()
                 .and()
                 .sessionManagement()
