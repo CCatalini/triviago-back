@@ -21,7 +21,10 @@ public class QuizSpecification implements Specification<Quiz> {
     public Predicate toPredicate(Root<Quiz> quiz, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
         List<Predicate> restrictions = new ArrayList<>();
         if(quizFilter.getTitle() != null && !quizFilter.getTitle().isEmpty()){
-            restrictions.add(criteriaBuilder.equal(quiz.get("title"), quizFilter.getTitle()));
+            restrictions.add(criteriaBuilder.like(
+                criteriaBuilder.lower(quiz.get("title")), 
+                "%" + quizFilter.getTitle().toLowerCase() + "%"
+            ));
         }
         if(quizFilter.getCreationDate()!=null){
             restrictions.add(criteriaBuilder.equal(quiz.get("creationDate"), quizFilter.getCreationDate()));    
@@ -39,35 +42,10 @@ public class QuizSpecification implements Specification<Quiz> {
                 }
             }
         }
-        if((quizFilter.getMinQuestion() != null) && (quizFilter.getMaxQuestion()!= null)){
-            restrictions.add(criteriaBuilder.between(quiz.get("questionQty"), quizFilter.getMinQuestion(), quizFilter.getMaxQuestion()));
-        }
-        else{
-            if (quizFilter.getMinQuestion() != null) {
-                restrictions.add(criteriaBuilder.greaterThanOrEqualTo(quiz.get("questionQty"), quizFilter.getMinQuestion()));
-            }
-            else if (quizFilter.getMaxQuestion() != null) {
-                restrictions.add(criteriaBuilder.lessThanOrEqualTo(quiz.get("questionQty"), quizFilter.getMaxQuestion()));
-            }
-        }
-        if(quizFilter.getRating()!=null){
-                restrictions.add(criteriaBuilder.equal(quiz.get("rating"), quizFilter.getRating()));
-        }
-        else{
-            if((quizFilter.getMinRating() != null) && (quizFilter.getMaxRating()!=null)){
-                restrictions.add(criteriaBuilder.between(quiz.get("rating"), quizFilter.getMinRating(), quizFilter.getMaxRating()));
-            }
-            else{
-                if(quizFilter.getMinRating() != null){
-                    restrictions.add(criteriaBuilder.greaterThanOrEqualTo(quiz.get("rating"), quizFilter.getMinRating()));
-                }
-                else if(quizFilter.getMaxRating() != null){
-                    restrictions.add(criteriaBuilder.lessThanOrEqualTo(quiz.get("rating"), quizFilter.getMaxRating()));
-                }
-            }
-        }
+        // Note: questionQty and rating filters are handled in QuizServiceImpl 
+        // because these are calculated fields, not database columns
         if(quizFilter.getUserId() != null){
-            restrictions.add(criteriaBuilder.equal(quiz.get("userId"), quizFilter.getUserId()));
+            restrictions.add(criteriaBuilder.equal(quiz.get("user").get("id"), quizFilter.getUserId()));
         }
         if (quizFilter.getIsPrivate() != null) {
             restrictions.add(criteriaBuilder.equal(quiz.get("isPrivate"), quizFilter.getIsPrivate()));

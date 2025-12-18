@@ -63,8 +63,35 @@ public class QuizServiceImpl implements QuizService {
         final QuizSpecification specification = new QuizSpecification(filter);
         List<QuizDto> quizzes = quizRepository.findAll(specification)
                 .stream().map(QuizDto::createDto).collect(Collectors.toList());
-        if (filter.getLabels() != null && !filter.getLabels().isEmpty()) {
-            quizzes = quizzes.stream().filter(quiz -> new HashSet<>(quiz.getLabels()).containsAll(filter.getLabels()))
+        
+        // Filter by labels (in memory because it's a many-to-many relationship)
+        List<String> labelsList = filter.getLabelsList();
+        if (!labelsList.isEmpty()) {
+            quizzes = quizzes.stream().filter(quiz -> new HashSet<>(quiz.getLabels()).containsAll(labelsList))
+                    .collect(Collectors.toList());
+        }
+        
+        // Filter by question count (in memory because it's a calculated field)
+        if (filter.getMinQuestion() != null) {
+            quizzes = quizzes.stream()
+                    .filter(quiz -> quiz.getQuestions().size() >= filter.getMinQuestion())
+                    .collect(Collectors.toList());
+        }
+        if (filter.getMaxQuestion() != null) {
+            quizzes = quizzes.stream()
+                    .filter(quiz -> quiz.getQuestions().size() <= filter.getMaxQuestion())
+                    .collect(Collectors.toList());
+        }
+        
+        // Filter by rating (in memory because it's a calculated field)
+        if (filter.getMinRating() != null) {
+            quizzes = quizzes.stream()
+                    .filter(quiz -> quiz.getRating() >= filter.getMinRating())
+                    .collect(Collectors.toList());
+        }
+        if (filter.getMaxRating() != null) {
+            quizzes = quizzes.stream()
+                    .filter(quiz -> quiz.getRating() <= filter.getMaxRating())
                     .collect(Collectors.toList());
         }
         int pageSize = pageable.getPageSize();

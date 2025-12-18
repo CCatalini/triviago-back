@@ -5,6 +5,8 @@ import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Getter
@@ -14,7 +16,7 @@ public class QuizFilter {
 
     Long userId;
     String title;
-    List<String> labels;
+    String labels;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     LocalDate dateFrom;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -27,4 +29,11 @@ public class QuizFilter {
     Double minRating;
     Double maxRating;
     Boolean isPrivate;
+
+    public List<String> getLabelsList() {
+        if (labels == null || labels.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return Arrays.asList(labels.split(","));
+    }
 }
